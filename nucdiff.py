@@ -1,0 +1,97 @@
+# copyright (c) 2014-2016 Ksenia Khelik
+#
+# This Source Code Form is subject to the 
+# terms of the Mozilla Public License, v. 2.0. 
+# If a copy of the MPL was not distributed 
+# with this file, You can obtain one at 
+# https://mozilla.org/MPL/2.0/.
+#
+#-------------------------------------------------------------------------------
+
+import sys
+import argparse
+import os
+
+import find_errors
+import generate_output
+import initial_preparation
+import ref_coord
+import statistics
+
+import subprocess
+
+
+
+
+def START(args):
+    
+    file_ref=args['file_ref']
+    file_contigs=args['file_contig']
+    working_dir=args['working_dir']
+    prefix=args['prefix']
+
+    reloc_dist=int(args['reloc_dist'])
+    
+    nucmer_opt=args['nucmer_opt']
+    filter_opt=args['filter_opt']
+    proc_num=args['proc']
+
+    delta_file=args['delta_file']
+
+
+    asmb_name_full=args['query_name_full']
+    ref_name_full=args['ref_name_full']
+    
+    
+          
+    #1. check input data correctness
+    working_dir=initial_preparation.CHECK_INPUT_DATA(file_ref, file_contigs, working_dir, prefix, nucmer_opt)
+
+    
+
+    #2. find differences and gaps in assembly
+    struct_dict,end_err_dict,unmapped_list=find_errors.FIND_ERRORS_ASSEMBLY(file_ref,file_contigs, working_dir, nucmer_opt, prefix,proc_num, filter_opt,delta_file,reloc_dist ) #class Errors
+
+
+    #3. find reference-oriented difference coordinates
+    err_ref_cont_coord_errors_list=ref_coord.FIND_REF_COORD_ERRORS(struct_dict,end_err_dict,unmapped_list,file_ref, file_contigs)
+
+    #4. find statistics
+    statistics_output_lines=statistics.FIND_STATISTICS(err_ref_cont_coord_errors_list)
+
+
+    #5. generate output
+    generate_output.GENERATE_OUTPUT(struct_dict,end_err_dict,unmapped_list, file_ref, file_contigs, working_dir, prefix,err_ref_cont_coord_errors_list,statistics_output_lines,asmb_name_full,ref_name_full)
+
+
+   
+
+    
+
+
+def main():
+    
+    argv=sys.argv
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('file_ref',metavar='Reference.fasta', type=str, help='- Fasta file with the reference sequences')
+    parser.add_argument('file_contig',metavar='Query.fasta', type=str, help='- Fasta file with the query sequences')
+    parser.add_argument('working_dir',metavar='Output_dir', type=str, help='- Path to the directory where all intermediate and final results will be stored')
+    parser.add_argument('prefix',metavar='Prefix', type=str, help='- Name that will be added to all generated files including the ones created by NUCmer')
+    parser.add_argument('--reloc_dist',metavar='int', type=str,nargs='?',default="10000", help='- Minimum distance between two relocated blocks [10000]')
+    parser.add_argument('--nucmer_opt',  type=str, nargs='?',default="", help='- NUCmer run options. By default, NUCmer will be run with its default parameters values, except the --maxmatch parameter. --maxmatch is hard coded and cannot be changed. To change any other parameter values, type parameter names and new values inside single or double quotation marks.')
+    parser.add_argument('--filter_opt',  type=str, nargs='?',default="-q", help='- Delta-filter run options. By default, it will be run with -q parameter only. ')
+    parser.add_argument('--delta_file',  type=str, nargs='?',default="", help='- Path to the already existing delta file (NUCmer output file) ')
+    parser.add_argument('--proc',  type=int, nargs='?',default=1, help='- Number of processes to be used [1] ')
+    parser.add_argument('--ref_name_full',  type=str, nargs='?',default='no',choices=['yes','no'], help="- Print full reference names in output files ('yes' value). In case of 'no', everything after the first space will be ignored. ['no']")
+    parser.add_argument('--query_name_full',  type=str, nargs='?',default='no',choices=['yes','no'], help="- Print full reference names in output files ('yes' value). In case of 'no', everything after the first space will be ignored.['no'] ")
+    parser.add_argument('--version', action='version', version='AEfinder 0.1')
+    
+    
+    
+    
+    args=vars(parser.parse_args())
+
+    START(args)
+
+main()
