@@ -20,7 +20,7 @@ import multiprocessing
 import general
 import class_errors
 import class_interv_coord
-import check_correctness
+#import check_correctness
 
 
 
