@@ -61,7 +61,7 @@ $python nucdiff.py --proc 5 --ref_name_full 'yes' --query_name_full 'yes' --nucm
 ### 4.1 NucDiff steps
 The NucDiff workflow is shown in Figure 1. The detailed description of all steps can be found in [2].
 
-![](Figures_manual/workflow.png)
+![](Figures_README/workflow.png)
 
 Figure 1: The NucDiff workflow
 
@@ -69,7 +69,7 @@ Figure 1: The NucDiff workflow
 All types of differences are classified into 3 groups: Global, Local and Structural (Figure 2). 
 
 
-![](Figures_manual/types_of_differences.png)
+![](Figures_README/types_of_differences.png)
 
 Figure 2: Classification of the types of differences with group names found in coloured boxes with capitalised names and the specific types found in white boxes with lowercase names.
 
