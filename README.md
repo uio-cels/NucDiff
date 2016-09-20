@@ -1,26 +1,15 @@
 # NucDiff manual
+
 ## 1 Introduction
 NucDiff locates and categorizes differences between two closely related nucleotide sequences. It is able to deal with very fragmented genomes, structural rearrangements and various local differences. These features make NucDiff to be perfectly suitable to compare assemblies with each other or with available reference genomes.   
 
 NucDiff provides information about the types of differences and their locations. It is possible to upload the results into genome browser for visualization and further inspection. It was written in Python and uses the NUCmer package from MUMmer[1] for sequence comparison. 
 
 
-
-
-## 2 Download and installation
-### 2.1 Prerequisites
+## 2 Prerequisites
 NucDiff can be run on Linux and Mac OS. It uses MUMmer v3.23 which should be installed and be in the PATH before running NucDiff.  
 
 The MUMmer tarball can be downloaded at http://sourceforge.net/projects/mummer/ .
-
-
-### 2.2 Installation 
-To install NucDiff, download the source code tarball and unpack it like this:
-
-```
-$wget  <reference  in the internet>
-$tar -xzf <name of tarball>.tar.gz
-```
 
 
 ## 3 Running NucDiff
@@ -54,8 +43,6 @@ Optional arguments:
 *  **--query_name_full** - print full query names in output files ('yes' value). In case of 'no', everything after the first space will be ignored. ['no']
 *  **--version** - show program's version number and exit
 
-
-
 ### 3.2 Running examples
 Running example with NucDiff and NUCmer predefined parameters values, except NUCmer --maxmatch parameter.  --maxmatch is hard coded and cannot be changed neither to --mum nor to --mumreference:
 
@@ -71,9 +58,7 @@ $python nucdiff.py --proc 5 --ref_name_full 'yes' --query_name_full 'yes' --nucm
 
 
 ## 4 Method overview
-
 ### 4.1 NucDiff steps
-
 The NucDiff workflow is shown in Figure 1. The detailed description of all steps can be found in [2].
 
 ![](Figures_manual/workflow.png)
@@ -81,7 +66,6 @@ The NucDiff workflow is shown in Figure 1. The detailed description of all steps
 Figure 1: The NucDiff workflow
 
 ### 4.2 Types of differences
-
 All types of differences are classified into 3 groups: Global, Local and Structural (Figure 2). 
 
 
@@ -90,13 +74,11 @@ All types of differences are classified into 3 groups: Global, Local and Structu
 Figure 2: Classification of the types of differences with group names found in coloured boxes with capitalised names and the specific types found in white boxes with lowercase names.
 
 #### 4.2.1 Global differences
-
 Global differences affect the whole query sequence. This group consists of only one type, called unaligned sequence.
 * **unaligned sequence** is a query sequence that has no matches of length equal to or longer than a given number of bases (65 by default) with the reference genome.  
 
 
 #### 4.2.2 Local differences
-
 Local differences involve various types of insertions, deletions and substitutions. NucDiff distinguishes between six types of insertions (the insertion subgroup in Figure 2):
 * **simple insertion** - an insertion of bases in the query sequence that were not present anywhere on the reference genome
 * **duplication** - an insertion in the query sequence of an extra copy of some reference sequence not adjacent to this region, creating an interspersed repeat, or increasing the copy number of an interspersed repeat  
@@ -115,7 +97,6 @@ And, last, there are two types of substitutions (the substitution subgroup in Fi
 * **gap** - a substitution of some reference sequence region with unknown sequence (Ns) of the same length. If the query has an enlarged gap, then this will be classified as gap+inserted gap differences, while a shortened gap is classified as gap+simple deletion differences.
 
 #### 4.2.3 Structural differences
-
 NucDiff detects several structural differences. These can be grouped into intra- and inter-chromosomal differences, and  some of these contain groups of types:
 * **Translocation** -  an inter-chromosomal structural rearrangement, when two regions located on the different reference sequences, are placed adjacent to each other (**simple translocation**), overlap (**translocation with overlap**), or contain an unmapped region between them (**translocation with inserted gap** in case of inserted Ns, and **translocation with insertion** otherwise) in the same query sequence
 * **Relocation** - an  intra-chromosomal structural rearrangement, when two regions located in different parts of the same reference sequence are placed adjacent to each other (**simple relocation**), overlap (**relocation with overlap**),  or or contain an unmapped region between them (**relocation with inserted gap** in case of inserted Ns, and **relocation with insertion** otherwise) in the same query sequence
@@ -124,9 +105,9 @@ NucDiff detects several structural differences. These can be grouped into intra-
 
 The Translocation is a part of the Inter-chromosomal subgroup, while Relocation, reshuffling and inversion belong to the Intra-chromosomal subgroup in Figure 2.
 
+
 ## 5. NucDiff output
 NucDiff puts its output in the directory `<output_dir>/results`. The output consists of 4 files: `<prefix>_query_coord.gff`, `<prefix>_ref_coord.gff`, `<prefix>_mapped_blocks.gff`,     `<prefix>_stat.out`. 
-
 
 ### 5.1 < prefix>_query_coord.gff
 The ```<prefix>_query_coord.gff``` is a file in gff3 format containing information about the differences between query and reference sequences in query-based coordinates. An example of such a file is given below: 
@@ -426,6 +407,7 @@ Each line contains following information:
 * the length of the whole query sequence (9 column, query_length)
 * the query coordinates of the mapped block (9 column, query_coord). 
 
+
 ### 5.4 < prefix>_stat.out
 The ```<prefix>_stat.out``` file contains information about the number of the found differences between the query and reference sequences. The following information is provided in the file:
 * The total number of all reshufflings, inversions, wrong sequences and all types of insertions, deletions, substitutions, translocations, and relocations (Total number).
@@ -486,6 +468,7 @@ query sequences 10
 reference sequences 2
 
 ``` 
+
 
 ## References
 [1] Kurtz S et al. Versatile and open software for comparing large genomes. Genome Biol. 2004;5(2):R12. doi 10.1186/gb-2004-5-2-r12.
