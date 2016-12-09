@@ -216,7 +216,7 @@ class Nucmer:
 
         #-------1.find translocations
         structure_dict={}
-        end_err_dict={}
+        #end_err_dict={}
 
         #1.1. redefine num element values
         self.FIND_REF_ORDER_NUM()
@@ -226,7 +226,7 @@ class Nucmer:
             #1.2 sort intervals by translocation groups (fill in 'blocks' field)
             structure_dict[cont_name]={}
 
-            
+            '''
             end_err_dict[cont_name]={'wrong_beginning':[],'wrong_end':[]}
 
             #fill in wrong end differences 
@@ -241,7 +241,7 @@ class Nucmer:
                 end_err_dict[cont_name]['wrong_end']=self.intervals[cont_name][-1][10][-1]
                 self.intervals[cont_name][-1][1]=self.intervals[cont_name][-1][10][-1][0]-1
                 self.intervals[cont_name][-1][10].pop(-1)
-                 
+            '''     
 
             cur_transl_group_num=0
             cur_transl_group_name=0
@@ -620,6 +620,7 @@ class Nucmer:
                                    
                                     flag_rep=1
                                     #delete all info about nested fragments
+                                    '''
                                     j_what=nested_frag_list[0][0]
                                     j_where=nested_frag_list[0][1]
                                     st_c=structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][j_what][0]
@@ -630,7 +631,7 @@ class Nucmer:
                                     elif end_c==len(contigs_dict[cont_name]):
                                         end_err_dict[cont_name]['wrong_end']=[st_c,end_c,'wrong_end',end_c-st_c+1,'transp']
                                     
-                                    
+                                    '''
                                     structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'].pop(j_what)
                                     nested_frag_list.pop(0)
                                     break
@@ -662,6 +663,7 @@ class Nucmer:
                                     c2_coord, last_err_end=class_interv_coord.FIND_CONT_COORD_FORWARD_START(r2_st, c2_st, r2_coord, errors_2,c2_end)
                                     
                                     if c2_coord<c2_end:
+
                                         structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][i+1][0]=c2_coord+1
                                         structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][i+1][2]=r2_coord+1
 
@@ -963,7 +965,7 @@ class Nucmer:
            
         '''
         
-        return structure_dict, end_err_dict    
+        return structure_dict    
       
         
                    
@@ -1269,7 +1271,31 @@ class Nucmer:
 
             
             
-        
+    def FIND_WRONG_END(self,structure_dict):
+
+        end_err_dict={}
+
+        for cont_name in structure_dict.keys():
+            end_err_dict[cont_name]={'wrong_beginning':[], 'wrong_end':[]}
+
+            first_entry=structure_dict[cont_name][0]['blocks'][0]['blocks'][0]['block']
+
+            last_trl=sorted(structure_dict[cont_name].keys())[-1]
+            last_msj=sorted(structure_dict[cont_name][last_trl]['blocks'].keys())[-1]
+            last_blk=sorted(structure_dict[cont_name][last_trl]['blocks'][last_msj]['blocks'].keys())[-1]
+
+            last_entry=structure_dict[cont_name][last_trl]['blocks'][last_msj]['blocks'][last_blk]['block']
+
+            if first_entry[0]>1:
+                for entry in [1,first_entry[0]-1,'wrong_beginning',first_entry[0]-1,'nuc12']:
+                    end_err_dict[cont_name]['wrong_beginning'].append(entry)
+
+            if last_entry[1]<last_entry[6]:
+                for entry in [last_entry[1]+1,last_entry[6],'wrong_end',last_entry[6]-last_entry[1],'nuc12']:
+                    end_err_dict[cont_name]['wrong_end'].append(entry)
+
+
+        return end_err_dict
 
     
     
@@ -1292,7 +1318,7 @@ class Nucmer:
         self.FIND_NON_STRUCTURAL_ERRORS(contigs_dict, ref_dict,reloc_dist)
 
         #4. check difference correctness
-        
+        '''
         for cont_name in self.intervals.keys():
             first_simb=self.intervals[cont_name][0][0] 
             if first_simb>1:
@@ -1313,11 +1339,11 @@ class Nucmer:
             self.intervals[cont_name][-1][10]=sorted(self.intervals[cont_name][-1][10], key=lambda inter:inter[0], reverse=False)
 
 
-        
+        '''
         #5. find structural differences
-        struct_dict,end_err_dict=self.FIND_STRUCTURAL_ERRORS(contigs_dict, ref_dict,reloc_dist)
+        struct_dict=self.FIND_STRUCTURAL_ERRORS(contigs_dict, ref_dict,reloc_dist)
 
-
+        end_err_dict=self.FIND_WRONG_END(struct_dict)
         
 
         
