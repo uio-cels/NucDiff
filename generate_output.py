@@ -501,8 +501,53 @@ def OUTPUT_MAPPED_BLOCKS_TO_REF(struct_dict,ref_dict,ref_names,ref_full_names_di
     
     f.close()
     
+def OUTPUT_BLOCKS_TO_QUERY(cont_blocks_dict,ref_dict,contig_names,ref_full_names_dict,cont_dict,contig_full_names_dict,working_dir, prefix,asmb_name_full,ref_name_full):
 
-def GENERATE_OUTPUT(struct_dict,end_err_dict,unmapped_list, file_ref, file_contigs,working_dir, prefix,err_ref_cont_coord_errors_list,statistics_output_lines,asmb_name_full,ref_name_full):
+    f=open(working_dir+prefix+'_query_blocks.gff','w')
+    
+    f.write('##gff-version 3\n')
+
+    dir_dict={-1:'-',1:'+'}
+
+    gff_dict={'block':'Block', 'translocation_block':'TRL','relocation_block':'RLC', 'inversion':'INV'}
+
+    for c_name in contig_names:
+        if asmb_name_full=='yes':
+            asmb_name=contig_full_names_dict[c_name]
+        else:
+            asmb_name=c_name
+
+        if cont_blocks_dict.has_key(c_name):
+
+            if cont_blocks_dict[c_name]!=[]:
+
+                f.write('##sequence-region\t'+asmb_name+'\t1\t'+str(len(cont_dict[c_name]))+'\n')
+
+                for entry in cont_blocks_dict[c_name]:
+                    if len(entry)==8:
+                    
+                        if ref_name_full=='yes':
+                            rf_name=ref_full_names_dict[entry[4]]
+                        else:
+                            rf_name=entry[4]
+
+                        if entry[2].startswith('reshuf'):
+                            field_2='RSH'
+                        else:
+                            field_2=gff_dict[entry[2]]
+
+                        f.write(asmb_name+'\t.\t'+field_2+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t'+dir_dict[entry[7]]+'\t.\tName='+entry[2]+';length='+str(entry[3])+';ref_name='+rf_name+';ref_length='+str(len(ref_dict[entry[4]]))+';ref_coord='+str(entry[5])+'-'+str(entry[6])+'\n')
+
+                    else:
+                        field_2=gff_dict[entry[2]]
+                        f.write(asmb_name+'\t.\t'+field_2+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t'+'.'+'\t.\tName='+entry[2]+';length='+str(entry[3])+'\n')
+
+        
+                        
+    f.close()
+    
+
+def GENERATE_OUTPUT(struct_dict,end_err_dict,unmapped_list, file_ref, file_contigs,working_dir, prefix,err_ref_cont_coord_errors_list,statistics_output_lines,asmb_name_full,ref_name_full,cont_blocks_dict):
 
     contigs_dict, contig_seqs, contig_names, contig_full_names_dict=general.READ_FASTA_ENTRY(file_contigs)
     ref_dict, ref_seqs, ref_names,ref_full_names_dict=general.READ_FASTA_ENTRY(file_ref)
@@ -513,3 +558,5 @@ def GENERATE_OUTPUT(struct_dict,end_err_dict,unmapped_list, file_ref, file_conti
     OUTPUT_STAT(statistics_output_lines,working_dir, 'results/'+prefix, len(contigs_dict.keys()),len(ref_dict.keys()))
       
     OUTPUT_MAPPED_BLOCKS_TO_REF(struct_dict,ref_dict,ref_names,ref_full_names_dict,contigs_dict,contig_full_names_dict,working_dir, 'results/'+prefix,asmb_name_full,ref_name_full)
+
+    OUTPUT_BLOCKS_TO_QUERY(cont_blocks_dict, ref_dict,contig_names,ref_full_names_dict,contigs_dict,contig_full_names_dict,working_dir, 'results/'+prefix,asmb_name_full,ref_name_full)

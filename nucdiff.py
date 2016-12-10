@@ -54,14 +54,14 @@ def START(args):
 
 
     #3. find reference-oriented difference coordinates
-    err_ref_cont_coord_errors_list=ref_coord.FIND_REF_COORD_ERRORS(struct_dict,end_err_dict,unmapped_list,file_ref, file_contigs)
+    err_ref_cont_coord_errors_list,cont_blocks_dict=ref_coord.FIND_REF_COORD_ERRORS(struct_dict,end_err_dict,unmapped_list,file_ref, file_contigs)
 
     #4. find statistics
     statistics_output_lines=statistics.FIND_STATISTICS(err_ref_cont_coord_errors_list)
 
 
     #5. generate output
-    generate_output.GENERATE_OUTPUT(struct_dict,end_err_dict,unmapped_list, file_ref, file_contigs, working_dir, prefix,err_ref_cont_coord_errors_list,statistics_output_lines,asmb_name_full,ref_name_full)
+    generate_output.GENERATE_OUTPUT(struct_dict,end_err_dict,unmapped_list, file_ref, file_contigs, working_dir, prefix,err_ref_cont_coord_errors_list,statistics_output_lines,asmb_name_full,ref_name_full,cont_blocks_dict)
 
 
    

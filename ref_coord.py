@@ -940,7 +940,122 @@ def FIND_UNCOVERED_REF_FRAG(err_ref_cont_coord_errors_list,struct_dict, ref_dict
             for entry in uncovered_list:
                 err_ref_cont_coord_errors_list.append([ref_name,entry[0],entry[1],'-','-','-','uncovered_region',entry[1]-entry[0]+1,'r'])
                                 
+def MERGE_BLOCK(block_list):
+    merge_block=[]
 
+    min_st=block_list[0][0]
+    max_end=block_list[0][1]
+
+    for entry in block_list[1:]:
+        cur_st=entry[0]
+        cur_end=entry[1]
+
+        min_st=min(min_st,cur_st)
+        max_end=max(max_end,cur_end)
+
+    
+    return [min_st,max_end]
+
+def FIND_CONT_BLOCKS(structure_dict):
+    cont_blocks_dict={}
+
+    temp_dict={}
+    result_dict={}
+    
+    for cont_name in structure_dict.keys():
+        temp_dict[cont_name]={'transloc':[], 'misj':[],'reshuf':[],'invers':[],'blocks':[]}
+        cont_blocks_dict[cont_name]={'transloc':[], 'misj':[],'reshuf':[],'invers':[],'blocks':[]}
+        result_dict[cont_name]=[]
+
+       
+
+        for transl_group in sorted(structure_dict[cont_name].keys()):
+            for misj_group in sorted(structure_dict[cont_name][transl_group]['blocks'].keys()):
+                for block_name in sorted(structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'].keys()):
+                    block=structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['block']
+                    reshuf=structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['transp_output']
+                    invers=structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['invers_output']
+
+                    c_dir=block[4]
+                    
+                    if reshuf!=[]:
+                        temp_dict[cont_name]['reshuf'].append(reshuf)
+
+                    if invers!=[]:
+                        temp_dict[cont_name]['invers'].append(invers)
+
+
+                    temp_dict[cont_name]['blocks'].append(block)
+                    
+                
+                if len(temp_dict[cont_name]['blocks'])>1:
+                    merge_block=MERGE_BLOCK(temp_dict[cont_name]['blocks'])
+                    temp_dict[cont_name]['misj'].append(merge_block)
+
+                else:
+                    temp_dict[cont_name]['misj'].append(temp_dict[cont_name]['blocks'][0])
+
+                
+                for entry in temp_dict[cont_name]['reshuf']:
+                    entry=entry[0]
+                    cont_blocks_dict[cont_name]['reshuf'].append([entry[0],entry[1],entry[2],entry[3],entry[5],entry[6],entry[7],c_dir])
+
+                for i in range(len(temp_dict[cont_name]['reshuf'])):
+                    temp_dict[cont_name]['reshuf'].pop(0)
+                    
+
+                for entry in temp_dict[cont_name]['invers']:
+                    entry=entry[0]
+                    cont_blocks_dict[cont_name]['invers'].append([entry[0],entry[1],entry[2],entry[3],entry[5],entry[6],entry[7],c_dir])
+
+                for i in range(len(temp_dict[cont_name]['invers'])):
+                    temp_dict[cont_name]['invers'].pop(0)
+
+
+
+                for entry in temp_dict[cont_name]['blocks']:
+                    cont_blocks_dict[cont_name]['blocks'].append([entry[0],entry[1],'block',entry[1]-entry[0]+1,entry[8],entry[2],entry[3],c_dir])
+                    
+                for i in range(len(temp_dict[cont_name]['blocks'])):
+                    temp_dict[cont_name]['blocks'].pop(0)
+
+            
+            if len(temp_dict[cont_name]['misj'])>1:
+                merge_block=MERGE_BLOCK(temp_dict[cont_name]['misj'])
+                temp_dict[cont_name]['transloc'].append(merge_block)
+
+                for entry in temp_dict[cont_name]['misj']:
+                    cont_blocks_dict[cont_name]['misj'].append([entry[0],entry[1],'relocation_block',entry[1]-entry[0]+1])
+
+            else:
+                temp_dict[cont_name]['transloc'].append(temp_dict[cont_name]['misj'][0])
+
+            for i in range(len(temp_dict[cont_name]['misj'])):
+                    temp_dict[cont_name]['misj'].pop(0)
+            
+        if len(temp_dict[cont_name]['transloc'])>1:
+            for entry in temp_dict[cont_name]['transloc']:
+                cont_blocks_dict[cont_name]['transloc'].append([entry[0],entry[1],'translocation_block',entry[1]-entry[0]+1])
+
+            for i in range(len(temp_dict[cont_name]['transloc'])):
+                temp_dict[cont_name]['transloc'].pop(0)
+
+            
+
+               
+        
+        for gr_name in ['blocks','invers','reshuf','misj','transloc']:
+            for entry in cont_blocks_dict[cont_name][gr_name]:
+                result_dict[cont_name].append(entry)
+
+        result_dict[cont_name]=sorted(result_dict[cont_name], key=lambda inter:inter[0], reverse=False)
+
+                        
+
+        
+    return result_dict
+    
+    
 
 def FIND_REF_COORD_ERRORS(struct_dict,end_err_dict,unmapped_list,file_ref, file_contigs):
     
@@ -954,4 +1069,6 @@ def FIND_REF_COORD_ERRORS(struct_dict,end_err_dict,unmapped_list,file_ref, file_
 
     FIND_UNCOVERED_REF_FRAG(err_ref_cont_coord_errors_list,struct_dict,ref_dict)
 
-    return err_ref_cont_coord_errors_list
+    cont_blocks_dict=FIND_CONT_BLOCKS(struct_dict)
+
+    return err_ref_cont_coord_errors_list,cont_blocks_dict
