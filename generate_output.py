@@ -279,9 +279,205 @@ def OUTPUT_READABLE(structure_dict,end_err_dict,unmapped_list, cont_dict,contig_
 
 
 def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,ref_full_names_dict,cont_dict,contig_names,contig_full_names_dict,working_dir, prefix,asmb_name_full,ref_name_full):
+
+   #query_snps.gff
+
     
+    snp_err_dict={}
+    for cont_name in cont_dict.keys():
+        snp_err_dict[cont_name]=[]
+        
+    for entry in err_ref_cont_coord_errors_list:
+        if entry[8]=='b':
+            if len(entry)==11 and entry[10]=='snps':
+                c_name=entry[3]
+                snp_err_dict[c_name].append(entry)
+                
+       
+    
+    for c_name in snp_err_dict.keys():
+        snp_err_dict[c_name]= sorted(snp_err_dict[c_name],key=lambda inter:inter[4], reverse=False)
+            
+        
+
+
+    fq=open(working_dir+prefix+'_query_snps.gff','w')
+    
+    fq.write('##gff-version 3\n')
     
 
+    ID_cur=1
+    for cont_name in contig_names:
+        if asmb_name_full=='yes':
+            c_name=contig_full_names_dict[cont_name]
+        else:
+            c_name=cont_name
+                
+
+        if snp_err_dict[cont_name]!=[]:
+                fq.write('##sequence-region\t'+c_name+'\t1\t'+str(len(cont_dict[cont_name]))+'\n')
+
+                for i in range(len(snp_err_dict[cont_name])):
+                    snp_err_dict[cont_name][i].append('SNP_'+str(ID_cur))
+                    ID_cur+=1
+
+                for entry in snp_err_dict[cont_name]:
+                        if ref_name_full=='yes':
+                            r_name=ref_full_names_dict[entry[0]]
+                        else:
+                            r_name=entry[0]
+                                
+                        if entry[6]=='insertion' or entry[6]=='wrong_gap':
+                                fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0000667'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t.\t.\tID='+entry[11]+';Name='+err_new_names_dict[entry[6]]+\
+                                        ';ins_len='+str(entry[7])+';query_dir='+str(entry[9])+';ref_sequence='+r_name+';ref_coord='+str(entry[1])+';query_bases='+cont_dict[cont_name][entry[4]-1:entry[5]]+\
+                                        ';ref_bases=-'+';color=EE0000'+'\n')
+                        elif entry[6]=='deletion':
+                            if entry[9]==1:
+                                 ref_coord=str(entry[1])+'-'+str(entry[2])
+                                 ref_bases=ref_dict[entry[0]][entry[1]-1:entry[2]]
+                            else:
+                                 ref_coord=str(entry[2])+'-'+str(entry[1])
+                                 ref_bases=general.COMPL_STRING(ref_dict[entry[0]][entry[1]-1:entry[2]])
+                         
+                            fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0000159'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t.\t.\tID='+entry[11]+';Name='+err_new_names_dict[entry[6]]+\
+                                        ';del_len='+str(entry[7])+';query_dir='+str(entry[9])+';ref_sequence='+r_name+';ref_coord='+ref_coord+';query_bases=-;ref_bases='+ref_bases+\
+                                     ';color=0000EE'+'\n')
+                        
+                        else: #subst and gap
+                            if entry[9]==1:
+                                 ref_coord=str(entry[1])+'-'+str(entry[2])
+                                 ref_bases=ref_dict[entry[0]][entry[1]-1:entry[2]]
+                            else:
+                                 ref_coord=str(entry[2])+'-'+str(entry[1])
+                                 ref_bases=general.COMPL_STRING(ref_dict[entry[0]][entry[1]-1:entry[2]])
+                         
+                            fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:1000002'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t.\t.\tID='+entry[11]+';Name='+err_new_names_dict[entry[6]]+\
+                                        ';subst_len='+str(entry[7])+';query_dir='+str(entry[9])+';ref_sequence='+r_name+';ref_coord='+ref_coord+';query_bases='+cont_dict[cont_name][entry[4]-1:entry[5]]+\
+                                     ';ref_bases='+ref_bases+';color=42C042'+'\n')
+                         
+                        if entry[4]>entry[5] or entry[7]<0:
+                            print entry
+                            print 'ERROR: a wrong query coordinate'
+    
+
+    
+    fq.close()
+
+    ref_snp_err_dict={}
+    for ref_name in ref_dict.keys():
+        ref_snp_err_dict[ref_name]=[]
+        
+
+    for cont_name in snp_err_dict.keys():
+        for entry in snp_err_dict[cont_name]:
+           ref_snp_err_dict[entry[0]].append(entry)
+
+    for r_name in ref_snp_err_dict.keys():
+        ref_snp_err_dict[r_name]= sorted(ref_snp_err_dict[r_name],key=lambda inter:inter[1], reverse=False)
+            
+       
+
+
+    fr=open(working_dir+prefix+'_ref_snps.gff','w')
+    fr.write('##gff-version 3\n')
+
+    for ref_name in ref_names:
+        if ref_name_full=='yes':
+            r_name=ref_full_names_dict[ref_name]
+        else:
+            r_name=ref_name
+                
+
+        if ref_snp_err_dict[ref_name]!=[]:
+                fr.write('##sequence-region\t'+r_name+'\t1\t'+str(len(ref_dict[ref_name]))+'\n')
+
+               
+                for entry in ref_snp_err_dict[ref_name]:
+                        if asmb_name_full=='yes':
+                            c_name=ref_full_names_dict[entry[3]]
+                        else:
+                            c_name=entry[3]
+
+                            
+                                
+                        if entry[6]=='insertion' or entry[6]=='wrong_gap':
+                            if entry[9]==1:
+                                 query_coord=str(entry[4])+'-'+str(entry[5])
+                                 query_bases=cont_dict[entry[3]][entry[4]-1:entry[5]]
+                            else:
+                                 query_coord=str(entry[5])+'-'+str(entry[4])
+                                 query_bases=general.COMPL_STRING(cont_dict[entry[3]][entry[4]-1:entry[5]])
+                         
+
+                            fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0000667'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+entry[11]+';Name='+err_new_names_dict[entry[6]]+\
+                                        ';ins_len='+str(entry[7])+';query_dir='+str(entry[9])+';query_sequence='+c_name+';query_coord='+query_coord+';query_bases='+query_bases+\
+                                        ';ref_bases=-'+';color=EE0000'+'\n')
+                        elif entry[6]=='deletion':
+                            fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0000159'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+entry[11]+';Name='+err_new_names_dict[entry[6]]+\
+                                        ';del_len='+str(entry[7])+';query_dir='+str(entry[9])+';query_sequence='+c_name+';query_coord='+str(entry[4])+';query_bases=-;ref_bases='+\
+                                        ref_dict[entry[0]][entry[1]-1:entry[2]]+';color=0000EE'+'\n')
+                        
+                        else: #subst and gap
+                            if entry[9]==1:
+                                 query_coord=str(entry[4])+'-'+str(entry[5])
+                                 query_bases=cont_dict[entry[3]][entry[4]-1:entry[5]]
+                            else:
+                                 query_coord=str(entry[5])+'-'+str(entry[4])
+                                 query_bases=general.COMPL_STRING(cont_dict[entry[3]][entry[4]-1:entry[5]])
+                         
+                            fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:1000002'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+entry[11]+';Name='+err_new_names_dict[entry[6]]+\
+                                        ';subst_len='+str(entry[7])+';query_dir='+str(entry[9])+';query_sequence='+c_name+';query_coord='+query_coord+\
+                                     ';query_bases='+query_bases+';ref_bases='+ref_dict[entry[0]][entry[1]-1:entry[2]]+';color=42C042'+'\n')
+                         
+                        if entry[4]>entry[5] or entry[7]<0:
+                            print entry
+                            print 'ERROR: a wrong query coordinate'
+    
+    
+    fr.close()
+                         
+    
+
+    '''
+    #copy modified
+    f=open(working_dir+prefix+'_query_snps.gff','w')
+    
+    f.write('##gff-version 3\n')
+
+    for cont_name in contig_names:
+        if asmb_name_full=='yes':
+            c_name=contig_full_names_dict[cont_name]
+        else:
+            c_name=cont_name
+                
+
+        if cont_err_dict.has_key(cont_name):
+                if cont_err_dict[cont_name]!=[]:
+                    f.write('##sequence-region\t'+contig_full_names_dict[cont_name]+'\t1\t'+str(len(cont_dict[cont_name]))+'\n')
+                    for entry in cont_err_dict[cont_name]:
+                        if entry[0]=='-':
+                            f.write(contig_full_names_dict[cont_name]+'\t.\t'+'Difference'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t+\t.\tName='+err_new_names_dict[entry[6]]+';length='+str(entry[7])+'\n')
+                        else:
+                            if ref_name_full=='yes':
+                                r_name=ref_full_names_dict[entry[0]]
+                            else:
+                                r_name=entry[0]
+                                
+                            if entry[6].startswith('reshuffling'):
+                                f.write(c_name+'\t.\t'+'Difference'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t+\t.\tName='+entry[6]+';length='+str(entry[7])+';ref_sequence='+r_name+';ref_coord='+str(entry[1])+'-'+str(entry[2])+'\n')
+                            else:
+                                f.write(c_name+'\t.\t'+'Difference'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t+\t.\tName='+err_new_names_dict[entry[6]]+';length='+str(entry[7])+';ref_sequence='+r_name+';ref_coord='+str(entry[1])+'-'+str(entry[2])+'\n')
+                                
+                        if entry[4]>entry[5] or entry[7]<0:
+                            print entry
+                            print 'ERROR: a wrong query coordinate'
+    
+
+    f.close()
+    '''
+
+    
+    '''
     cont_err_dict={}
     for cont_name in cont_dict.keys():
         cont_err_dict[cont_name]=[]
@@ -430,6 +626,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                         
 
     f.close()
+    '''
     
 def OUTPUT_STAT(statistics_output_lines,working_dir,prefix,cont_num,ref_num):
     f=open(working_dir+prefix+'_stat.out','w')

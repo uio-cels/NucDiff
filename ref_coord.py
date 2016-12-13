@@ -107,21 +107,23 @@ def FIND_CORR_INTERVAL_AND_ERRORS(entry, cont_name):
         for i in range(len(local_errors_list)):
             err=local_errors_list[i]
 
+            
+
             err_type=err[2]
             err_st=err[0]
             err_end=err[1]
             err_len=err[3]
-            
+            err_source=err[4]
 
             if err_type.startswith('insertion') or err_type.startswith('wrong_gap') :
                 ins_st_r=err_st-1-ins_len+del_len - c_st+start_r
-                interv_list.append([ins_st_r,ins_st_r,err_type,err_len,err_st,err_end])
+                interv_list.append([ins_st_r,ins_st_r,err_type,err_len,err_st,err_end,err_source])
                 ins_len+=err_len
 
             elif err_type.startswith('deletion'):
                 del_st_r=err_st+1-ins_len+del_len -c_st+start_r
                 del_end_r=err_st+err_len-ins_len+del_len -c_st+start_r
-                interv_list.append([del_st_r,del_end_r,err_type,err_len,err_st,err_end])
+                interv_list.append([del_st_r,del_end_r,err_type,err_len,err_st,err_end,err_source])
                 del_len+=err_len
 
             elif err_type.startswith('substitution') or err_type=='gap':
@@ -131,7 +133,7 @@ def FIND_CORR_INTERVAL_AND_ERRORS(entry, cont_name):
                 else:
                     subst_st_r=err_st-ins_len+del_len -c_st+start_r
                     subst_end_r=err_st+err_len-1-ins_len+del_len - c_st+start_r
-                interv_list.append([subst_st_r,subst_end_r,err_type,err_len,err_st,err_end])
+                interv_list.append([subst_st_r,subst_end_r,err_type,err_len,err_st,err_end,err_source])
 
             prev_type=err_type
             prev_st=err_st
@@ -153,19 +155,20 @@ def FIND_CORR_INTERVAL_AND_ERRORS(entry, cont_name):
             err_st=err[0]
             err_end=err[1]
             err_len=err[3]
+            err_source=err[4]
             
 
             if err_type.startswith('insertion') or err_type.startswith('wrong_gap') :
                
                 ins_st_r=end_r-(err_st-c_st+1)+1+ins_len-del_len
-                interv_list.append([ins_st_r,ins_st_r,err_type,err_len,err_st,err_end])
+                interv_list.append([ins_st_r,ins_st_r,err_type,err_len,err_st,err_end,err_source])
                 ins_len+=err_len
 
             
             elif err_type.startswith('deletion'):
                 del_end_r=end_r-(err_st-c_st+1)+ins_len-del_len
                 del_st_r=end_r-(err_st-c_st+1)+ins_len-del_len-err_len+1
-                interv_list.append([del_st_r,del_end_r,err_type,err_len,err_st,err_end])
+                interv_list.append([del_st_r,del_end_r,err_type,err_len,err_st,err_end,err_source])
                 del_len+=err_len
 
             elif err_type.startswith('substitution') or err_type=='gap':
@@ -173,13 +176,13 @@ def FIND_CORR_INTERVAL_AND_ERRORS(entry, cont_name):
                 if prev_type.startswith('deletion') and prev_st==err_st:
                     subst_end_r=end_r-(err_st-c_st+1)+ins_len-del_len+prev_length+1
                     subst_st_r=end_r-(err_end-c_st+1)+ins_len-del_len+prev_length+1
-                    interv_list.append([subst_st_r,subst_end_r,err_type,err_len,err_st,err_end])
+                    interv_list.append([subst_st_r,subst_end_r,err_type,err_len,err_st,err_end,err_source])
                     
                 else:
                    
                     subst_end_r=end_r-(err_st-c_st)+ins_len-del_len
                     subst_st_r=end_r-(err_end-c_st)+ins_len-del_len
-                    interv_list.append([subst_st_r,subst_end_r,err_type,err_len,err_st,err_end])
+                    interv_list.append([subst_st_r,subst_end_r,err_type,err_len,err_st,err_end,err_source])
 
             prev_type=err_type
             prev_st=err_st
@@ -196,7 +199,9 @@ def FIND_LOCAL_ERRORS(err_ref_cont_coord_errors_list,block_coord,cont_name):
 
     if block_coord[10]!=[]:
         ref_name=block_coord[8]
+        c_dir=block_coord[4]
         interv_list=FIND_CORR_INTERVAL_AND_ERRORS(block_coord, cont_name)
+        
         for entry in interv_list:
             r_st=entry[0]
             r_end=entry[1]
@@ -204,10 +209,13 @@ def FIND_LOCAL_ERRORS(err_ref_cont_coord_errors_list,block_coord,cont_name):
             err_len=entry[3]
             c_st=entry[4]
             c_end=entry[5]
+            err_source=entry[6]
             if r_st>r_end or c_st>c_end:
                 print ref_name,r_st,r_end, cont_name,c_st,c_end, err_type,err_len,'b'
                 print 'ERROR: wrong local difference'
-            err_ref_cont_coord_errors_list.append([ref_name,r_st,r_end, cont_name,c_st,c_end, err_type,err_len,'b'])
+            err_ref_cont_coord_errors_list.append([ref_name,r_st,r_end, cont_name,c_st,c_end, err_type,err_len,'b',c_dir,err_source])
+            print entry
+            raw_input('lidf')
 
 def FIND_TRANSP(err_ref_cont_coord_errors_list,misjoin_blocks,cont_name):
     if  len(misjoin_blocks.keys())==1: 
