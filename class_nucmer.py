@@ -389,8 +389,9 @@ class Nucmer:
                                     misj_groups_dict[misj_group]['reason'].append([c1_end, c1_end, 'circular_genome_start', 1, interv_case])
                
                                     c_len=c1_end-c2_st+1
+
                                     
-                                    misj_groups_dict[misj_group]['reason'].append([c1_end, c1_end, 'deletion-collapsed_repeat', c_len, interv_case ])
+                                    misj_groups_dict[misj_group]['reason'].append([c1_end, c1_end, 'deletion-collapsed_repeat', c_len, interv_case])
 
                                     corresp_ref_coord, last_err_end=class_interv_coord.FIND_REF_COORD_REVERSE_END(r2_end, c2_st, c1_end+1, structure_dict[cont_name][transl_group]['blocks'][i+1][10])
                                     first_base=last_err_end+1
@@ -604,6 +605,7 @@ class Nucmer:
                                    
                                     flag_rep=1
                                     #delete all info about nested fragments
+                                    j_what=nested_frag_list[0][0]
                                     
                                     structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'].pop(j_what)
                                     nested_frag_list.pop(0)
@@ -995,7 +997,8 @@ class Nucmer:
                     if interv_type=='non_structural':
                         reference_seq=ref_dict[cur_interv[8]]
 
-                        cur_interv, new_interv_case=a.FIND_ERROR_MERGE(b,interv_case, contig_sequence, reference_seq) 
+                        cur_interv, new_interv_case=a.FIND_ERROR_MERGE(b,interv_case, contig_sequence, reference_seq,cont_name)
+                        
 
                         local_case_dict[new_interv_case]+=1
 

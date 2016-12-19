@@ -190,13 +190,17 @@ class Interv_coord:
         return interv_case, interv_type
 
 
-    def FIND_ERROR_MERGE(self,b,interv_case, contig_seq, ref_seq):
+    def FIND_ERROR_MERGE(self,b,interv_case, contig_seq, ref_seq,cont_name):
+        overlap_interv=[]
 
         if interv_case=='1.2':
             c_space_len=b.c_st-self.c_end-1
             ref_space_len=b.r_st-self.r_end-1
 
             errors_list=INSERTION_CONTIG_REFERENCE(self.c_end+1, b.c_st-1,contig_seq, c_space_len, ref_space_len, interv_case)
+
+            for entry in errors_list:
+                entry.append([])
 
             temp_errors=[]
             for entry in self.errors: 
@@ -207,11 +211,18 @@ class Interv_coord:
                 temp_errors.append(entry)
 
             new_interv=[self.c_st,b.c_end,self.r_st,b.r_end,self.c_dir,self.r_dir, self.c_len, self.r_len, self.r_name,b.num, temp_errors]
+            
 
         elif interv_case=='1.3':
             c_space_len=b.c_st-self.c_end-1
 
             errors_list=INSERTION_INSIDE_CONTIG(self.c_end+1, b.c_st-1,contig_seq, c_space_len,interv_case)
+
+            for entry in errors_list:
+                entry.append([])
+
+            #print errors_list
+            #raw_input('grk')
 
             temp_errors=[]
             for entry in self.errors: 
@@ -221,24 +232,32 @@ class Interv_coord:
             for entry in b.errors:
                 temp_errors.append(entry)
                         
-            new_interv=[self.c_st,b.c_end,self.r_st,b.r_end,self.c_dir,self.r_dir, self.c_len, self.r_len, self.r_name,b.num, temp_errors] 
+            new_interv=[self.c_st,b.c_end,self.r_st,b.r_end,self.c_dir,self.r_dir, self.c_len, self.r_len, self.r_name,b.num, temp_errors]
+            
+
         
 
         elif interv_case=='1.4':
             c_space_len=b.c_st-self.c_end-1
             ref_space_len=self.r_end-b.r_st+1
 
+             
             errors_list=INSERTION_INSIDE_CONTIG(self.c_end+1, b.c_st-1,contig_seq, c_space_len, interv_case)
+            for entry in errors_list:
+                entry.append([])
+            
            
             corresp_cont_coord, last_err_end=FIND_CONT_COORD_FORWARD_START(b.r_st, b.c_st, self.r_end, b.errors, b.c_end)
-            
-            if min(corresp_cont_coord,b.c_end)-b.c_st+1!=0:
-                errors_list.append([b.c_st, min(corresp_cont_coord,b.c_end),'insertion-multiple_copy',min(corresp_cont_coord,b.c_end)-b.c_st+1, interv_case])
 
-            
+            if min(corresp_cont_coord,b.c_end)-b.c_st+1!=0:
+                overlap_st=FIND_CONT_COORD_FORWARD_END_1(self.r_end, self.c_end, b.r_st, self.errors, self.c_st)
+                overlap_interv.append([self.r_name, b.r_st,self.r_end, cont_name, overlap_st, self.c_end,1,[b.c_st, min(corresp_cont_coord,b.c_end),'insertion-multiple_copy',min(corresp_cont_coord,b.c_end)-b.c_st+1, interv_case]])
+
+                errors_list.append([b.c_st, min(corresp_cont_coord,b.c_end),'insertion-multiple_copy',min(corresp_cont_coord,b.c_end)-b.c_st+1, interv_case,overlap_interv])
+
             first_base=last_err_end+1
 
-            
+
             
             temp_errors=[]
             for entry in self.errors: 
@@ -248,10 +267,34 @@ class Interv_coord:
             for entry in b.errors:
                 if entry[0]>=first_base:
                     temp_errors.append(entry)
-                
-            
+
             new_interv=[self.c_st,b.c_end,self.r_st,b.r_end,self.c_dir,self.r_dir, self.c_len, self.r_len, self.r_name,b.num,temp_errors]
+
+    
+            '''            
+            print cont_name
+            self.PRINT_FUNC()
+            print
+            b.PRINT_FUNC()
+            print
+            print errors_list[-1]
+            print
+            print self.errors
+            print
+            print overlap_st
+            print
+            print self.r_end, self.c_end, b.r_st
+            print self.r_name, b.r_st,self.r_end, cont_name, overlap_st, self.c_end
             
+
+            
+            print
+            print
+            print ref_seq[b.r_st-1: self.r_end]
+            print
+            print contig_seq[overlap_st-1: self.c_end]
+            raw_input('jdg1.4')    
+            '''
         
         elif interv_case=='4.8':
             c_space_len=b.c_st-self.c_end-1
@@ -259,11 +302,17 @@ class Interv_coord:
 
             
             errors_list=INSERTION_INSIDE_CONTIG(self.c_end+1, b.c_st-1,contig_seq, c_space_len, interv_case)
+            for entry in errors_list:
+                entry.append([])
+            
 
             corresp_cont_coord,last_err_end=FIND_CONT_COORD_REVERSE_END(b.r_end, b.c_st, self.r_st, b.errors, b.c_end)
-            
+
             if min(corresp_cont_coord,b.c_end)-b.c_st+1!=0:
-                errors_list.append([b.c_st, min(corresp_cont_coord,b.c_end),'insertion-multiple_copy',min(corresp_cont_coord,b.c_end)-b.c_st+1, interv_case])
+                overlap_st=FIND_CONT_COORD_REVERSE_END_1(self.r_st, self.c_end, b.r_end, self.errors, self.c_st)
+                overlap_interv.append([self.r_name, self.r_st,b.r_end, cont_name, overlap_st, self.c_end,-1,[b.c_st, min(corresp_cont_coord,b.c_end),'insertion-multiple_copy',min(corresp_cont_coord,b.c_end)-b.c_st+1, interv_case]])
+
+                errors_list.append([b.c_st, min(corresp_cont_coord,b.c_end),'insertion-multiple_copy',min(corresp_cont_coord,b.c_end)-b.c_st+1, interv_case,overlap_interv])
 
             first_base=last_err_end+1
 
@@ -278,11 +327,46 @@ class Interv_coord:
                     temp_errors.append(entry)
                 
             new_interv=[self.c_st,b.c_end,b.r_st,self.r_end,self.c_dir,self.r_dir, self.c_len, self.r_len, self.r_name,b.num,temp_errors]
+
+            
+            '''
+            print cont_name
+            self.PRINT_FUNC()
+            print
+            b.PRINT_FUNC()
+            print
+            print errors_list[-1]
+            print
+            print overlap_st
+            print
+            print self.errors
+            print
+            print self.r_st, self.c_end, b.r_end
+            print self.r_name, self.r_st,b.r_end, cont_name, overlap_st, self.c_end
+            
+
+            
+            print
+            print
+            import general
+            print general.COMPL_STRING(ref_seq[self.r_st-1: b.r_end])
+            print
+            print contig_seq[overlap_st-1: self.c_end]
+            print
+            print contig_seq[b.c_st-1: min(corresp_cont_coord,b.c_end)]
+            raw_input('jdg4.8')    
+            '''
             
         elif interv_case=='4.9':
             c_space_len=b.c_st-self.c_end-1
 
             errors_list=INSERTION_INSIDE_CONTIG(self.c_end+1, b.c_st-1,contig_seq, c_space_len,interv_case)
+
+            for entry in errors_list:
+                entry.append([])
+
+            #print errors_list
+            #raw_input('flk')
 
             temp_errors=[]
             for entry in self.errors: 
@@ -301,6 +385,12 @@ class Interv_coord:
 
             errors_list=INSERTION_CONTIG_REFERENCE(self.c_end+1, b.c_st-1,contig_seq, c_space_len, ref_space_len,interv_case)
 
+            for entry in errors_list:
+                entry.append([])
+
+            #print errors_list
+            #raw_input('flk')
+                
             temp_errors=[]
             for entry in self.errors: 
                 temp_errors.append(entry)
@@ -315,7 +405,7 @@ class Interv_coord:
         elif interv_case=='5.2':
             ref_space_len=b.r_st-self.r_end-1
 
-            errors_list=[[self.c_end, self.c_end, 'deletion', ref_space_len, interv_case]]
+            errors_list=[[self.c_end, self.c_end, 'deletion', ref_space_len, interv_case,[]]]
 
             temp_errors=[]
             for entry in self.errors: 
@@ -346,11 +436,14 @@ class Interv_coord:
             errors_list=[]
 
             corresp_cont_coord, last_err_end=FIND_CONT_COORD_FORWARD_START(b.r_st, b.c_st, self.r_end, b.errors, b.c_end)
-            
-            if min(corresp_cont_coord,b.c_end)-self.c_end-1+1!=0:
-                errors_list.append([self.c_end+1, min(corresp_cont_coord,b.c_end), 'insertion-tandem_multiple_copy', min(corresp_cont_coord,b.c_end)-self.c_end-1+1, interv_case])
-           
 
+            if min(corresp_cont_coord,b.c_end)-self.c_end-1+1!=0:
+                overlap_st=FIND_CONT_COORD_FORWARD_END_1(self.r_end, self.c_end, b.r_st, self.errors,self.c_st)
+                overlap_interv.append([self.r_name, b.r_st,self.r_end, cont_name, overlap_st, self.c_end,1,[self.c_end+1, min(corresp_cont_coord,b.c_end), 'insertion-tandem_multiple_copy', min(corresp_cont_coord,b.c_end)-self.c_end-1+1, interv_case]])
+
+                errors_list.append([self.c_end+1, min(corresp_cont_coord,b.c_end), 'insertion-tandem_multiple_copy', min(corresp_cont_coord,b.c_end)-self.c_end-1+1, interv_case,overlap_interv])
+
+           
             first_base=last_err_end+1
 
 
@@ -367,6 +460,34 @@ class Interv_coord:
 
             new_interv=[self.c_st,b.c_end,self.r_st,b.r_end,self.c_dir,self.r_dir, self.c_len, self.r_len, self.r_name,b.num,temp_errors]
 
+            
+            '''
+            print cont_name
+            self.PRINT_FUNC()
+            print
+            b.PRINT_FUNC()
+            print
+            print errors_list[-1]
+            print
+            print self.errors
+            print
+            print overlap_st
+            print
+            print self.r_end, self.c_end, b.r_st
+            print self.r_name, b.r_st,self.r_end, cont_name, overlap_st, self.c_end
+            
+
+            
+            print
+            print
+            print ref_seq[b.r_st-1: self.r_end]
+            print
+            print contig_seq[overlap_st-1: self.c_end]
+            print
+            print contig_seq[self.c_end+1-1: min(corresp_cont_coord,b.c_end)]
+            raw_input('jdg5.4')    
+            '''
+
 
         elif interv_case=='8.8':
             ref_space_len=b.r_end-self.r_st+1
@@ -374,9 +495,14 @@ class Interv_coord:
             errors_list=[]
 
             corresp_cont_coord,last_err_end=FIND_CONT_COORD_REVERSE_END(b.r_end, b.c_st, self.r_st, b.errors, b.c_end)
+
+            
             
             if min(corresp_cont_coord,b.c_end)-self.c_end-1+1!=0:
-                errors_list.append([self.c_end+1,min(corresp_cont_coord,b.c_end) , 'insertion-tandem_multiple_copy', min(corresp_cont_coord,b.c_end)-self.c_end-1+1, interv_case])
+                overlap_st=FIND_CONT_COORD_REVERSE_END_1(self.r_st, self.c_end, b.r_end, self.errors,self.c_st)
+                overlap_interv.append([self.r_name, self.r_st,b.r_end, cont_name, overlap_st, self.c_end,-1,[self.c_end+1,min(corresp_cont_coord,b.c_end) , 'insertion-tandem_multiple_copy', min(corresp_cont_coord,b.c_end)-self.c_end-1+1, interv_case]])
+
+                errors_list.append([self.c_end+1,min(corresp_cont_coord,b.c_end) , 'insertion-tandem_multiple_copy', min(corresp_cont_coord,b.c_end)-self.c_end-1+1, interv_case,overlap_interv])
             first_base=last_err_end+1
 
             
@@ -393,6 +519,35 @@ class Interv_coord:
               
             new_interv=[self.c_st,b.c_end,b.r_st,self.r_end,self.c_dir,self.r_dir, self.c_len, self.r_len, self.r_name,b.num, temp_errors]
 
+            
+            '''
+            print cont_name
+            self.PRINT_FUNC()
+            print
+            b.PRINT_FUNC()
+            print
+            print errors_list[-1]
+            print
+            print overlap_st
+            print
+            print self.errors
+            print
+            print self.r_st, self.c_end, b.r_end
+            print self.r_name, self.r_st,b.r_end, cont_name, overlap_st, self.c_end
+            
+
+            
+            print
+            print
+            import general
+            print general.COMPL_STRING(ref_seq[self.r_st-1:b.r_end])
+            print
+            print contig_seq[overlap_st-1: self.c_end]
+            print
+            print contig_seq[self.c_end+1-1:min(corresp_cont_coord,b.c_end)]
+            raw_input('jdg8.8')    
+            '''
+
         elif interv_case=='8.9':
             errors_list=[[]]
 
@@ -407,7 +562,7 @@ class Interv_coord:
         elif interv_case=='8.10':
             ref_space_len=self.r_st-b.r_end-1
 
-            errors_list=[[self.c_end, self.c_end, 'deletion', ref_space_len, interv_case]]
+            errors_list=[[self.c_end, self.c_end, 'deletion', ref_space_len, interv_case,[]]]
 
             temp_errors=[]
             for entry in self.errors: 
@@ -427,12 +582,17 @@ class Interv_coord:
             ref_space_len=b.r_st-self.r_end-1
 
             
-            errors_list=[[self.c_end, self.c_end, 'deletion', ref_space_len, interv_case]]
-           
+            errors_list=[[self.c_end, self.c_end, 'deletion', ref_space_len, interv_case,[]]]
             corresp_ref_coord, last_err_end=FIND_REF_COORD_FORWARD_START(b.r_st, b.c_st, self.c_end, b.errors)
 
-            if min(corresp_ref_coord,b.r_end)-b.r_st+1 !=0: 
-                errors_list.append([self.c_end, self.c_end, 'deletion-collapsed_repeat',min(corresp_ref_coord,b.r_end)-b.r_st+1,interv_case])
+            
+
+            if min(corresp_ref_coord,b.r_end)-b.r_st+1 !=0:
+                overlap_st=FIND_REF_COORD_FORWARD_END_1(self.r_end, self.c_end, b.c_st, self.errors,self.r_st)
+                overlap_interv.append([self.r_name, overlap_st,self.r_end, cont_name, b.c_st, self.c_end, 1,[self.c_end, self.c_end, 'deletion-collapsed_repeat',min(corresp_ref_coord,b.r_end)-b.r_st+1,interv_case]])
+
+
+                errors_list.append([self.c_end, self.c_end, 'deletion-collapsed_repeat',min(corresp_ref_coord,b.r_end)-b.r_st+1,interv_case,overlap_interv])
             
 
             first_base=last_err_end+1
@@ -453,16 +613,51 @@ class Interv_coord:
             new_interv=[self.c_st,b.c_end,self.r_st,b.r_end,self.c_dir,self.r_dir, self.c_len, self.r_len, self.r_name,b.num,temp_errors]
 
             
+            '''
+            print cont_name
+            self.PRINT_FUNC()
+            print
+            b.PRINT_FUNC()
+            print
+            print errors_list[-1]
+            print
+            print overlap_st
+            print
+            print self.errors
+            print
+            print self.r_end, self.c_end, b.c_st
+            print self.r_name, overlap_st,self.r_end, cont_name, b.c_st, self.c_end
+            
+
+            
+            print
+            print
+            print ref_seq[overlap_st-1:self.r_end]
+            print
+            print contig_seq[b.c_st-1: self.c_end]
+            print
+            print ref_seq[b.r_st-1: min(corresp_ref_coord,b.r_end)]
+            
+            raw_input('jdg9.2')    
+            '''
+
+
+
+            
         elif interv_case=='9.3':
             c_space_len=self.c_end-b.c_st+1
 
             errors_list=[]
 
             corresp_ref_coord, last_err_end=FIND_REF_COORD_FORWARD_START(b.r_st, b.c_st, self.c_end, b.errors)
-            if min(corresp_ref_coord,b.r_end)-b.r_st+1!=0:
-                errors_list.append([self.c_end, self.c_end, 'deletion-collapsed_tandem_repeat',min(corresp_ref_coord,b.r_end)-b.r_st+1,interv_case])
-            
 
+            
+            if min(corresp_ref_coord,b.r_end)-b.r_st+1!=0:
+                overlap_st=FIND_REF_COORD_FORWARD_END_1(self.r_end, self.c_end, b.c_st, self.errors,self.r_st)
+                overlap_interv.append([self.r_name, overlap_st,self.r_end, cont_name, b.c_st, self.c_end,1, [self.c_end, self.c_end, 'deletion-collapsed_tandem_repeat',min(corresp_ref_coord,b.r_end)-b.r_st+1,interv_case]])
+
+                errors_list.append([self.c_end, self.c_end, 'deletion-collapsed_tandem_repeat',min(corresp_ref_coord,b.r_end)-b.r_st+1,interv_case,overlap_interv])
+            
             first_base=last_err_end+1    
 
             temp_errors=[]
@@ -476,6 +671,34 @@ class Interv_coord:
 
            
             new_interv=[self.c_st,b.c_end,self.r_st,b.r_end,self.c_dir,self.r_dir, self.c_len, self.r_len, self.r_name,b.num,temp_errors]
+
+            
+            '''
+            print cont_name
+            self.PRINT_FUNC()
+            print
+            b.PRINT_FUNC()
+            print
+            print errors_list[-1]
+            print
+            print overlap_st
+            print
+            print self.errors
+            print
+            print self.r_end, self.c_end, b.c_st
+            print self.r_name, overlap_st,self.r_end, cont_name, b.c_st, self.c_end
+            
+
+            
+            print
+            print
+            print ref_seq[overlap_st-1:self.r_end]
+            print
+            print contig_seq[b.c_st-1: self.c_end]
+            print
+            print ref_seq[b.r_st-1: min(corresp_ref_coord,b.r_end)]
+            raw_input('jdg9.3')    
+            '''
 
         elif interv_case=='9.4':
             errors_list=[]
@@ -495,11 +718,24 @@ class Interv_coord:
             
             first_base=last_err_end+1
 
+
             
+        
             if min(ins_end_coord,b.c_end)-self.c_end-1+1>0:
-                errors_list.append([self.c_end+1, min(ins_end_coord,b.c_end),'insertion-tandem_multiple_copy',min(ins_end_coord,b.c_end)-self.c_end-1+1,interv_case+'.1'])
-                interv_case='9.4.1'
-                b.errors=b_errors_ins
+                    overlap_st=FIND_REF_COORD_FORWARD_END_1(self.r_end, self.c_end, b.c_st, self.errors,self.r_st)
+                    overlap_interv.append([self.r_name, overlap_st,self.r_end, cont_name, b.c_st, self.c_end,1, [self.c_end+1, min(ins_end_coord,b.c_end),'insertion-tandem_multiple_copy',min(ins_end_coord,b.c_end)-self.c_end-1+1,interv_case+'.1']])
+
+                    overlap_st=FIND_CONT_COORD_FORWARD_END_1(self.r_end, self.c_end, b.r_st, self.errors,self.c_st)
+                    overlap_interv.append([self.r_name, b.r_st,self.r_end, cont_name, overlap_st, self.c_end,1, [self.c_end+1, min(ins_end_coord,b.c_end),'insertion-tandem_multiple_copy',min(ins_end_coord,b.c_end)-self.c_end-1+1,interv_case+'.1']])
+
+                
+                    errors_list.append([self.c_end+1, min(ins_end_coord,b.c_end),'insertion-tandem_multiple_copy',min(ins_end_coord,b.c_end)-self.c_end-1+1,interv_case+'.1',overlap_interv])
+                    interv_case='9.4.1'
+                    b.errors=b_errors_ins
+
+                    
+
+                   
                 
 
             else:
@@ -511,7 +747,17 @@ class Interv_coord:
                 
                 first_base=last_err_end+1
                 if min(ins_end_coord,b.r_end)-self.r_end-1+1>0:
-                       errors_list.append([self.c_end, self.c_end,'deletion-collapsed_tandem_repeat',min(ins_end_coord,b.r_end)-self.r_end-1+1,interv_case+'.2'])
+
+                        overlap_st=FIND_REF_COORD_FORWARD_END_1(self.r_end, self.c_end, b.c_st, self.errors, self.r_st)
+                        overlap_interv.append([self.r_name, overlap_st,self.r_end, cont_name, b.c_st, self.c_end, 1,[self.c_end, self.c_end,'deletion-collapsed_tandem_repeat',min(ins_end_coord,b.r_end)-self.r_end-1+1,interv_case+'.2']])
+
+                        overlap_st=FIND_CONT_COORD_FORWARD_END_1(self.r_end, self.c_end, b.r_st, self.errors,self.c_st)
+                        overlap_interv.append([self.r_name, b.r_st,self.r_end, cont_name, overlap_st, self.c_end,1, [self.c_end, self.c_end,'deletion-collapsed_tandem_repeat',min(ins_end_coord,b.r_end)-self.r_end-1+1,interv_case+'.2']])
+                    
+                        errors_list.append([self.c_end, self.c_end,'deletion-collapsed_tandem_repeat',min(ins_end_coord,b.r_end)-self.r_end-1+1,interv_case+'.2',overlap_interv])
+
+                       
+                        
                 
                 interv_case='9.4.2'
                        
@@ -528,9 +774,67 @@ class Interv_coord:
 
             
        
-            new_interv=[self.c_st,b.c_end,self.r_st,b.r_end,self.c_dir,self.r_dir, self.c_len, self.r_len, self.r_name,b.num,temp_errors]    
+            new_interv=[self.c_st,b.c_end,self.r_st,b.r_end,self.c_dir,self.r_dir, self.c_len, self.r_len, self.r_name,b.num,temp_errors]
+
+            
+            '''
+            if interv_case=='9.4.1' or interv_case=='9.4.2' and errors_list!=[]:
+                print errors_list
+                overlap_st=FIND_REF_COORD_FORWARD_END_1(self.r_end, self.c_end, b.c_st, self.errors,self.r_st)
+                overlap_interv.append([self.r_name, overlap_st,self.r_end, cont_name, b.c_st, self.c_end,1, errors_list[-1]])
+
+                print cont_name
+                self.PRINT_FUNC()
+                print
+                b.PRINT_FUNC()
+                print
+                print errors_list[-1]
+                print
+                print overlap_st
+                print
+                print self.errors
+                print
+                print self.r_end, self.c_end, b.c_st
+                print self.r_name, overlap_st,self.r_end, cont_name, b.c_st, self.c_end
+
                 
+                print
+                print
+                print ref_seq[overlap_st-1: self.r_end]
+                print
+                print contig_seq[b.c_st-1: self.c_end]
+                   
                 
+
+                overlap_st=FIND_CONT_COORD_FORWARD_END_1(self.r_end, self.c_end, b.r_st, self.errors, self.c_st)
+                overlap_interv.append([self.r_name, b.r_st,self.r_end, cont_name, overlap_st, self.c_end,1, errors_list[-1]])
+
+                
+                print cont_name
+                self.PRINT_FUNC()
+                print
+                b.PRINT_FUNC()
+                print
+                print errors_list[-1]
+                print
+                print overlap_st
+                print
+                print self.errors
+                print
+                print self.r_end, self.c_end, b.r_st
+                print self.r_name, b.r_st,self.r_end, cont_name, overlap_st, self.c_end
+                
+
+                
+                print
+                print
+                print ref_seq[b.r_st-1: self.r_end]
+                print
+                print contig_seq[overlap_st-1: self.c_end]
+                raw_input('jdg9.4')    
+                
+            '''
+    
 
             
         elif interv_case=='12.8':
@@ -560,10 +864,17 @@ class Interv_coord:
             first_base=last_err_end+1
 
             if min(ins_end_coord,b.c_end)-self.c_end-1+1>0:
-                errors_list.append([self.c_end+1, min(ins_end_coord,b.c_end),'insertion-tandem_multiple_copy',min(ins_end_coord,b.c_end)-self.c_end-1+1,interv_case+'.1'])
+                overlap_end=FIND_REF_COORD_REVERSE_END_1(self.r_st, self.c_end, b.c_st, self.errors,self.r_end)
+                overlap_interv.append([self.r_name, self.r_st,overlap_end, cont_name, b.c_st, self.c_end,-1, [self.c_end+1, min(ins_end_coord,b.c_end),'insertion-tandem_multiple_copy',min(ins_end_coord,b.c_end)-self.c_end-1+1,interv_case+'.1']])
+
+                overlap_st=FIND_CONT_COORD_REVERSE_END_1(self.r_st, self.c_end, b.r_end, self.errors, self.c_st)
+                overlap_interv.append([self.r_name, self.r_st,b.r_end, cont_name, overlap_st, self.c_end,-1,[self.c_end+1, min(ins_end_coord,b.c_end),'insertion-tandem_multiple_copy',min(ins_end_coord,b.c_end)-self.c_end-1+1,interv_case+'.1']])
+
+
+                errors_list.append([self.c_end+1, min(ins_end_coord,b.c_end),'insertion-tandem_multiple_copy',min(ins_end_coord,b.c_end)-self.c_end-1+1,interv_case+'.1',overlap_interv])
                 interv_case='12.8.1'
                 b.errors=b_errors_ins
-                
+
                 
 
             else:
@@ -573,7 +884,16 @@ class Interv_coord:
                 
                 first_base=last_err_end+1
                 if self.r_st-1-ins_end_coord+1>0:
-                       errors_list.append([self.c_end, self.c_end,'deletion-collapsed_tandem_repeat',self.r_st-1-ins_end_coord+1,interv_case+'.2'])
+                        overlap_end=FIND_REF_COORD_REVERSE_END_1(self.r_st, self.c_end, b.c_st, self.errors,self.r_end)
+                        overlap_interv.append([self.r_name, self.r_st,overlap_end, cont_name, b.c_st, self.c_end,-1, [self.c_end, self.c_end,'deletion-collapsed_tandem_repeat',self.r_st-1-ins_end_coord+1,interv_case+'.2']])
+
+                        overlap_st=FIND_CONT_COORD_REVERSE_END_1(self.r_st, self.c_end, b.r_end, self.errors,self.c_st)
+                        overlap_interv.append([self.r_name, self.r_st,b.r_end, cont_name, overlap_st, self.c_end,-1,[self.c_end, self.c_end,'deletion-collapsed_tandem_repeat',self.r_st-1-ins_end_coord+1,interv_case+'.2']])
+
+                        
+                        errors_list.append([self.c_end, self.c_end,'deletion-collapsed_tandem_repeat',self.r_st-1-ins_end_coord+1,interv_case+'.2', overlap_interv])
+
+                        
                 interv_case='12.8.2'
                        
 
@@ -591,7 +911,70 @@ class Interv_coord:
 
 
              
-            new_interv=[self.c_st,b.c_end,b.r_st,self.r_end,self.c_dir,self.r_dir, self.c_len, self.r_len, self.r_name,b.num,temp_errors]    
+            new_interv=[self.c_st,b.c_end,b.r_st,self.r_end,self.c_dir,self.r_dir, self.c_len, self.r_len, self.r_name,b.num,temp_errors]
+
+            '''
+            if interv_case=='12.8.1' or interv_case=='12.8.2' and errors_list!=[]:
+                print errors_list
+                overlap_end=FIND_REF_COORD_REVERSE_END_1(self.r_st, self.c_end, b.c_st, self.errors,self.r_end)
+                overlap_interv.append([self.r_name, self.r_st,overlap_end, cont_name, b.c_st, self.c_end,-1, errors_list[-1]])
+
+                print cont_name
+                self.PRINT_FUNC()
+                print
+                b.PRINT_FUNC()
+                print
+                print errors_list[-1]
+                print
+                print overlap_st
+                print
+                print self.errors
+                print
+                print self.r_st, self.c_end, b.c_st
+                print self.r_name, self.r_st,overlap_end, cont_name, b.c_st, self.c_end
+                
+
+                
+                print
+                print
+                import general
+                print general.COMPL_STRING(ref_seq[self.r_st-1:overlap_end])
+                print
+                print contig_seq[b.c_st-1: self.c_end]
+                   
+                
+
+                overlap_st=FIND_CONT_COORD_REVERSE_END_1(self.r_st, self.c_end, b.r_end, self.errors, self.c_st)
+                overlap_interv.append([self.r_name, self.r_st,b.r_end, cont_name, overlap_st, self.c_end,-1,errors_list[-1]])
+
+                
+                print cont_name
+                self.PRINT_FUNC()
+                print
+                b.PRINT_FUNC()
+                print
+                print errors_list[-1]
+                print
+                print overlap_st
+                print
+                print self.errors
+                print
+                print self.r_st, self.c_end, b.r_end
+                print self.r_name, self.r_st,b.r_end, cont_name, overlap_st, self.c_end
+                
+
+                
+                print
+                print
+                import general
+                print general.COMPL_STRING(ref_seq[self.r_st-1:b.r_end])
+                print
+                print contig_seq[overlap_st-1: self.c_end]
+                raw_input('jdg12.8')    
+                
+            '''
+    
+
         
  
         elif interv_case=='12.9':
@@ -604,8 +987,12 @@ class Interv_coord:
            
             corresp_ref_coord, last_err_end=FIND_REF_COORD_REVERSE_END(b.r_end, b.c_st, self.c_end, b.errors)
             if b.r_end-corresp_ref_coord+1!=0:
-                errors_list.append([self.c_end, self.c_end, 'deletion-collapsed_tandem_repeat',b.r_end-corresp_ref_coord+1,interv_case])
+                overlap_end=FIND_REF_COORD_REVERSE_END_1(self.r_st, self.c_end, b.c_st, self.errors,self.r_end)
+                overlap_interv.append([self.r_name, self.r_st,overlap_end, cont_name, b.c_st, self.c_end,-1, [self.c_end, self.c_end, 'deletion-collapsed_tandem_repeat',b.r_end-corresp_ref_coord+1,interv_case]])
 
+                errors_list.append([self.c_end, self.c_end, 'deletion-collapsed_tandem_repeat',b.r_end-corresp_ref_coord+1,interv_case,overlap_interv])
+
+                
             first_base=last_err_end+1
 
                 
@@ -620,13 +1007,41 @@ class Interv_coord:
             
                 
             new_interv=[self.c_st,b.c_end,b.r_st,self.r_end,self.c_dir,self.r_dir, self.c_len, self.r_len, self.r_name,b.num,temp_errors]
+
+            
+            '''
+            print cont_name
+            self.PRINT_FUNC()
+            print
+            b.PRINT_FUNC()
+            print
+            print errors_list[-1]
+            print
+            print overlap_end
+            print
+            print self.errors
+            print
+            print self.r_st, self.c_end, b.c_st
+            print self.r_name, self.r_st,overlap_end, cont_name, b.c_st, self.c_end
+            
+
+            
+            print
+            print
+            import general
+            print general.COMPL_STRING(ref_seq[self.r_st-1:overlap_end])
+            print
+            print contig_seq[b.c_st-1: self.c_end]
+            print general.COMPL_STRING(ref_seq[corresp_ref_coord-1:b.r_end])
+            raw_input('jdg12.9')    
+            '''
     
 
         elif interv_case=='12.10':
             c_space_len=self.c_end-b.c_st+1
             ref_space_len=self.r_st-b.r_end-1
 
-            errors_list=[[self.c_end, self.c_end, 'deletion', ref_space_len,interv_case]]
+            errors_list=[[self.c_end, self.c_end, 'deletion', ref_space_len,interv_case,[]]]
 
            
             
@@ -635,10 +1050,12 @@ class Interv_coord:
             corresp_ref_coord, last_err_end=FIND_REF_COORD_REVERSE_END(b.r_end, b.c_st, self.c_end, b.errors)
             
             if b.r_end-corresp_ref_coord+1!=0:
-                errors_list.append([self.c_end, self.c_end, 'deletion-collapsed_repeat',b.r_end-corresp_ref_coord+1,interv_case])
+                overlap_end=FIND_REF_COORD_REVERSE_END_1(self.r_st, self.c_end, b.c_st, self.errors, self.r_end)
+                overlap_interv.append([self.r_name, self.r_st,overlap_end, cont_name, b.c_st, self.c_end,-1, [self.c_end, self.c_end, 'deletion-collapsed_repeat',b.r_end-corresp_ref_coord+1,interv_case]])
 
-            
-            
+                errors_list.append([self.c_end, self.c_end, 'deletion-collapsed_repeat',b.r_end-corresp_ref_coord+1,interv_case,overlap_interv])
+
+                
             first_base=last_err_end+1
             
             temp_errors=[]
@@ -654,6 +1071,35 @@ class Interv_coord:
             
                        
             new_interv=[self.c_st,b.c_end,b.r_st,self.r_end,self.c_dir,self.r_dir, self.c_len, self.r_len, self.r_name,b.num,temp_errors]
+
+            
+            '''
+            print cont_name
+            self.PRINT_FUNC()
+            print
+            b.PRINT_FUNC()
+            print
+            print errors_list[-1]
+            print
+            print overlap_end
+            print
+            print self.errors
+            print
+            print self.r_st, self.c_end, b.c_st
+            print self.r_name, self.r_st,overlap_end, cont_name, b.c_st, self.c_end
+            
+
+            
+            print
+            print
+            import general
+            print general.COMPL_STRING(ref_seq[self.r_st-1:overlap_end])
+            print
+            print contig_seq[b.c_st-1: self.c_end]
+            print general.COMPL_STRING(ref_seq[corresp_ref_coord-1:b.r_end])
+            raw_input('jdg12.10')    
+            '''
+    
     
         else:
             errors_list=[[]]
@@ -928,8 +1374,58 @@ def FIND_CONT_COORD_FORWARD_START(r_st, c_st, ref_pos, errors_list,c_end):
        
     return c_pos, last_err_end
                     
+def FIND_CONT_COORD_REVERSE_END_1(r_st, c_end, ref_pos, errors_list,c_st):
+    c_pos=c_end-(ref_pos-r_st+1)+1
+
+    
+    flag_del=0
+    for i in range(len(errors_list)-1,-1,-1):
+        if errors_list[i][1]>=c_pos:
             
+            if errors_list[i][2].startswith('insertion') or errors_list[i][2].startswith('wrong_gap'):
+                c_pos-=errors_list[i][3]
                     
+            elif errors_list[i][2]=='substitution' or errors_list[i][2]=='gap' :
+                 a='do_nothing'    
+                 
+            elif errors_list[i][2].startswith('deletion'):
+                if errors_list[i][0]>=c_pos and errors_list[i][1]>=c_pos:
+                    c_pos+=errors_list[i][3]
+
+
+    if c_pos>c_end:
+        c_pos=c_end
+    elif c_pos<c_st:
+        c_pos=c_st
+   
+    return c_pos
+def FIND_CONT_COORD_FORWARD_END_1(r_end, c_end, ref_pos, errors_list,c_st):
+
+    c_pos=c_end-(r_end-ref_pos+1)+1
+
+    
+    flag_del=0
+    for i in range(len(errors_list)-1,-1,-1):
+        if errors_list[i][1]>=c_pos:
+            
+            if errors_list[i][2].startswith('insertion') or errors_list[i][2].startswith('wrong_gap'):
+                c_pos-=errors_list[i][3]
+                    
+            elif errors_list[i][2]=='substitution' or errors_list[i][2]=='gap' :
+                 a='do_nothing'    
+                 
+            elif errors_list[i][2].startswith('deletion'):
+                if errors_list[i][0]>=c_pos and errors_list[i][1]>=c_pos:
+                    c_pos+=errors_list[i][3]
+
+                
+    if c_pos>c_end:
+        c_pos=c_end
+    elif c_pos<c_st:
+        c_pos=c_st
+   
+    
+    return c_pos
 
 
 def FIND_CONT_COORD_REVERSE_END_SECOND(r_st, c_end, r_coord, errors_list):
@@ -1222,19 +1718,108 @@ def FIND_REF_COORD_FORWARD_START(r_st, c_st, c_pos, errors_list):
 
     return r_pos, last_err_end
 
+def FIND_REF_COORD_REVERSE_END_1(r_st, c_end, c_pos, errors_list,r_end):
+
+    
+
+    r_pos=r_st+(c_end-c_pos+1)-1
+
+    
+
+    
+    for i in range(len(errors_list)-1,-1,-1):
+        if errors_list[i][1]>=c_pos:
+            if errors_list[i][2].startswith('insertion') or errors_list[i][2].startswith('wrong_gap'):
+                if errors_list[i][0]>c_pos and errors_list[i][1]>c_pos:
+                    r_pos-=errors_list[i][3]
+                   
+                elif (errors_list[i][0]<c_pos and errors_list[i][1]==c_pos) or (errors_list[i][0]==c_pos and errors_list[i][1]==c_pos): 
+                
+                    r_pos-=errors_list[i][1]-c_pos+1
+                   
+                elif (errors_list[i][0]<c_pos and errors_list[i][1]>c_pos):
+                    r_pos-=errors_list[i][1]-c_pos+1
+
+                elif (errors_list[i][0]==c_pos and errors_list[i][1]>c_pos):
+                    r_pos-=errors_list[i][3]
+                   
+                        
+
+            elif errors_list[i][2].startswith('deletion'):
+                if errors_list[i][0]>=c_pos and errors_list[i][1]>=c_pos:
+                    r_pos+=errors_list[i][3]
+                    
+                   
+            elif errors_list[i][2]=='substitution' or errors_list[i][2]=='gap' :
+                  a='do_nothing'
+    if r_pos>r_end:
+        r_pos=r_end
+    elif r_pos<r_st:
+        r_pos=r_st
+   
+    
+
+    return r_pos
+
+
             
-
-
-##use in nuc
-def FIND_REF_COORD_FORWARD_END(r_end, c_end, c_pos, errors_list):
+def FIND_REF_COORD_FORWARD_END_1(r_end, c_end, c_pos, errors_list,r_st):
 
     
 
     r_pos=r_end-(c_end-c_pos+1)+1
 
+    
+
+    
+    for i in range(len(errors_list)-1,-1,-1):
+        if errors_list[i][1]>=c_pos:
+            if errors_list[i][2].startswith('insertion') or errors_list[i][2].startswith('wrong_gap'):
+                if errors_list[i][0]>c_pos and errors_list[i][1]>c_pos:
+                    r_pos+=errors_list[i][3]
+                   
+                elif (errors_list[i][0]<c_pos and errors_list[i][1]==c_pos) or (errors_list[i][0]==c_pos and errors_list[i][1]==c_pos): 
+                
+                    r_pos+=errors_list[i][1]-c_pos+1
+                   
+                elif (errors_list[i][0]<c_pos and errors_list[i][1]>c_pos):
+                    r_pos+=errors_list[i][1]-c_pos+1
+
+                elif (errors_list[i][0]==c_pos and errors_list[i][1]>c_pos):
+                    r_pos+=errors_list[i][3]
+                   
+                        
+
+            elif errors_list[i][2].startswith('deletion'):
+                if errors_list[i][0]>=c_pos and errors_list[i][1]>=c_pos:
+                    r_pos-=errors_list[i][3]
+                    
+                   
+            elif errors_list[i][2]=='substitution' or errors_list[i][2]=='gap' :
+                  a='do_nothing'
+
+    if r_pos>r_end:
+        r_pos=r_end
+    elif r_pos<r_st:
+        r_pos=r_st       
+
+    return r_pos
+
+
+##use in nuc
+def FIND_REF_COORD_FORWARD_END(r_end, c_end, c_pos, errors_list):
+
+     
+
+    r_pos=r_end-(c_end-c_pos+1)+1
+
+    
+
     used_i_list=[] 
     for i in range(len(errors_list)):
+        
         if errors_list[i][0]>c_pos:
+            
             if errors_list[i][2].startswith('insertion') or errors_list[i][2].startswith('wrong_gap'):
                 r_pos+=errors_list[i][3]
             elif errors_list[i][2].startswith('deletion'):
@@ -1263,6 +1848,7 @@ def FIND_REF_COORD_FORWARD_END(r_end, c_end, c_pos, errors_list):
             used_i_list.append(i)
         else:
             break
+
     
     if used_i_list==[]:
         last_err_end=c_pos

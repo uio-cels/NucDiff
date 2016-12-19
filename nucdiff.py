@@ -85,7 +85,7 @@ def main():
     parser.add_argument('--proc',  type=int, nargs='?',default=1, help='- Number of processes to be used [1] ')
     parser.add_argument('--ref_name_full',  type=str, nargs='?',default='no',choices=['yes','no'], help="- Print full reference names in output files ('yes' value). In case of 'no', everything after the first space will be ignored. ['no']")
     parser.add_argument('--query_name_full',  type=str, nargs='?',default='no',choices=['yes','no'], help="- Print full reference names in output files ('yes' value). In case of 'no', everything after the first space will be ignored.['no'] ")
-    parser.add_argument('--version', action='version', version='AEfinder 0.1')
+    parser.add_argument('--version', action='version', version='AEfinder 2.0')
     
     
     

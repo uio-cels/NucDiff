@@ -284,20 +284,34 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
 
     
     snp_err_dict={}
+    struct_err_dict={}
+    repeat_region_dict={}
     for cont_name in cont_dict.keys():
         snp_err_dict[cont_name]=[]
+        struct_err_dict[cont_name]=[]
+        repeat_region_dict[cont_name]=[]
+
+   
         
     for entry in err_ref_cont_coord_errors_list:
         if entry[8]=='b':
+           
             if len(entry)==11 and entry[10]=='snps':
                 c_name=entry[3]
                 snp_err_dict[c_name].append(entry)
-                
+            else:
+                c_name=entry[3]
+                struct_err_dict[c_name].append(entry)
+       # elif entry[8]=='a':
+       #     print entry
+       #    raw_input('jdf')
        
     
     for c_name in snp_err_dict.keys():
         snp_err_dict[c_name]= sorted(snp_err_dict[c_name],key=lambda inter:inter[4], reverse=False)
             
+    for c_name in struct_err_dict.keys():
+        struct_err_dict[c_name]= sorted(struct_err_dict[c_name],key=lambda inter:inter[4], reverse=False)
         
 
 
@@ -362,6 +376,195 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
 
     
     fq.close()
+
+
+    fq=open(working_dir+prefix+'_query_struct.gff','w')
+    
+    fq.write('##gff-version 3\n')
+    
+
+    ID_cur=1
+    for cont_name in contig_names:
+        if asmb_name_full=='yes':
+            c_name=contig_full_names_dict[cont_name]
+        else:
+            c_name=cont_name
+                
+
+        if struct_err_dict[cont_name]!=[]:
+                fq.write('##sequence-region\t'+c_name+'\t1\t'+str(len(cont_dict[cont_name]))+'\n')
+
+                for i in range(len(struct_err_dict[cont_name])):
+                    struct_err_dict[cont_name][i].append('SV_'+str(ID_cur))
+                    ID_cur+=1
+
+                for entry in struct_err_dict[cont_name]:
+                        if ref_name_full=='yes':
+                            r_name=ref_full_names_dict[entry[0]]
+                        else:
+                            r_name=entry[0]
+                                
+                        if entry[6]=='insertion' or entry[6]=='wrong_gap' or entry[6]=='wrong_end' or entry[6]=='wrong_beginning':
+                            if len(entry)==13:
+                                ID_name=entry[12]
+                                query_dir=str(entry[9])
+                                
+                            elif len(entry)==10:
+                                ID_name=entry[9]
+                                query_dir='1'
+
+                            
+                            
+                            #fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0000667'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
+                            #            ';ins_len='+str(entry[7])+';query_dir='+query_dir+';ref_sequence='+r_name+';ref_coord='+str(entry[1])+';color=EE0000'+'\n')
+                                
+                        elif entry[6]=='insertion-multiple_copy':
+                            if len(entry)==13:
+                                ID_name=entry[12]
+
+                                if len(entry[11])==1:
+                                    repeat_region_dict[cont_name].append([entry])
+                                    
+                                    #fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:1000035'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
+                                    #    ';ins_len='+str(entry[7])+';query_dir='+str(entry[9])+';ref_sequence='+r_name+';ref_coord='+str(entry[1])+\
+                                    #    ';query_repeat_region='+str(entry[11][0][4])+'-'+str(entry[11][0][5])+';color=EE0000'+'\n')
+
+                                    
+                                    
+                                elif entry[11]==[]:
+                                    fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:1000035'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
+                                        ';ins_len='+str(entry[7])+';query_dir='+str(entry[9])+';ref_sequence='+r_name+';ref_coord='+str(entry[1])+';color=EE0000'+'\n')
+    
+                            elif len(entry)==10:
+                                ID_name=entry[9]
+                            
+                                #fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:1000035'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
+                                #        ';ins_len='+str(entry[7])+';query_dir=1;ref_sequence='+r_name+';ref_coord='+str(entry[1])+';color=EE0000'+'\n')
+    
+
+                        elif entry[6]=='insertion-tandem_multiple_copy':
+                            if len(entry)==13:
+                                ID_name=entry[12]
+
+                                if len(entry[11])==1:
+                                    repeat_region_dict[cont_name].append([entry])
+                                    
+                                    #fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:1000173'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
+                                    #    ';ins_len='+str(entry[7])+';query_dir='+str(entry[9])+';ref_sequence='+r_name+';ref_coord='+str(entry[1])+\
+                                    #    ';query_repeat_region='+str(entry[11][0][4])+'-'+str(entry[11][0][5])+';color=EE0000'+'\n')
+
+                                elif len(entry[11])==2:
+                                    repeat_region_dict[cont_name].append([entry])
+                                    
+                                    #fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:1000173'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
+                                    #    ';ins_len='+str(entry[7])+';query_dir='+str(entry[9])+';ref_sequence='+r_name+';ref_coord='+str(entry[1])+\
+                                    #    ';query_repeat_region_1='+str(entry[11][0][4])+'-'+str(entry[11][0][5])+\
+                                    #    ';query_repeat_region_2='+str(entry[11][1][4])+'-'+str(entry[11][1][5])+';color=EE0000'+'\n')
+
+                                    
+                                elif entry[11]==[]:
+                                    fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:1000173'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
+                                        ';ins_len='+str(entry[7])+';query_dir='+str(entry[9])+';ref_sequence='+r_name+';ref_coord='+str(entry[1])+';color=EE0000'+'\n')
+    
+                            elif len(entry)==10:
+                                ID_name=entry[9]
+
+                                fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:1000173'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
+                                        ';ins_len='+str(entry[7])+';query_dir=1;ref_sequence='+r_name+';ref_coord='+str(entry[1])+';color=EE0000'+'\n')
+                            
+
+                        if entry[6]=='deletion':
+                            if len(entry)==13:
+                                ID_name=entry[12]
+                                query_dir=str(entry[9])
+                                
+                            elif len(entry)==10:
+                                ID_name=entry[9]
+                                query_dir='1'
+
+                            
+                            
+                            #fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0000159'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
+                            #            ';del_len='+str(entry[7])+';query_dir='+query_dir+';ref_sequence='+r_name+';ref_coord='+str(entry[1])+'-'+str(entry[2])+';color=0000EE'+'\n')
+
+                        elif entry[6]=='deletion-collapsed_repeat':
+                            if len(entry)==13:
+                                ID_name=entry[12]
+
+                                if len(entry[11])==1:
+                                    repeat_region_dict[cont_name].append([entry])
+                                    
+                                    #fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0000159'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
+                                    #    ';del_len='+str(entry[7])+';query_dir='+str(entry[9])+';ref_sequence='+r_name+';ref_coord='+str(entry[1])+'-'+str(entry[2])+\
+                                    #    ';query_repeat_region='+str(entry[11][0][4])+'-'+str(entry[11][0][5])+';color=0000EE'+'\n')
+
+                                    
+                                    
+                                elif entry[11]==[]:
+                                    fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0000159'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
+                                        ';del_len='+str(entry[7])+';query_dir='+str(entry[9])+';ref_sequence='+r_name+';ref_coord='+str(entry[1])+'-'+str(entry[2])+';color=0000EE'+'\n')
+    
+                            elif len(entry)==10:
+                                ID_name=entry[9]
+
+                                fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0000159'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
+                                        ';del_len='+str(entry[7])+';query_dir=1;ref_sequence='+r_name+';ref_coord='+str(entry[1])+'-'+str(entry[2])+';color=0000EE'+'\n')
+    
+                        elif entry[6]=='deletion-collapsed_tandem_repeat':
+                            if len(entry)==13:
+                                ID_name=entry[12]
+
+                                if len(entry[11])==1:
+                                    repeat_region_dict[cont_name].append([entry])
+                                    
+                                    #fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0000159'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
+                                    #    ';del_len='+str(entry[7])+';query_dir='+str(entry[9])+';ref_sequence='+r_name+';ref_coord='+str(entry[1])+'-'+str(entry[2])+\
+                                    #    ';query_repeat_region='+str(entry[11][0][4])+'-'+str(entry[11][0][5])+';color=0000EE'+'\n')
+
+                                elif len(entry[11])==2:
+                                    repeat_region_dict[cont_name].append([entry])
+                                    
+                                    #fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0000159'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
+                                    #    ';del_len='+str(entry[7])+';query_dir='+str(entry[9])+';ref_sequence='+r_name+';ref_coord='+str(entry[1])+'-'+str(entry[2])+\
+                                    #    ';query_repeat_region_1='+str(entry[11][0][4])+'-'+str(entry[11][0][5])+\
+                                    #    ';query_repeat_region_2='+str(entry[11][1][4])+'-'+str(entry[11][1][5])+';color=0000EE'+'\n')
+
+                                    
+                                elif entry[11]==[]:
+                                    fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0000159'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
+                                        ';del_len='+str(entry[7])+';query_dir='+str(entry[9])+';ref_sequence='+r_name+';ref_coord='+str(entry[1])+'-'+str(entry[2])+';color=0000EE'+'\n')
+    
+                            elif len(entry)==10:
+                                ID_name=entry[9]
+
+                               
+
+                                fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0000159'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
+                                        ';del_len='+str(entry[7])+';query_dir=1;ref_sequence='+r_name+';ref_coord='+str(entry[1])+'-'+str(entry[2])+';color=0000EE'+'\n')
+
+                        elif entry[6]=='substitution' or entry[6]=='gap':
+                            if len(entry)==13:
+                                ID_name=entry[12]
+                                query_dir=str(entry[9])
+                                
+                            elif len(entry)==10:
+                                ID_name=entry[9]
+                                query_dir='1'
+
+                                                        
+                            #fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:1000002'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
+                            #            ';subst_len='+str(entry[7])+';query_dir='+query_dir+';ref_sequence='+r_name+';ref_coord='+str(entry[1])+'-'+str(entry[2])+';color=42C042'+'\n')
+                                            
+                        elif entry[6]=='circular_genome_start':
+                            print entry
+                            raw_input('hd')
+
+                            #parse afterwards!!!!!
+                        #elif entry[6]=='misjoin':
+                            
+
+    fq.close()
+    
 
     ref_snp_err_dict={}
     for ref_name in ref_dict.keys():
