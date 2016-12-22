@@ -687,9 +687,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                 if entry[8]!='struct2':
                     ref_struct_err_dict[entry[0]].append(entry)
 
-                elif entry[8]=='r':
-                    print entry
-                    raw_input('lkh')
+               
                 else:
                     #if entry[3]=='misjoin' or entry[3]=='circular_genome_start' or entry[3]=='translocation':
                         ref_name=entry[6][0][4]
@@ -697,13 +695,13 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                         ref_struct_err_dict[ref_name].append([ref_name,entry[6][0][6][1],entry[6][0][6][1],entry[3],entry[6][0][6][2],entry[0],entry[6][0][6][0],
                                                               [entry[1],entry[2],entry[4],'breakpoint'],
                                                               [entry[6][0][0],entry[6][0][1],entry[6][0][2],entry[6][0][3],'block_coord'],
-                                                              [entry[6][0][5][0],entry[6][0][5][1],entry[6][0][5][2],'block_start'],entry[9],[],entry])
+                                                              [entry[6][0][5][0],entry[6][0][5][1],entry[6][0][5][2],'block_start'],entry[9]])
                         ref_name=entry[7][0][4]
 
                         ref_struct_err_dict[ref_name].append([ref_name,entry[7][0][5][1],entry[7][0][5][1],entry[3],entry[7][0][5][2],entry[0],entry[7][0][5][0],
                                                               [entry[1],entry[2],entry[4],'breakpoint'],
                                                               [entry[7][0][0],entry[7][0][1],entry[7][0][2],entry[7][0][3],'block_coord'],
-                                                              [entry[7][0][6][0],entry[7][0][6][1],entry[7][0][6][2],'block_end'],entry[9],[],entry])
+                                                              [entry[7][0][6][0],entry[7][0][6][1],entry[7][0][6][2],'block_end'],entry[9]])
                         
                     
                         
@@ -1174,6 +1172,7 @@ def OUTPUT_MAPPED_BLOCKS_TO_REF(struct_dict,ref_dict,ref_names,ref_full_names_di
     for r_name in ref_dict.keys():
         mapped_blocks_dict[r_name]=[]
 
+   
     for cont in struct_dict.keys():
         for trl in struct_dict[cont].keys():
             for msj in struct_dict[cont][trl]['blocks'].keys():
@@ -1181,50 +1180,45 @@ def OUTPUT_MAPPED_BLOCKS_TO_REF(struct_dict,ref_dict,ref_names,ref_full_names_di
                     blk_coord=struct_dict[cont][trl]['blocks'][msj]['blocks'][bl]['block']
 
                     ref_name=blk_coord[8]
-                    mapped_blocks_dict[ref_name].append([blk_coord[2],blk_coord[3],cont,blk_coord[0],blk_coord[1]])
-                    print mapped_blocks_dict[ref_name][-1]
-                    raw_input('kjdv')
-
+                    mapped_blocks_dict[ref_name].append([blk_coord[2],blk_coord[3],cont,blk_coord[0],blk_coord[1], blk_coord[4]])
+                    
     for ref in mapped_blocks_dict.keys():
         mapped_blocks_dict[ref]=sorted(mapped_blocks_dict[ref],key=lambda inter:inter[0], reverse=False)
 
+    
     
     f=open(working_dir+prefix+'_mapped_blocks.gff','w')
     
     f.write('##gff-version 3\n')
 
-    if ref_name_full=='yes':
-
-        for r_name in ref_names:
-            
-            
-            if mapped_blocks_dict.has_key(r_name):
-
+    ID=1
+    for r_name in ref_names:
+        if ref_name_full=='yes':
+            ref_name=ref_full_names_dict[r_name]
+        else:
+            ref_name=r_name
         
-                if mapped_blocks_dict[r_name]!=[]:
-                    f.write('##sequence-region\t'+ref_full_names_dict[r_name]+'\t1\t'+str(len(ref_dict[r_name]))+'\n')
+
+        if mapped_blocks_dict.has_key(r_name):
+            if mapped_blocks_dict[r_name]!=[]:
+                    f.write('##sequence-region\t'+ref_name+'\t1\t'+str(len(ref_dict[r_name]))+'\n')
 
                     for entry in mapped_blocks_dict[r_name]:
                         if asmb_name_full=='yes':
-                            f.write(ref_full_names_dict[r_name]+'\t.\t'+'MappedBlock'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t+\t.\tName='+contig_full_names_dict[entry[2]]+';length='+str(entry[1]-entry[0]+1)+';query_length='+str(len(cont_dict[entry[2]]))+';query_coord='+str(entry[3])+'-'+str(entry[4])+'\n')
+                            c_name=contig_full_names_dict[entry[2]]
                         else:
-                            f.write(ref_full_names_dict[r_name]+'\t.\t'+'MappedBlock'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t+\t.\tName='+entry[2]+';length='+str(entry[1]-entry[0]+1)+';query_length='+str(len(cont_dict[entry[2]]))+';query_coord='+str(entry[3])+'-'+str(entry[4])+'\n')
-    else:
-        for r_name in ref_names:
-            
-            
-            if mapped_blocks_dict.has_key(r_name):
+                            c_name=entry[2]
 
-        
-                if mapped_blocks_dict[r_name]!=[]:
-                    f.write('##sequence-region\t'+r_name+'\t1\t'+str(len(ref_dict[r_name]))+'\n')
+                        
+                        ID_cur='Blk_'+str(ID)
+                        ID+=1
 
-                    for entry in mapped_blocks_dict[r_name]:
-                        if asmb_name_full=='yes':
-                            f.write(r_name+'\t.\t'+'MappedBlock'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t+\t.\tName='+contig_full_names_dict[entry[2]]+';length='+str(entry[1]-entry[0]+1)+';query_length='+str(len(cont_dict[entry[2]]))+';query_coord='+str(entry[3])+'-'+str(entry[4])+'\n')
-                        else:
-                            f.write(r_name+'\t.\t'+'MappedBlock'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t+\t.\tName='+entry[2]+';length='+str(entry[1]-entry[0]+1)+';query_length='+str(len(cont_dict[entry[2]]))+';query_coord='+str(entry[3])+'-'+str(entry[4])+'\n')
-    
+                        entry.append(ID_cur)
+
+                        f.write(ref_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t.\t.\tID='+entry[6]+';Name='+c_name+'_block'+\
+                                ';blk_length='+str(entry[1]-entry[0]+1)+';query_sequence_length='+str(len(cont_dict[entry[2]]))+\
+                                ';blk_coord_query='+str(entry[3])+'-'+str(entry[4])+';query_dir='+str(entry[5])+'\n')
+                        
     f.close()
     
 def OUTPUT_BLOCKS_TO_QUERY(cont_blocks_dict,ref_dict,contig_names,ref_full_names_dict,cont_dict,contig_full_names_dict,working_dir, prefix,asmb_name_full,ref_name_full):
@@ -1237,6 +1231,7 @@ def OUTPUT_BLOCKS_TO_QUERY(cont_blocks_dict,ref_dict,contig_names,ref_full_names
 
     gff_dict={'block':'Block', 'translocation_block':'TRL','relocation_block':'RLC', 'inversion':'INV', 'circlular_genome_block':'RLC'}
 
+    ID=1
     for c_name in contig_names:
         if asmb_name_full=='yes':
             asmb_name=contig_full_names_dict[c_name]
@@ -1250,25 +1245,28 @@ def OUTPUT_BLOCKS_TO_QUERY(cont_blocks_dict,ref_dict,contig_names,ref_full_names
                 f.write('##sequence-region\t'+asmb_name+'\t1\t'+str(len(cont_dict[c_name]))+'\n')
 
                 for entry in cont_blocks_dict[c_name]:
-                    if len(entry)==8:
-                    
-                        if ref_name_full=='yes':
+                    entry.append('Blk_'+str(ID))
+                    ID+=1
+
+                    if ref_name_full=='yes':
                             rf_name=ref_full_names_dict[entry[4]]
-                        else:
+                    else:
                             rf_name=entry[4]
 
-                        #if entry[2].startswith('reshuf'):
-                        #    field_2='RSH'
-                        #else:
-                        #    field_2=gff_dict[entry[2]]
+                            
+                    if len(entry)==5:
+                        f.write(asmb_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t'+'.'+'\t.\tID='+entry[4]+';Name='+entry[2]+\
+                                ';blk_length='+str(entry[3])+'\n')
 
-                        f.write(asmb_name+'\t.\t'+'SO:0000001'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t'+dir_dict[entry[7]]+'\t.\tName='+entry[2]+';length='+str(entry[3])+';ref_name='+rf_name+';ref_length='+str(len(ref_dict[entry[4]]))+';ref_coord='+str(entry[5])+'-'+str(entry[6])+'\n')
+                        
 
-                    else:
-                        #field_2=gff_dict[entry[2]]
-                        f.write(asmb_name+'\t.\t'+'SO:0000001'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t'+'.'+'\t.\tName='+entry[2]+';length='+str(entry[3])+'\n')
+                    elif len(entry)==9:
+                        f.write(asmb_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t'+'.'+'\t.\tID='+entry[8]+';Name='+entry[2]+\
+                                ';blk_length='+str(entry[3])+';query_dir='+str(entry[7])+';ref_sequence='+rf_name+';ref_coord='+str(entry[5])+'-'+str(entry[6])+'\n')
 
-        
+                        
+                    
+                        
                         
     f.close()
     

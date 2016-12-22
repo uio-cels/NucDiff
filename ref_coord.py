@@ -1242,6 +1242,7 @@ def FIND_REF_COORD_ERRORS1(struct_dict,end_err_dict,unmapped_list,file_ref, file
 def FIND_ERRORS_ALL_COORD(ref_dict,cont_dict, structure_dict, end_err_dict,unmapped_list):
     err_ref_cont_coord_errors_list=[]
 
+
     cont_blocks_dict={}
 
     temp_dict={}
@@ -1308,7 +1309,8 @@ def FIND_ERRORS_ALL_COORD(ref_dict,cont_dict, structure_dict, end_err_dict,unmap
 
                 for entry in temp_dict[cont_name]['reshuf']:
                     entry=entry[0]
-                    cont_blocks_dict[cont_name]['reshuf'].append([entry[0],entry[1],entry[2],entry[3],entry[5],entry[6],entry[7],c_dir])
+                    blck_name='R'+entry[2][1:]
+                    cont_blocks_dict[cont_name]['reshuf'].append([entry[0],entry[1],blck_name,entry[3],entry[5],entry[6],entry[7],c_dir])
                     err_ref_cont_coord_errors_list.append([entry[5],entry[6],entry[7],cont_name,entry[0],entry[1],entry[2],entry[3],'struct',c_dir,entry[4]])
                 for i in range(len(temp_dict[cont_name]['reshuf'])):
                     temp_dict[cont_name]['reshuf'].pop(0)
@@ -1317,7 +1319,7 @@ def FIND_ERRORS_ALL_COORD(ref_dict,cont_dict, structure_dict, end_err_dict,unmap
                 for entry in temp_dict[cont_name]['invers']:
                     entry=entry[0]
                     if entry[2]=='inversion':
-                        cont_blocks_dict[cont_name]['invers'].append([entry[0],entry[1],entry[2],entry[3],entry[5],entry[6],entry[7],c_dir])
+                        cont_blocks_dict[cont_name]['invers'].append([entry[0],entry[1],'Inversion',entry[3],entry[5],entry[6],entry[7],c_dir])
                         err_ref_cont_coord_errors_list.append([entry[5],entry[6],entry[7],cont_name,entry[0],entry[1],entry[2],entry[3],'struct',c_dir,entry[4]])
                 for i in range(len(temp_dict[cont_name]['invers'])):
                     temp_dict[cont_name]['invers'].pop(0)
@@ -1332,7 +1334,7 @@ def FIND_ERRORS_ALL_COORD(ref_dict,cont_dict, structure_dict, end_err_dict,unmap
 
                 for entry in temp_dict[cont_name]['blocks']:
                     
-                    cont_blocks_dict[cont_name]['blocks'].append([entry[0],entry[1],'block',entry[1]-entry[0]+1,entry[8],entry[2],entry[3],c_dir])
+                    cont_blocks_dict[cont_name]['blocks'].append([entry[0],entry[1],'Block',entry[1]-entry[0]+1,entry[8],entry[2],entry[3],c_dir])
                     
                     if entry[10]!=[]:
                         FIND_LOCAL_ERRORS(temp_local_list,entry,cont_name)
@@ -1384,9 +1386,9 @@ def FIND_ERRORS_ALL_COORD(ref_dict,cont_dict, structure_dict, end_err_dict,unmap
 
                 entry=temp_dict[cont_name]['misj'][0]
                 if entry[1]!=[] and entry[1][0][2]=='circular_genome_start':
-                    cont_blocks_dict[cont_name]['misj'].append([entry[0][0],entry[0][1],'circular_genome_block',entry[0][1]-entry[0][0]+1])
+                    cont_blocks_dict[cont_name]['misj'].append([entry[0][0],entry[0][1],'Circular_genome_block',entry[0][1]-entry[0][0]+1])
                 else:
-                    cont_blocks_dict[cont_name]['misj'].append([entry[0][0],entry[0][1],'relocation_block',entry[0][1]-entry[0][0]+1])
+                    cont_blocks_dict[cont_name]['misj'].append([entry[0][0],entry[0][1],'Relocation_block',entry[0][1]-entry[0][0]+1])
 
                 err_ref_cont_coord_errors_list.append([cont_name,entry[1][0][0],entry[1][0][1],entry[1][0][2],entry[1][0][3],entry[1][0][4],[entry[0]],[temp_dict[cont_name]['misj'][1][0]],'struct2'])
 
@@ -1394,14 +1396,14 @@ def FIND_ERRORS_ALL_COORD(ref_dict,cont_dict, structure_dict, end_err_dict,unmap
                 for i in range(1,len(temp_dict[cont_name]['misj'])):
                     entry=temp_dict[cont_name]['misj'][i]
                     if entry[1]!=[] and entry[1][0][2]=='circular_genome_start':
-                        cont_blocks_dict[cont_name]['misj'].append([entry[0][0],entry[0][1],'circular_genome_block',entry[0][1]-entry[0][0]+1])
+                        cont_blocks_dict[cont_name]['misj'].append([entry[0][0],entry[0][1],'Circular_genome_block',entry[0][1]-entry[0][0]+1])
                     elif entry[1]!=[] and entry[1][0][2]!='circular_genome_start':
-                        cont_blocks_dict[cont_name]['misj'].append([entry[0][0],entry[0][1],'relocation_block',entry[0][1]-entry[0][0]+1])
+                        cont_blocks_dict[cont_name]['misj'].append([entry[0][0],entry[0][1],'Relocation_block',entry[0][1]-entry[0][0]+1])
                     else:
                         if temp_dict[cont_name]['misj'][i-1][1][0][2]=='circular_genome_start':
-                            cont_blocks_dict[cont_name]['misj'].append([entry[0][0],entry[0][1],'circular_genome_block',entry[0][1]-entry[0][0]+1])
+                            cont_blocks_dict[cont_name]['misj'].append([entry[0][0],entry[0][1],'Circular_genome_block',entry[0][1]-entry[0][0]+1])
                         else:
-                            cont_blocks_dict[cont_name]['misj'].append([entry[0][0],entry[0][1],'relocation_block',entry[0][1]-entry[0][0]+1])
+                            cont_blocks_dict[cont_name]['misj'].append([entry[0][0],entry[0][1],'Relocation_block',entry[0][1]-entry[0][0]+1])
 
 
                     if i!=len(temp_dict[cont_name]['misj'])-1:
@@ -1421,10 +1423,10 @@ def FIND_ERRORS_ALL_COORD(ref_dict,cont_dict, structure_dict, end_err_dict,unmap
             
             for entry in temp_dict[cont_name]['transloc']:
                 if entry[1]==[]:
-                    cont_blocks_dict[cont_name]['transloc'].append([entry[0][0],entry[0][1],'translocation_block',entry[0][1]-entry[0][0]+1])
+                    cont_blocks_dict[cont_name]['transloc'].append([entry[0][0],entry[0][1],'Translocation_block',entry[0][1]-entry[0][0]+1])
                 else:
-                    cont_blocks_dict[cont_name]['transloc'].append([entry[0][0],entry[1][1],'translocation_block',entry[1][1]-entry[0][0]+1])
-                #print cont_blocks_dict[cont_name]['transloc'][-1]
+                    cont_blocks_dict[cont_name]['transloc'].append([entry[0][0],entry[1][1],'Translocation_block',entry[1][1]-entry[0][0]+1])
+                    
 
             #print 'done'
 
@@ -1432,21 +1434,23 @@ def FIND_ERRORS_ALL_COORD(ref_dict,cont_dict, structure_dict, end_err_dict,unmap
                 entry=temp_dict[cont_name]['transloc'][i]
                 next_entry=temp_dict[cont_name]['transloc'][i+1]
 
+               
 
                 if entry[1]==[] and next_entry[1]==[]:
+                    
                     err_ref_cont_coord_errors_list.append([cont_name,entry[2][0][0],entry[2][0][1],entry[2][0][2],entry[2][0][3],entry[2][0][4],[entry[0]],[next_entry[0]],'struct2'])
 
                 elif entry[1]==[] and next_entry[1]!=[]:
                     err_ref_cont_coord_errors_list.append([cont_name,entry[2][0][0],entry[2][0][1],entry[2][0][2],entry[2][0][3],entry[2][0][4],[entry[0]],[next_entry[0]],'struct2'])
 
+                    
                 elif entry[1]!=[] and next_entry[1]==[]:
                     err_ref_cont_coord_errors_list.append([cont_name,entry[2][0][0],entry[2][0][1],entry[2][0][2],entry[2][0][3],entry[2][0][4],[entry[1]],[next_entry[0]],'struct2'])
 
                 else:
                     err_ref_cont_coord_errors_list.append([cont_name,entry[2][0][0],entry[2][0][1],entry[2][0][2],entry[2][0][3],entry[2][0][4],[entry[1]],[next_entry[0]],'struct2'])
 
-           
-
+                
 
             
         
