@@ -790,10 +790,12 @@ def FIND_CONTIGS_ENDS(err_ref_cont_coord_errors_list,struct_dict_contig, cont_na
 
 
     sort_c_st_list=sorted(c_list, key=lambda inter:inter[0], reverse=False)
+
     c_st=sort_c_st_list[0][0]
     c_dir=sort_c_st_list[0][4]
     r_name=sort_c_st_list[0][5]
 
+    
     if c_dir==1:
         r_st=sort_c_st_list[0][2]
         err_ref_cont_coord_errors_list.append([r_name, r_st, r_st, cont_name, c_st, c_st, 'contig_st',1,'r' ])
@@ -801,7 +803,7 @@ def FIND_CONTIGS_ENDS(err_ref_cont_coord_errors_list,struct_dict_contig, cont_na
         if not end_err_dict[cont_name]['wrong_beginning']==[]:
             end_entry=end_err_dict[cont_name]['wrong_beginning']
             
-            err_ref_cont_coord_errors_list.append([r_name,max(1,r_st-1),max(1,r_st-1),cont_name,end_entry[0],end_entry[1],end_entry[2],end_entry[3],'b'])
+            err_ref_cont_coord_errors_list.append([r_name,max(1,r_st-1),max(1,r_st-1),cont_name,end_entry[0],end_entry[1],end_entry[2],end_entry[3],'struct'])
 
 
             
@@ -815,7 +817,7 @@ def FIND_CONTIGS_ENDS(err_ref_cont_coord_errors_list,struct_dict_contig, cont_na
 
             
             
-            err_ref_cont_coord_errors_list.append([r_name,r_st,r_st,cont_name,end_entry[0],end_entry[1],end_entry[2],end_entry[3],'b'])
+            err_ref_cont_coord_errors_list.append([r_name,r_st,r_st,cont_name,end_entry[0],end_entry[1],end_entry[2],end_entry[3],'struct'])
 
     
 
@@ -832,7 +834,7 @@ def FIND_CONTIGS_ENDS(err_ref_cont_coord_errors_list,struct_dict_contig, cont_na
 
         if not end_err_dict[cont_name]['wrong_end']==[]:
             end_entry=end_err_dict[cont_name]['wrong_end']
-            err_ref_cont_coord_errors_list.append([r_name,r_end,r_end,cont_name,end_entry[0],end_entry[1],end_entry[2],end_entry[3],'b'])
+            err_ref_cont_coord_errors_list.append([r_name,r_end,r_end,cont_name,end_entry[0],end_entry[1],end_entry[2],end_entry[3],'struct'])
             
     else:
         r_end=sort_c_st_list[-1][2]
@@ -840,7 +842,7 @@ def FIND_CONTIGS_ENDS(err_ref_cont_coord_errors_list,struct_dict_contig, cont_na
 
         if not end_err_dict[cont_name]['wrong_end']==[]:
             end_entry=end_err_dict[cont_name]['wrong_end']
-            err_ref_cont_coord_errors_list.append([r_name,max(1,r_end-1),max(1,r_end-1),cont_name,end_entry[0],end_entry[1],end_entry[2],end_entry[3],'b'])
+            err_ref_cont_coord_errors_list.append([r_name,max(1,r_end-1),max(1,r_end-1),cont_name,end_entry[0],end_entry[1],end_entry[2],end_entry[3],'struct'])
             
 
     
@@ -1386,7 +1388,7 @@ def FIND_ERRORS_ALL_COORD(ref_dict,cont_dict, structure_dict, end_err_dict,unmap
                 else:
                     cont_blocks_dict[cont_name]['misj'].append([entry[0][0],entry[0][1],'relocation_block',entry[0][1]-entry[0][0]+1])
 
-                err_ref_cont_coord_errors_list.append([cont_name,entry[1][0][0],entry[1][0][1],entry[1][0][2],entry[1][0][3],entry[1][0][4],[entry[0]],[temp_dict[cont_name]['misj'][1][0]],'struct'])
+                err_ref_cont_coord_errors_list.append([cont_name,entry[1][0][0],entry[1][0][1],entry[1][0][2],entry[1][0][3],entry[1][0][4],[entry[0]],[temp_dict[cont_name]['misj'][1][0]],'struct2'])
 
                 
                 for i in range(1,len(temp_dict[cont_name]['misj'])):
