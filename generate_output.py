@@ -713,10 +713,6 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                 ID_cur+=1
                 
 
-                   
-                    
-    
-    #!!!!add with entry8==r
 
     for r_name in ref_snp_err_dict.keys():
         ref_snp_err_dict[r_name]= sorted(ref_snp_err_dict[r_name],key=lambda inter:inter[1], reverse=False)
@@ -1227,8 +1223,7 @@ def OUTPUT_BLOCKS_TO_QUERY(cont_blocks_dict,ref_dict,contig_names,ref_full_names
     
     f.write('##gff-version 3\n')
 
-    dir_dict={-1:'-',1:'+'}
-
+    
     gff_dict={'block':'Block', 'translocation_block':'TRL','relocation_block':'RLC', 'inversion':'INV', 'circlular_genome_block':'RLC'}
 
     ID=1
@@ -1280,7 +1275,7 @@ def GENERATE_OUTPUT(struct_dict,end_err_dict,unmapped_list, file_ref, file_conti
     #OUTPUT_READABLE(struct_dict,end_err_dict,unmapped_list, contigs_dict,contig_names, contig_full_names_dict, ref_dict,ref_full_names_dict,working_dir, 'results/'+prefix)
 
     OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,ref_full_names_dict,contigs_dict,contig_names,contig_full_names_dict,working_dir, 'results/'+prefix,asmb_name_full,ref_name_full)
-    #OUTPUT_STAT(statistics_output_lines,working_dir, 'results/'+prefix, len(contigs_dict.keys()),len(ref_dict.keys()))
+    OUTPUT_STAT(statistics_output_lines,working_dir, 'results/'+prefix, len(contigs_dict.keys()),len(ref_dict.keys()))
       
     OUTPUT_MAPPED_BLOCKS_TO_REF(struct_dict,ref_dict,ref_names,ref_full_names_dict,contigs_dict,contig_full_names_dict,working_dir, 'results/'+prefix,asmb_name_full,ref_name_full)
 

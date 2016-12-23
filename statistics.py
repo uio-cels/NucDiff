@@ -13,6 +13,7 @@
 
 
 def FIND_STATISTICS(err_ref_cont_coord_errors_list):
+    
 
     insertions_dict={'insertion':0, 'insertion-multiple_copy':0,'insertion-tandem_multiple_copy':0,
                      'wrong_beginning':0,'wrong_end':0,'wrong_gap':0,'wrong_gap-overestimated':0}
@@ -32,7 +33,22 @@ def FIND_STATISTICS(err_ref_cont_coord_errors_list):
     
     for entry in err_ref_cont_coord_errors_list:
         
-        if entry[8]=='b' or entry[8]=='a':
+
+        if entry[8]=='r':
+            if entry[6]=='contig_st' or entry[6]=='contig_end':
+                a='contig_end, contig_st. Do nothing.'
+            elif entry[6]=='uncovered_region':
+                uncov_ref_frag_num+=1
+                uncov_ref_frag_len+=entry[7]
+           
+        elif entry[8]=='a':
+
+            if entry[6]=='wrong_sequence':
+                wrong_seq_num+=1
+            
+        
+        
+        elif entry[8]=='struct' or entry[8]=='snps':
 
             if insertions_dict.has_key(entry[6]):
                 insertions_dict[entry[6]]+=1
@@ -40,25 +56,6 @@ def FIND_STATISTICS(err_ref_cont_coord_errors_list):
                 deletions_dict[entry[6]]+=1
             elif substitutions_dict.has_key(entry[6]):
                 substitutions_dict[entry[6]]+=1
-            elif misjoin_dict.has_key(entry[6]):
-                
-                misjoin_dict[entry[6]]+=1
-
-                if entry[6]in ['misjoin-insertion','misjoin-mixed_fragments'] :
-                    insertions_dict['insertion']+=1
-
-                elif entry[6]in ['misjoin-wrong_scaffolding'] :
-                    insertions_dict['wrong_gap']+=1
-                        
-            elif translocation_dict.has_key(entry[6]):
-                translocation_dict[entry[6]]+=1
-
-                if entry[6]in ['translocation-insertion','translocation-mixed_fragments'] :
-                    insertions_dict['insertion']+=1
-
-                elif entry[6]in ['translocation-wrong_scaffolding'] :
-                    insertions_dict['wrong_gap']+=1
-                
             elif entry[6].startswith('reshuffling'):
                 
                 temp=entry[6].split('reshuffling-part_')
@@ -69,23 +66,31 @@ def FIND_STATISTICS(err_ref_cont_coord_errors_list):
                 reshufflings_block_num+=1
             elif entry[6]=='inversion':
                 inversions_num+=1
-            elif entry[6]=='wrong_sequence':
-                wrong_seq_num+=1
-            elif entry[6] in ['misjoin_st', 'misjoin_end', 'translocation_st', 'translocation_end', 'misjoin-overlap_st', 'misjoin-overlap_end',
-                              'translocation-overlap_st','translocation-overlap_end','translocation-insertion_st','translocation-insertion_end',
-                              'translocation-mixed_fragments_st','translocation-mixed_fragments_end','translocation-wrong_scaffolding_st','translocation-wrong_scaffolding_end',
-                              'misjoin-insertion_st','misjoin-insertion_end','misjoin-mixed_fragments_st','misjoin-mixed_fragments_end',
-                              'misjoin-wrong_scaffolding_st','misjoin-wrong_scaffolding_end']:
+            
+           
+        elif entry[8]=='struct2':
+            
+            if misjoin_dict.has_key(entry[3]):
+                
+                misjoin_dict[entry[3]]+=1
 
-                a='do_nothing'
-            else:
-                print entry
-                print 'ERROR: unknown found difference'
-        else:
-            if entry[6]=='uncovered_region':
-                uncov_ref_frag_num+=1
-                uncov_ref_frag_len+=entry[7]
+                if entry[3]in ['misjoin-insertion','misjoin-mixed_fragments'] :
+                    insertions_dict['insertion']+=1
 
+                elif entry[3]in ['misjoin-wrong_scaffolding'] :
+                    insertions_dict['wrong_gap']+=1
+                        
+            elif translocation_dict.has_key(entry[3]):
+                translocation_dict[entry[3]]+=1
+
+                if entry[3]in ['translocation-insertion','translocation-mixed_fragments'] :
+                    insertions_dict['insertion']+=1
+
+                elif entry[3]in ['translocation-wrong_scaffolding'] :
+                    insertions_dict['wrong_gap']+=1
+                
+            
+        
 
     insertion_num=sum(insertions_dict.values())
     deletion_num=sum(deletions_dict.values())
@@ -143,3 +148,4 @@ def FIND_STATISTICS(err_ref_cont_coord_errors_list):
     
 
     return statistics_output_lines
+        
