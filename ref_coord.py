@@ -1302,6 +1302,8 @@ def FIND_ERRORS_ALL_COORD(ref_dict,cont_dict, structure_dict, end_err_dict,unmap
 
 
                 msj_reason=structure_dict[cont_name][transl_group]['blocks'][misj_group]['reason']
+
+                
                 
                 merge_bl=MERGE_BLOCK_MSJ(temp_dict[cont_name]['blocks'])
                 temp_dict[cont_name]['misj'].append([merge_bl,msj_reason])
@@ -1390,7 +1392,10 @@ def FIND_ERRORS_ALL_COORD(ref_dict,cont_dict, structure_dict, end_err_dict,unmap
                 else:
                     cont_blocks_dict[cont_name]['misj'].append([entry[0][0],entry[0][1],'Relocation_block',entry[0][1]-entry[0][0]+1])
 
-                err_ref_cont_coord_errors_list.append([cont_name,entry[1][0][0],entry[1][0][1],entry[1][0][2],entry[1][0][3],entry[1][0][4],[entry[0]],[temp_dict[cont_name]['misj'][1][0]],'struct2'])
+                if entry[1][0][2]=='misjoin-overlap':
+                    err_ref_cont_coord_errors_list.append([cont_name,entry[1][0][0],entry[1][0][1],entry[1][0][2],entry[1][0][3],entry[1][0][4],[entry[0]],[temp_dict[cont_name]['misj'][1][0]],'struct2',[entry[1][0][5],entry[1][0][6]]])
+                else:
+                    err_ref_cont_coord_errors_list.append([cont_name,entry[1][0][0],entry[1][0][1],entry[1][0][2],entry[1][0][3],entry[1][0][4],[entry[0]],[temp_dict[cont_name]['misj'][1][0]],'struct2'])
 
                 
                 for i in range(1,len(temp_dict[cont_name]['misj'])):
@@ -1407,9 +1412,11 @@ def FIND_ERRORS_ALL_COORD(ref_dict,cont_dict, structure_dict, end_err_dict,unmap
 
 
                     if i!=len(temp_dict[cont_name]['misj'])-1:
-                        err_ref_cont_coord_errors_list.append([cont_name,entry[1][0][0],entry[1][0][1],entry[1][0][2],entry[1][0][3],entry[1][0][4],[entry[0]],[temp_dict[cont_name]['misj'][i+1][0]],'struct2'])
+                        if entry[1][0][2]=='misjoin-overlap':
+                            err_ref_cont_coord_errors_list.append([cont_name,entry[1][0][0],entry[1][0][1],entry[1][0][2],entry[1][0][3],entry[1][0][4],[entry[0]],[temp_dict[cont_name]['misj'][i+1][0]],'struct2',[entry[1][0][5],entry[1][0][6]]])
 
-                
+                        else:
+                            err_ref_cont_coord_errors_list.append([cont_name,entry[1][0][0],entry[1][0][1],entry[1][0][2],entry[1][0][3],entry[1][0][4],[entry[0]],[temp_dict[cont_name]['misj'][i+1][0]],'struct2'])
 
             else:
                 merge_bl=MERGE_BLOCK_TRL(temp_dict[cont_name]['misj'])
@@ -1437,18 +1444,34 @@ def FIND_ERRORS_ALL_COORD(ref_dict,cont_dict, structure_dict, end_err_dict,unmap
                
 
                 if entry[1]==[] and next_entry[1]==[]:
-                    
-                    err_ref_cont_coord_errors_list.append([cont_name,entry[2][0][0],entry[2][0][1],entry[2][0][2],entry[2][0][3],entry[2][0][4],[entry[0]],[next_entry[0]],'struct2'])
 
+                    if entry[2][0][2]=='translocation-overlap':
+                        err_ref_cont_coord_errors_list.append([cont_name,entry[2][0][0],entry[2][0][1],entry[2][0][2],entry[2][0][3],entry[2][0][4],[entry[0]],[next_entry[0]],'struct2',[entry[2][0][5],entry[2][0][6]]])
+                    else:
+                        err_ref_cont_coord_errors_list.append([cont_name,entry[2][0][0],entry[2][0][1],entry[2][0][2],entry[2][0][3],entry[2][0][4],[entry[0]],[next_entry[0]],'struct2'])
+                    
+                    
                 elif entry[1]==[] and next_entry[1]!=[]:
-                    err_ref_cont_coord_errors_list.append([cont_name,entry[2][0][0],entry[2][0][1],entry[2][0][2],entry[2][0][3],entry[2][0][4],[entry[0]],[next_entry[0]],'struct2'])
+                    if entry[2][0][2]=='translocation-overlap':
+                        err_ref_cont_coord_errors_list.append([cont_name,entry[2][0][0],entry[2][0][1],entry[2][0][2],entry[2][0][3],entry[2][0][4],[entry[0]],[next_entry[0]],'struct2',[entry[2][0][5],entry[2][0][6]]])
+
+                    else:
+                        err_ref_cont_coord_errors_list.append([cont_name,entry[2][0][0],entry[2][0][1],entry[2][0][2],entry[2][0][3],entry[2][0][4],[entry[0]],[next_entry[0]],'struct2'])
 
                     
                 elif entry[1]!=[] and next_entry[1]==[]:
-                    err_ref_cont_coord_errors_list.append([cont_name,entry[2][0][0],entry[2][0][1],entry[2][0][2],entry[2][0][3],entry[2][0][4],[entry[1]],[next_entry[0]],'struct2'])
+                    if entry[2][0][2]=='translocation-overlap':
+                        err_ref_cont_coord_errors_list.append([cont_name,entry[2][0][0],entry[2][0][1],entry[2][0][2],entry[2][0][3],entry[2][0][4],[entry[1]],[next_entry[0]],'struct2',[entry[2][0][5],entry[2][0][6]]])
+                    else:
+                        err_ref_cont_coord_errors_list.append([cont_name,entry[2][0][0],entry[2][0][1],entry[2][0][2],entry[2][0][3],entry[2][0][4],[entry[1]],[next_entry[0]],'struct2'])
 
+                   
+            
                 else:
-                    err_ref_cont_coord_errors_list.append([cont_name,entry[2][0][0],entry[2][0][1],entry[2][0][2],entry[2][0][3],entry[2][0][4],[entry[1]],[next_entry[0]],'struct2'])
+                    if entry[2][0][2]=='translocation-overlap':
+                        err_ref_cont_coord_errors_list.append([cont_name,entry[2][0][0],entry[2][0][1],entry[2][0][2],entry[2][0][3],entry[2][0][4],[entry[1]],[next_entry[0]],'struct2',[entry[2][0][5],entry[2][0][6]]])
+                    else:
+                        err_ref_cont_coord_errors_list.append([cont_name,entry[2][0][0],entry[2][0][1],entry[2][0][2],entry[2][0][3],entry[2][0][4],[entry[1]],[next_entry[0]],'struct2'])
 
                 
 
@@ -1466,7 +1489,7 @@ def FIND_ERRORS_ALL_COORD(ref_dict,cont_dict, structure_dict, end_err_dict,unmap
                 result_dict[cont_name].append(entry)
 
         result_dict[cont_name]=sorted(result_dict[cont_name], key=lambda inter:inter[0], reverse=False)
-        
+       
     return result_dict, err_ref_cont_coord_errors_list
 
     

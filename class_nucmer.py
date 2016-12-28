@@ -212,7 +212,7 @@ class Nucmer:
     
     def FIND_STRUCTURAL_ERRORS(self,contigs_dict, ref_dict,reloc_dist):
         
-        
+        errors_list=[]
 
         #-------1.find translocations
         structure_dict={}
@@ -279,7 +279,38 @@ class Nucmer:
 
                         else:
                             structure_dict[cont_name][transl_group]['reason'].append([c2_st, c1_end,'translocation-overlap', c1_end-c2_st+1, 'transl'])
+                            
+                            r_end_1=self.intervals[cont_name][i][3]
+                            r_st_1=self.intervals[cont_name][i][2]
+                                
+                            if self.intervals[cont_name][i][4]==1:
+                                ref_overl_1=class_interv_coord.FIND_REF_COORD_FORWARD_END_1(r_end_1, c1_end, c2_st, self.intervals[cont_name][i][10], r_st_1)
+                                structure_dict[cont_name][transl_group]['reason'][-1].append([self.intervals[cont_name][i][8],ref_overl_1, r_end_1])
+                            else:
+                                ref_overl_1=class_interv_coord.FIND_REF_COORD_REVERSE_END_1(r_st_1, c1_end, c2_st, self.intervals[cont_name][i][10],r_end_1)
+                                structure_dict[cont_name][transl_group]['reason'][-1].append([self.intervals[cont_name][i][8],r_st_1, ref_overl_1])
 
+                            r_end_2=self.intervals[cont_name][i+1][3]
+                            r_st_2=self.intervals[cont_name][i+1][2]
+
+                            for err_ent in self.intervals[cont_name][i+1][10]:
+                                errors_list.append([err_ent[0],err_ent[1],err_ent[2],err_ent[3],err_ent[4]])
+                                
+                            if self.intervals[cont_name][i+1][4]==1:
+                                
+                                ref_overl_2,x=class_interv_coord.FIND_REF_COORD_FORWARD_START(r_st_2, c2_st, c1_end, errors_list)
+                                ref_overl_2=min(r_end_2,ref_overl_2)
+                                structure_dict[cont_name][transl_group]['reason'][-1].append([self.intervals[cont_name][i+1][8],r_st_2, ref_overl_2])
+                                
+                            else:
+                                ref_overl_2,x=class_interv_coord.FIND_REF_COORD_REVERSE_END(r_end_2, c2_st, c1_end, errors_list)
+                                ref_overl_2=max(r_st_2,ref_overl_2)
+                                structure_dict[cont_name][transl_group]['reason'][-1].append([self.intervals[cont_name][i+1][8],ref_overl_2, r_end_2])
+                                
+                            for i in range(len(errors_list)):
+                                errors_list.pop(0)
+                                
+                            
                     #1.4. delete the 'temp' field
                     structure_dict[cont_name][transl_group].pop('temp', None)
             else:
@@ -485,7 +516,38 @@ class Nucmer:
                                      misj_groups_dict[misj_group]['reason'].append([c1_end,c2_st,'misjoin',0, 'misj'])
 
                                 else:
-                                     misj_groups_dict[misj_group]['reason'].append([c2_st, c1_end,'misjoin-overlap', c1_end-c2_st+1, 'misj'])
+                                    misj_groups_dict[misj_group]['reason'].append([c2_st, c1_end,'misjoin-overlap', c1_end-c2_st+1, 'misj'])
+
+                                    r_end_1=structure_dict[cont_name][transl_group]['blocks'][i][3]
+                                    r_st_1=structure_dict[cont_name][transl_group]['blocks'][i][2]
+                                        
+                                    if self.intervals[cont_name][i][4]==1:
+                                        ref_overl_1=class_interv_coord.FIND_REF_COORD_FORWARD_END_1(r_end_1, c1_end, c2_st, self.intervals[cont_name][i][10], r_st_1)
+                                        misj_groups_dict[misj_group]['reason'][-1].append([structure_dict[cont_name][transl_group]['blocks'][i][8],ref_overl_1, r_end_1])
+                                    else:
+                                        ref_overl_1=class_interv_coord.FIND_REF_COORD_REVERSE_END_1(r_st_1, c1_end, c2_st, self.intervals[cont_name][i][10],r_end_1)
+                                        misj_groups_dict[misj_group]['reason'][-1].append([structure_dict[cont_name][transl_group]['blocks'][i][8],r_st_1, ref_overl_1])
+
+                                    r_end_2=structure_dict[cont_name][transl_group]['blocks'][i+1][3]
+                                    r_st_2=structure_dict[cont_name][transl_group]['blocks'][i+1][2]
+
+                                    for err_ent in self.intervals[cont_name][i+1][10]:
+                                        errors_list.append([err_ent[0],err_ent[1],err_ent[2],err_ent[3],err_ent[4]])
+                                        
+                                    if self.intervals[cont_name][i+1][4]==1:
+                                        
+                                        ref_overl_2,x=class_interv_coord.FIND_REF_COORD_FORWARD_START(r_st_2, c2_st, c1_end, errors_list)
+                                        ref_overl_2=min(r_end_2,ref_overl_2)
+                                        misj_groups_dict[misj_group]['reason'][-1].append([structure_dict[cont_name][transl_group]['blocks'][i+1][8],r_st_2, ref_overl_2])
+                                        
+                                    else:
+                                        ref_overl_2,x=class_interv_coord.FIND_REF_COORD_REVERSE_END(r_end_2, c2_st, c1_end, errors_list)
+                                        ref_overl_2=max(r_st_2,ref_overl_2)
+                                        misj_groups_dict[misj_group]['reason'][-1].append([structure_dict[cont_name][transl_group]['blocks'][i+1][8],ref_overl_2, r_end_2])
+                                        
+                                    for i in range(len(errors_list)):
+                                        errors_list.pop(0)
+                                    
 
                         #2.4 delete the 'temp' field
                         misj_groups_dict[misj_group].pop('temp', None)

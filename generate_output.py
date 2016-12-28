@@ -643,7 +643,8 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
 
                             
                         elif entry[3]=='misjoin-overlap':
-                            ID_name=entry[9]
+                            ID_name=entry[10]
+                            
                             
                             
                             fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0001874'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+\
@@ -656,7 +657,9 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
 
 
                         elif entry[3]=='translocation-overlap':
-                            ID_name=entry[9]
+                            ID_name=entry[10]
+                            
+                            
 
                             fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0001873'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+\
                                      ';overlap_len='+str(entry[4])+\
@@ -693,6 +696,22 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                
                 else:
                     #if entry[3]=='misjoin' or entry[3]=='circular_genome_start' or entry[3]=='translocation':
+                    if entry[3]=='misjoin-overlap' or entry[3]=='translocation-overlap':
+                        ref_name=entry[6][0][4]
+
+                        ref_struct_err_dict[ref_name].append([ref_name,entry[6][0][6][1],entry[6][0][6][1],entry[3],entry[6][0][6][2],entry[0],entry[6][0][6][0],
+                                                              [entry[1],entry[2],entry[4],'breakpoint'],
+                                                              [entry[6][0][0],entry[6][0][1],entry[6][0][2],entry[6][0][3],'block_coord'],
+                                                              [entry[6][0][5][0],entry[6][0][5][1],entry[6][0][5][2],'block_start'],entry[10]+'.1'])
+                        ref_name=entry[7][0][4]
+
+                        ref_struct_err_dict[ref_name].append([ref_name,entry[7][0][5][1],entry[7][0][5][1],entry[3],entry[7][0][5][2],entry[0],entry[7][0][5][0],
+                                                              [entry[1],entry[2],entry[4],'breakpoint'],
+                                                              [entry[7][0][0],entry[7][0][1],entry[7][0][2],entry[7][0][3],'block_coord'],
+                                                              [entry[7][0][6][0],entry[7][0][6][1],entry[7][0][6][2],'block_end'],entry[10]+'.2'])
+                        
+
+                    else:
                         ref_name=entry[6][0][4]
 
                         ref_struct_err_dict[ref_name].append([ref_name,entry[6][0][6][1],entry[6][0][6][1],entry[3],entry[6][0][6][2],entry[0],entry[6][0][6][0],
@@ -1192,7 +1211,38 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
     for r_name in ref_duplication_dict.keys():
         ref_duplication_dict[r_name]= sorted(ref_duplication_dict[r_name],key=lambda inter:inter[0], reverse=False)
             
+    
+    for entry in err_ref_cont_coord_errors_list:
+        if entry[8]=='struct2':
+            if entry[3]=='misjoin-overlap': 
+                ref_name=entry[9][0][0]
+                if not ref_duplication_dict.has_key(ref_name):
+                    ref_duplication_dict[ref_name]=[]
+
+                ref_duplication_dict[ref_name].append([entry[9][0][1],entry[9][0][2],'Relocation_overlap_region'])
+
+                ref_name=entry[9][1][0]
+                if not ref_duplication_dict.has_key(ref_name):
+                    ref_duplication_dict[ref_name]=[]
+
+                ref_duplication_dict[ref_name].append([entry[9][1][1],entry[9][1][2],'Relocation_overlap_region'])
+    
             
+            elif entry[3]=='translocation-overlap': 
+                ref_name=entry[9][0][0]
+                if not ref_duplication_dict.has_key(ref_name):
+                    ref_duplication_dict[ref_name]=[]
+
+                ref_duplication_dict[ref_name].append([entry[9][0][1],entry[9][0][2],'Translocation_overlap_region'])
+
+                ref_name=entry[9][1][0]
+                if not ref_duplication_dict.has_key(ref_name):
+                    ref_duplication_dict[ref_name]=[]
+
+                ref_duplication_dict[ref_name].append([entry[9][1][1],entry[9][1][2],'Translocation_overlap_region'])
+    
+            
+
 
 
     f=open(working_dir+prefix+'_ref_additional.gff','w')
@@ -1227,7 +1277,11 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                                 ';repeat_len='+str(entry[1]-entry[0]+1)+';difference_type='+err_new_names_dict[entry[4][2]]+';difference_coord_ref='+str(entry[4][0])+'-'+str(entry[4][1])+\
                                     ';difference_len='+str(entry[4][3])+';color=#EE0000'+'\n')
 
+                        elif entry[2]=='Relocation_overlap_region' or entry[2]=='Translocation_overlap_region':
+                            f.write(ref_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t.\t.\tID='+entry[3]+';Name='+entry[2]+\
+                                ';overlap_len='+str(entry[1]-entry[0]+1)+'\n')
                         else:
+                            
                             
                             f.write(ref_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t.\t.\tID='+entry[3]+';Name='+'Ref_duplication'+\
                                 ';duplic_len='+str(entry[1]-entry[0]+1)+'\n')
