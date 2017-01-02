@@ -56,7 +56,8 @@ err_new_names_dict={'substitution':'substitution', 'gap':'gap',
                       'misjoin-wrong_scaffolding_end':'relocation-inserted_gap_end',
                       'misjoin-overlap_end':'relocation-overlap_end',     
 
-                      'contig_st':'query_st', 'contig_end':'query_end', 'uncovered_region':'uncovered_region'
+                      'contig_st':'query_st', 'contig_end':'query_end', 'uncovered_region':'uncovered_region',
+                      'clipped_repeated_region':'uncovered_repeated_region'
                       }
 
 
@@ -1022,12 +1023,14 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                             
                             
                     elif entry[8]=='r':
+
                         
-                        if entry[6]=='uncovered_region':
+                        
+                        if entry[6]=='uncovered_region' or entry[6]=='clipped_repeated_region' :
                             ID_name=entry[9]
 
                             fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
-                                        ';color=#990000'+'\n')
+                                        ';region_len='+str(entry[2]-entry[1]+1)+';color=#990000'+'\n')
 
                         else:
                             ID_name=entry[9]

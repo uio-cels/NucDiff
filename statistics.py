@@ -30,6 +30,8 @@ def FIND_STATISTICS(err_ref_cont_coord_errors_list):
     inversions_num=0
     uncov_ref_frag_num=0
     uncov_ref_frag_len=0
+    uncov_ref_clipped_num=0
+    uncov_ref_clipped_len=0
     
     for entry in err_ref_cont_coord_errors_list:
         
@@ -40,6 +42,9 @@ def FIND_STATISTICS(err_ref_cont_coord_errors_list):
             elif entry[6]=='uncovered_region':
                 uncov_ref_frag_num+=1
                 uncov_ref_frag_len+=entry[7]
+            elif entry[6]=='clipped_repeated_region':
+                uncov_ref_clipped_num+=1
+                uncov_ref_clipped_len+=entry[7]
            
         elif entry[8]=='a':
 
@@ -114,6 +119,8 @@ def FIND_STATISTICS(err_ref_cont_coord_errors_list):
     statistics_output_lines.append('\n')
     statistics_output_lines.append('Uncovered ref regions num\t'+str(uncov_ref_frag_num)+'\n')
     statistics_output_lines.append('Uncovered ref regions len\t'+str(uncov_ref_frag_len)+'\n')
+    statistics_output_lines.append('Uncovered ref repeated regions num\t'+str(uncov_ref_clipped_num)+'\n')
+    statistics_output_lines.append('Uncovered ref repeated regions len\t'+str(uncov_ref_clipped_len)+'\n')
     statistics_output_lines.append('\n')
     statistics_output_lines.append('DETAILED INFORMATION:\t\n')
     statistics_output_lines.append('substitution\t'+str(substitutions_dict['substitution'])+'\n')

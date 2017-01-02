@@ -50,11 +50,11 @@ def START(args):
     
 
     #2. find differences and gaps in assembly
-    struct_dict,end_err_dict,unmapped_list=find_errors.FIND_ERRORS_ASSEMBLY(file_ref,file_contigs, working_dir, nucmer_opt, prefix,proc_num, filter_opt,delta_file,reloc_dist ) #class Errors
+    struct_dict,end_err_dict,unmapped_list,uncovered_dict=find_errors.FIND_ERRORS_ASSEMBLY(file_ref,file_contigs, working_dir, nucmer_opt, prefix,proc_num, filter_opt,delta_file,reloc_dist ) #class Errors
 
 
     #3. find reference-oriented difference coordinates
-    err_ref_cont_coord_errors_list,cont_blocks_dict=ref_coord.FIND_REF_COORD_ERRORS(struct_dict,end_err_dict,unmapped_list,file_ref, file_contigs)
+    err_ref_cont_coord_errors_list,cont_blocks_dict=ref_coord.FIND_REF_COORD_ERRORS(struct_dict,end_err_dict,unmapped_list,file_ref, file_contigs,uncovered_dict)
 
     #4. find statistics
     statistics_output_lines=statistics.FIND_STATISTICS(err_ref_cont_coord_errors_list)

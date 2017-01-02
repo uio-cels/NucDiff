@@ -934,26 +934,35 @@ def FIND_INTERSECTION(interv_list):
 def FIND_UNCOV_REF(interv_list,len_ref):
     uncovered_list=[]
 
-    if interv_list[0][0]!=1:
-        uncovered_list.append([1,interv_list[0][0]-1])
+    if interv_list!=[]:
 
-    for i in range(len(interv_list)-1):
-        cur=interv_list[i]
-        nex=interv_list[i+1]
+        if interv_list[0][0]!=1:
+            uncovered_list.append([1,interv_list[0][0]-1])
 
-        if nex[0]-cur[1]>1:
-            uncovered_list.append([cur[1]+1,nex[0]-1])
+        for i in range(len(interv_list)-1):
+            cur=interv_list[i]
+            nex=interv_list[i+1]
 
-    if interv_list[-1][1]<len_ref:
-        uncovered_list.append([interv_list[-1][1]+1,len_ref])
+            if nex[0]-cur[1]>1:
+                uncovered_list.append([cur[1]+1,nex[0]-1])
+
+        if interv_list[-1][1]<len_ref:
+            uncovered_list.append([interv_list[-1][1]+1,len_ref])
 
     return uncovered_list
 
 
     
-def FIND_UNCOVERED_REF_FRAG(err_ref_cont_coord_errors_list,struct_dict, ref_dict):
+def FIND_UNCOVERED_REF_FRAG(err_ref_cont_coord_errors_list,struct_dict, ref_dict,uncovered_dict):
     ref_interv_dict={}
 
+
+    for ref_name in uncovered_dict.keys():
+        if uncovered_dict[ref_name]!=[]:
+            for entry in uncovered_dict[ref_name]:
+                err_ref_cont_coord_errors_list.append([ref_name,entry[0],entry[1],'-','-','-','uncovered_region',entry[1]-entry[0]+1,'r'])
+
+    #find clipped_repeated_regios
     for ref_name in ref_dict.keys():
         ref_interv_dict[ref_name]=[]
 
@@ -969,6 +978,7 @@ def FIND_UNCOVERED_REF_FRAG(err_ref_cont_coord_errors_list,struct_dict, ref_dict
                         for entry in between_output:
                             ref_interv_dict[entry[5]].append([entry[6],entry[7]])
 
+    '''
     for ref_name in ref_interv_dict.keys():
         if ref_interv_dict[ref_name]==[]:
             err_ref_cont_coord_errors_list.append([ref_name,1,len(ref_dict[ref_name]),'-','-','-','uncovered_region',len(ref_dict[ref_name]),'r'])
@@ -976,9 +986,27 @@ def FIND_UNCOVERED_REF_FRAG(err_ref_cont_coord_errors_list,struct_dict, ref_dict
             cover_reg_list=FIND_INTERSECTION(ref_interv_dict[ref_name])
             uncovered_list=FIND_UNCOV_REF(cover_reg_list,len(ref_dict[ref_name]))
 
+            
+
             for entry in uncovered_list:
                 err_ref_cont_coord_errors_list.append([ref_name,entry[0],entry[1],'-','-','-','uncovered_region',entry[1]-entry[0]+1,'r'])
+    '''
 
+    for ref_name in ref_dict.keys():
+        cover_reg_list=FIND_INTERSECTION(ref_interv_dict[ref_name])
+
+        for entry in uncovered_dict[ref_name]:
+            cover_reg_list.append(entry)
+
+        cover_reg_list=FIND_INTERSECTION(cover_reg_list)
+
+        uncovered_list=FIND_UNCOV_REF(cover_reg_list,len(ref_dict[ref_name]))
+
+        for entry in uncovered_list:
+                err_ref_cont_coord_errors_list.append([ref_name,entry[0],entry[1],'-','-','-','clipped_repeated_region',entry[1]-entry[0]+1,'r'])
+
+        
+        
 def MERGE_BLOCK_TRL(reloc_list):
     #[c_st,c_end,r_st,r_end,ref_name,[c_st,c_st_Ref,c_st_Ref_type],[c_end,c_end_Ref,c_end_Tef_type]]
 
@@ -1499,7 +1527,7 @@ def FIND_ERRORS_ALL_COORD(ref_dict,cont_dict, structure_dict, end_err_dict,unmap
 
 
 
-def FIND_REF_COORD_ERRORS(struct_dict,end_err_dict,unmapped_list,file_ref, file_contigs):
+def FIND_REF_COORD_ERRORS(struct_dict,end_err_dict,unmapped_list,file_ref, file_contigs, uncovered_dict):
     
 
     ref_dict=READ_FASTA_ENTRY(file_ref)
@@ -1509,7 +1537,7 @@ def FIND_REF_COORD_ERRORS(struct_dict,end_err_dict,unmapped_list,file_ref, file_
     
     cont_blocks_dict,err_ref_cont_coord_errors_list=FIND_ERRORS_ALL_COORD(ref_dict,cont_dict, struct_dict, end_err_dict,unmapped_list)
 
-    FIND_UNCOVERED_REF_FRAG(err_ref_cont_coord_errors_list,struct_dict,ref_dict)
+    FIND_UNCOVERED_REF_FRAG(err_ref_cont_coord_errors_list,struct_dict,ref_dict,uncovered_dict)
 
     
 

@@ -20,7 +20,7 @@ import multiprocessing
 import general
 import class_errors
 import class_interv_coord
-
+import ref_coord
 
 
 
@@ -184,7 +184,7 @@ class Nucmer:
                     start_seq=frag_dict[cont_name][i][0]
                     end_seq=frag_dict[cont_name][i][1]
                     seq=contigs_dict[cont_name][start_seq-1 :end_seq-1   +1]
-
+    
                     gaps_list=FIND_GAPS(seq,start_seq,end_seq,frag_dict[cont_name][i][7])   
 
                     if self.intervals[cont_name][i][10]!=[]:
@@ -226,12 +226,18 @@ class Nucmer:
             #1.2 sort intervals by translocation groups (fill in 'blocks' field)
             structure_dict[cont_name]={}
 
+            #for entry in self.intervals[cont_name]:
+            #    print entry
+            #raw_input('rfj')
+            
+
             
             cur_transl_group_num=0
             cur_transl_group_name=0
             structure_dict[cont_name][cur_transl_group_name]={'blocks':[self.intervals[cont_name][0]], 'output_line':[],'reason':[],'temp':-1}
             
 
+            
             
             for i in range(len(self.intervals[cont_name])-1):
                     if self.intervals[cont_name][i][9][0]==self.intervals[cont_name][i+1][9][0]: #from one ref seq
@@ -317,9 +323,7 @@ class Nucmer:
                 structure_dict[cont_name][0].pop('temp', None)
 
 
-        
-
-
+            
         
         #---------2.find misjoins and circular genome ends
                     
@@ -568,7 +572,33 @@ class Nucmer:
 
 
                  
-        
+       
+
+        temp_block_list=[]
+
+        for cont_name in structure_dict.keys():
+            for transl_group in structure_dict[cont_name].keys():
+                for misj_group in structure_dict[cont_name][transl_group]['blocks'].keys():
+                    if len(structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'])>1:
+                        for block in structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks']:
+                            temp_block_list.append(block)
+
+                        tmp_res=ref_coord.MERGE_BLOCK_MSJ(temp_block_list)
+                        structure_dict[cont_name][transl_group]['blocks'][misj_group]['bounds']=[tmp_res[0],tmp_res[1],tmp_res[2],tmp_res[3]]
+
+                        for i in range(len(temp_block_list)):
+                            temp_block_list.pop(0)
+
+
+                    else:
+                        structure_dict[cont_name][transl_group]['blocks'][misj_group]['bounds']=[]
+                            
+
+                    
+                     
+                        
+                    
+
         
         #-------3. simplify blocks before detecting transposition and inversions
         temp_errors=[]
@@ -768,6 +798,7 @@ class Nucmer:
                                 
                     structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks']=sorted(structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'], key=lambda inter:inter[0], reverse=False)
 
+
         
 
         #--------4. detect transpositions and inversions
@@ -966,7 +997,73 @@ class Nucmer:
                     for key in blocks_info_dict.keys():
                         blocks_info_dict.pop(key, None)
 
+        for cont_name in structure_dict.keys():
+            
+            for transl_group in structure_dict[cont_name].keys():
+                for misj_group in structure_dict[cont_name][transl_group]['blocks'].keys():
+                    if len(structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'].keys())>1:
+                        for block_name in structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'].keys():
+                            block=structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['block']
+                            temp_block_list.append(block)
+                            
+                        tmp_res=ref_coord.MERGE_BLOCK_MSJ(temp_block_list)
+                        init_res=structure_dict[cont_name][transl_group]['blocks'][misj_group]['bounds']
+                        if init_res!=[tmp_res[0],tmp_res[1],tmp_res[2],tmp_res[3]]:
+                            if init_res[0]!=tmp_res[0]:
+                                for block_name in structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'].keys():
+                                    if structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['block'][0]==tmp_res[0]:
+                                        if structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['block'][4]==1:
+                                            ref_pos=structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['block'][2]
 
+                                        else:
+                                            ref_pos=structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['block'][3]
+                                        ref_name=structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['block'][8]
+                                        structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['between_output'].append([init_res[0], tmp_res[0]-1,'insertion-multiple_copy',tmp_res[0]-init_res[0],'transp2',ref_name,ref_pos-1,ref_pos-1])
+
+                            if init_res[1]!=tmp_res[1]:
+                                for block_name in structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'].keys():
+                                    if structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['block'][1]==tmp_res[1]:
+                                        if structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['block'][4]==1:
+                                            ref_pos=structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['block'][3]
+                                        else:
+                                            ref_pos=structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['block'][2]
+                                            
+                                        ref_name=structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['block'][8]
+                                        structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['between_output'].append([tmp_res[1]+1, init_res[1],'insertion-multiple_copy',init_res[1]-tmp_res[1],'transp2',ref_name,ref_pos-1,ref_pos-1])
+
+
+                            if init_res[2]!=tmp_res[2]:
+                                for block_name in structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'].keys():
+                                    if structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['block'][2]==tmp_res[2]:
+                                        if structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['block'][4]==1:
+                                            cont_pos=structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['block'][0]
+                                            
+                                        else:
+                                            cont_pos=structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['block'][1]
+                                            
+                                        ref_name=structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['block'][8]
+                                        structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['between_output'].append([cont_pos-1, cont_pos-1,'deletion-collapsed_repeat',tmp_res[2]-init_res[2],'transp2',ref_name,init_res[2],tmp_res[2]-1])
+
+                            if init_res[3]!=tmp_res[3]:
+                                for block_name in structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'].keys():
+                                    if structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['block'][3]==tmp_res[3]:
+                                        if structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['block'][4]==1:
+                                            cont_pos=structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['block'][1]
+                                            
+                                        else:
+                                            cont_pos=structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['block'][0]
+
+                                        ref_name=structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['block'][8]
+                                        structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][block_name]['between_output'].append([cont_pos-1, cont_pos-1,'deletion-collapsed_repeat',init_res[3]-tmp_res[3],'transp2',ref_name,tmp_res[3]+1,init_res[3]])
+
+
+                            
+                        
+
+
+                        for i in range(len(temp_block_list)):
+                            temp_block_list.pop(0)
+        
         '''
         
         for cont_name in sorted(structure_dict.keys()):
@@ -1151,7 +1248,10 @@ class Nucmer:
 
     def IMPROVE_PARSING_RESULTS(self, contigs_dict, ref_dict):
         
-        
+        for cont_name in self.intervals.keys():
+           self.intervals[cont_name]=sorted(self.intervals[cont_name], key=lambda inter:inter[0], reverse=False)
+
+
         
         #1. assign a number to an interval that shows the order of this interval if the entries were sorted by a reference start coordinate
         
@@ -1161,10 +1261,23 @@ class Nucmer:
 
         nested_frag_list=[]
         nested_transloc_list=[]
+
+        count_dict={}
+
+        end_err_dict={}
         
         for cont_name in self.intervals.keys():
-            if len(self.intervals[cont_name])>1:
+            end_err_dict[cont_name]={'wrong_beginning':[], 'wrong_end':[],'duplication':[]}
 
+            if self.intervals[cont_name][0][0]>1:
+                    end_err_dict[cont_name]['wrong_beginning'].append([1,self.intervals[cont_name][0][0]-1,'wrong_beginning',self.intervals[cont_name][0][0]-1,'ends'])
+
+            if self.intervals[cont_name][-1][1]<self.intervals[cont_name][-1][6]:
+                    end_err_dict[cont_name]['wrong_end'].append([self.intervals[cont_name][-1][1]+1,self.intervals[cont_name][-1][6],'wrong_end',self.intervals[cont_name][-1][6]-self.intervals[cont_name][-1][1],'ends'])
+  
+            
+            if len(self.intervals[cont_name])>1:
+                    
                 flag_rep=1
 
                 # repeat these steps until all query overlaps are resolved
@@ -1176,6 +1289,7 @@ class Nucmer:
                     
                     #2. assign a number to an interval that shows the order of this interval if the entries were sorted by a reference start coordinate
                     self.FIND_REF_ORDER_NUM()
+                    
 
                     for i in range(len(self.intervals[cont_name])-1):
                         c_st1=self.intervals[cont_name][i][0]
@@ -1195,27 +1309,52 @@ class Nucmer:
 
 
                             if c_st1<=c_st2 and c_end1>=c_end2 and self.intervals[cont_name][i][8]==self.intervals[cont_name][j][8]:#C1 contains C2  or C1=C2
-                                nested_frag_list.append(j)
+                                nested_frag_list.append([j,i])# j in i
                                 break
 
                             elif c_st1>=c_st2 and c_end1<=c_end2 and self.intervals[cont_name][i][8]==self.intervals[cont_name][j][8]:#C2 contains C1:
-                                nested_frag_list.append(i)
+                                nested_frag_list.append([i,j])
                                 break
 
                             elif c_st1<=c_st2 and c_end1>=c_end2 and self.intervals[cont_name][i][8]!=self.intervals[cont_name][j][8]:#C1 contains C2  or C1=C2 , different ref
-                                nested_transloc_list.append(j)
+                                nested_transloc_list.append([j,i])
                                 break
                                     
                             elif c_st1>=c_st2 and c_end1<=c_end2 and self.intervals[cont_name][i][8]!=self.intervals[cont_name][j][8]:#C2 contains C1, different ref
-                                nested_transloc_list.append(i)
+                                nested_transloc_list.append([i,j])
                                 break
 
                             elif c_st2>c_end1:
                                 break
 
                         if len(nested_transloc_list)==1:
+                            
+
+                            for kj in range(len(self.intervals[cont_name])):
+                                if not count_dict.has_key(self.intervals[cont_name][kj][8]):
+                                    count_dict[self.intervals[cont_name][kj][8]]=0
+                                count_dict[self.intervals[cont_name][kj][8]]+=self.intervals[cont_name][kj][3]-self.intervals[cont_name][kj][2]+1
+
+                           
+                            
                             flag_rep=1
-                            self.intervals[cont_name].pop(nested_transloc_list[0])
+
+                            first_ref=self.intervals[cont_name][nested_transloc_list[0][0]][8]
+                            second_ref=self.intervals[cont_name][nested_transloc_list[0][1]][8]
+
+                            if count_dict[first_ref]>count_dict[second_ref]:
+                                self.intervals[cont_name].pop(nested_transloc_list[0][1])
+                            elif count_dict[first_ref]<count_dict[second_ref]:
+                                self.intervals[cont_name].pop(nested_transloc_list[0][0])
+                            else:
+                                if self.intervals[cont_name][nested_transloc_list[0][0]][1]-self.intervals[cont_name][nested_transloc_list[0][0]][0]+1>=self.intervals[cont_name][nested_transloc_list[0][1]][1]-self.intervals[cont_name][nested_transloc_list[0][1]][0]+1:
+                                    self.intervals[cont_name].pop(nested_transloc_list[0][1])
+                                else:
+                                    self.intervals[cont_name].pop(nested_transloc_list[0][0])
+
+                            count_dict.clear()
+
+                           
                             nested_transloc_list.pop(0)
                             break
                         
@@ -1224,10 +1363,12 @@ class Nucmer:
 
                             
                             #4. delete contained fragment
-                            self.intervals[cont_name].pop(nested_frag_list[0])
+                            self.intervals[cont_name].pop(nested_frag_list[0][0])
 
                             #5. empty nested_frag_list
                             nested_frag_list.pop(0)
+
+                            
 
                             break
                             
@@ -1274,15 +1415,45 @@ class Nucmer:
 
                         if len(nested_frag_list)==1:
                                 flag_rep=1
-
-                                
-                                
+    
                                 #delete all info about nested fragments
 
                                 self.intervals[cont_name].pop(nested_frag_list[0])
                                 nested_frag_list.pop(0)
+                                
                                 break
 
+        
+        for cont_name in self.intervals.keys():
+            self.intervals[cont_name]=sorted(self.intervals[cont_name], key=lambda inter:inter[0], reverse=False)
+
+            if self.intervals[cont_name][0][0]>1:
+                if end_err_dict[cont_name]['wrong_beginning']==[]:
+                    err_st=1
+                    end_err_dict[cont_name]['duplication'].append([err_st,self.intervals[cont_name][0][0]-1,'wrong_beginning',self.intervals[cont_name][0][0]-err_st,'ends'])
+
+                else:
+                    if self.intervals[cont_name][0][0]>end_err_dict[cont_name]['wrong_beginning'][0][1]+1:
+                        err_st=end_err_dict[cont_name]['wrong_beginning'][0][1]+1
+                        end_err_dict[cont_name]['duplication'].append([err_st,self.intervals[cont_name][0][0]-1,'wrong_beginning',self.intervals[cont_name][0][0]-err_st,'ends'])
+
+
+                    
+                
+                        
+
+            if self.intervals[cont_name][-1][1]<self.intervals[cont_name][-1][6]:
+                    if end_err_dict[cont_name]['wrong_end']==[]:
+                        err_end=self.intervals[cont_name][-1][6]
+                        end_err_dict[cont_name]['duplication'].append([self.intervals[cont_name][-1][1]+1,err_end,'wrong_end',err_end-self.intervals[cont_name][-1][1],'ends'])
+
+                    else:
+                        if self.intervals[cont_name][-1][1]<end_err_dict[cont_name]['wrong_end'][0][0]-1:
+                            err_end=end_err_dict[cont_name]['wrong_end'][0][0]-1
+                            end_err_dict[cont_name]['duplication'].append([self.intervals[cont_name][-1][1]+1,err_end,'wrong_end',err_end-self.intervals[cont_name][-1][1],'ends'])
+
+
+                    
 
 
         for cont_name in self.intervals.keys():
@@ -1292,7 +1463,7 @@ class Nucmer:
 
 
 
-
+        return end_err_dict
 
 
     def FIND_UNMAPPED_CONTIGS(self, contigs_dict):
@@ -1335,8 +1506,29 @@ class Nucmer:
 
         return end_err_dict
 
-    
-    
+    def FIND_UNCOVERED_REF_REGIONS(self, ref_dict):
+
+        intervals_dict={}
+        uncov_dict={}
+
+        for ref_name in ref_dict.keys():
+            intervals_dict[ref_name]=[]
+            uncov_dict[ref_name]=[]
+
+        for cont_name in self.intervals.keys():
+            for entry in self.intervals[cont_name]:
+                ref_name=entry[8]
+
+                intervals_dict[ref_name].append([entry[2],entry[3]])
+
+
+        for ref_name in intervals_dict.keys():
+            if intervals_dict[ref_name]!=[]:
+                intervals_dict[ref_name]=sorted(intervals_dict[ref_name],key=lambda inter:inter[0], reverse=False)
+                overlap_list=FIND_OVERLAP_INTERVALS(intervals_dict[ref_name])
+                uncov_dict[ref_name]=FIND_ZERO_COV(overlap_list,len(ref_dict[ref_name]))
+        return uncov_dict
+                
     def FIND_ERRORS(self, file_contigs, file_ref,reloc_dist):
 
         
@@ -1346,11 +1538,13 @@ class Nucmer:
         
  
         #1. find unmapped query sequences
-        unmapped_list=self.FIND_UNMAPPED_CONTIGS(contigs_dict) 
+        unmapped_list=self.FIND_UNMAPPED_CONTIGS(contigs_dict)
+
+        uncovered_dict=self.FIND_UNCOVERED_REF_REGIONS(ref_dict )
 
            
         #2. delete nested query and references fragments 
-        self.IMPROVE_PARSING_RESULTS(contigs_dict, ref_dict)
+        end_err_dict=self.IMPROVE_PARSING_RESULTS(contigs_dict, ref_dict)
 
         #3. find local differences
         self.FIND_NON_STRUCTURAL_ERRORS(contigs_dict, ref_dict,reloc_dist)
@@ -1386,10 +1580,70 @@ class Nucmer:
 
         
         
-        return struct_dict,end_err_dict,unmapped_list
+        return struct_dict,end_err_dict,unmapped_list,uncovered_dict
         
 
 #------------------------------------
+def FIND_ZERO_COV(overlap_list,len_seq):
+
+    uncov_list=[]
+
+    if overlap_list==[]:
+        uncov_list.append([1,len_seq])
+    else:
+        if overlap_list[0][0]>1:
+            uncov_list.append([1,overlap_list[0][0]-1])
+
+        for i in range(len(overlap_list)-1):
+            entry_1=overlap_list[i]
+            entry_2=overlap_list[i+1]
+
+            if entry_2[0]>entry_1[1]+1:
+                uncov_list.append([entry_1[1]+1,entry_2[0]-1])
+
+
+        if overlap_list[-1][1]<len_seq:
+            uncov_list.append([overlap_list[-1][1]+1,len_seq])
+
+    return uncov_list
+def FIND_OVERLAP_INTERVALS(interv_list):
+
+    
+    if interv_list==[]:
+        result_list=[]
+
+    else:
+        if len(interv_list)==1:
+            result_list=interv_list
+
+        else:
+            result_list=[]
+
+            st_interv=interv_list[0][0]
+            end_interv=interv_list[0][1]
+            
+
+            for entry in interv_list[1:]:
+                st_new=entry[0]
+                end_new=entry[1]
+
+                if end_interv<st_new:
+                    result_list.append([st_interv, end_interv])
+
+                    st_interv=st_new
+                    end_interv=end_new
+
+                   
+                else:
+                    end_interv=max(end_interv,end_new)
+
+            
+            result_list.append([st_interv, end_interv])
+   
+
+    return result_list
+
+
 def FIND_GAP_POS(seq, start_seq, end_seq):
 
     gap_list=[]
