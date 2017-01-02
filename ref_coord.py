@@ -800,24 +800,37 @@ def FIND_CONTIGS_ENDS(err_ref_cont_coord_errors_list,struct_dict_contig, cont_na
         r_st=sort_c_st_list[0][2]
         err_ref_cont_coord_errors_list.append([r_name, r_st, r_st, cont_name, c_st, c_st, 'contig_st',1,'r' ])
 
-        if not end_err_dict[cont_name]['wrong_beginning']==[]:
-            end_entry=end_err_dict[cont_name]['wrong_beginning']
+        if end_err_dict[cont_name]['wrong_beginning']!=[]:
+            end_entry=end_err_dict[cont_name]['wrong_beginning'][0]
             
             err_ref_cont_coord_errors_list.append([r_name,max(1,r_st-1),max(1,r_st-1),cont_name,end_entry[0],end_entry[1],end_entry[2],end_entry[3],'struct'])
 
+        if end_err_dict[cont_name]['duplication']!=[]:
 
-            
+            for dupl in end_err_dict[cont_name]['duplication']:
+                if dupl[2]=='wrong_beginning':
+                    err_ref_cont_coord_errors_list.append([r_name,max(1,r_st-1),max(1,r_st-1),cont_name,dupl[0],dupl[1],'insertion-multiple_copy',dupl[3],'struct',1,'ends'])
+
+ 
                   
     else:
         r_st=sort_c_st_list[0][3]
         err_ref_cont_coord_errors_list.append([r_name, r_st, r_st, cont_name, c_st, c_st, 'contig_end',1,'r' ])
 
-        if not end_err_dict[cont_name]['wrong_beginning']==[]:
-            end_entry=end_err_dict[cont_name]['wrong_beginning']
+        if end_err_dict[cont_name]['wrong_beginning']!=[]:
+            end_entry=end_err_dict[cont_name]['wrong_beginning'][0]
 
-            
-            
             err_ref_cont_coord_errors_list.append([r_name,r_st,r_st,cont_name,end_entry[0],end_entry[1],end_entry[2],end_entry[3],'struct'])
+
+
+        if end_err_dict[cont_name]['duplication']!=[]:
+
+            for dupl in end_err_dict[cont_name]['duplication']:
+                if dupl[2]=='wrong_beginning':
+                    err_ref_cont_coord_errors_list.append([r_name,r_st,r_st,cont_name,dupl[0],dupl[1],'insertion-multiple_copy',dupl[3],'struct',1,'ends'])
+
+
+                   
 
     
 
@@ -832,23 +845,34 @@ def FIND_CONTIGS_ENDS(err_ref_cont_coord_errors_list,struct_dict_contig, cont_na
         r_end=sort_c_st_list[-1][3]
         err_ref_cont_coord_errors_list.append([r_name, r_end, r_end, cont_name, c_end, c_end, 'contig_end',1,'r' ])
 
-        if not end_err_dict[cont_name]['wrong_end']==[]:
-            end_entry=end_err_dict[cont_name]['wrong_end']
+        if end_err_dict[cont_name]['wrong_end']!=[]:
+            end_entry=end_err_dict[cont_name]['wrong_end'][0]
             err_ref_cont_coord_errors_list.append([r_name,r_end,r_end,cont_name,end_entry[0],end_entry[1],end_entry[2],end_entry[3],'struct'])
+
+        if end_err_dict[cont_name]['duplication']!=[]:
+
+            for dupl in end_err_dict[cont_name]['duplication']:
+                if dupl[2]=='wrong_end':
+                    err_ref_cont_coord_errors_list.append([r_name,r_end,r_end,cont_name,dupl[0],dupl[1],'insertion-multiple_copy',dupl[3],'struct',1,'ends'])
             
     else:
         r_end=sort_c_st_list[-1][2]
         err_ref_cont_coord_errors_list.append([r_name, r_end, r_end, cont_name, c_end, c_end, 'contig_st',1,'r' ])
 
-        if not end_err_dict[cont_name]['wrong_end']==[]:
-            end_entry=end_err_dict[cont_name]['wrong_end']
+        if end_err_dict[cont_name]['wrong_end']!=[]:
+            end_entry=end_err_dict[cont_name]['wrong_end'][0]
             err_ref_cont_coord_errors_list.append([r_name,max(1,r_end-1),max(1,r_end-1),cont_name,end_entry[0],end_entry[1],end_entry[2],end_entry[3],'struct'])
+
+        if end_err_dict[cont_name]['duplication']!=[]:
+
             
 
-    
+            for dupl in end_err_dict[cont_name]['duplication']:
+                if dupl[2]=='wrong_end':
+                    err_ref_cont_coord_errors_list.append([r_name,max(1,r_end-1),max(1,r_end-1),cont_name,dupl[0],dupl[1],'insertion-multiple_copy',dupl[3],'struct',1,'ends'])
+            
 
-    
-    
+           
                             
     
     
@@ -956,12 +980,12 @@ def FIND_UNCOV_REF(interv_list,len_ref):
 def FIND_UNCOVERED_REF_FRAG(err_ref_cont_coord_errors_list,struct_dict, ref_dict,uncovered_dict):
     ref_interv_dict={}
 
-
+    '''
     for ref_name in uncovered_dict.keys():
         if uncovered_dict[ref_name]!=[]:
             for entry in uncovered_dict[ref_name]:
                 err_ref_cont_coord_errors_list.append([ref_name,entry[0],entry[1],'-','-','-','uncovered_region',entry[1]-entry[0]+1,'r'])
-
+    '''
     #find clipped_repeated_regios
     for ref_name in ref_dict.keys():
         ref_interv_dict[ref_name]=[]
@@ -976,9 +1000,11 @@ def FIND_UNCOVERED_REF_FRAG(err_ref_cont_coord_errors_list,struct_dict, ref_dict
                     between_output=struct_dict[cont_name][trl_gr]['blocks'][msj_gr]['blocks'][bl_name]['between_output']
                     if between_output!=[]:
                         for entry in between_output:
-                            ref_interv_dict[entry[5]].append([entry[6],entry[7]])
+                            
+                            if entry[2].startswith('deletion'):
+                                ref_interv_dict[entry[5]].append([entry[6],entry[7]])
 
-    '''
+    
     for ref_name in ref_interv_dict.keys():
         if ref_interv_dict[ref_name]==[]:
             err_ref_cont_coord_errors_list.append([ref_name,1,len(ref_dict[ref_name]),'-','-','-','uncovered_region',len(ref_dict[ref_name]),'r'])
@@ -990,8 +1016,8 @@ def FIND_UNCOVERED_REF_FRAG(err_ref_cont_coord_errors_list,struct_dict, ref_dict
 
             for entry in uncovered_list:
                 err_ref_cont_coord_errors_list.append([ref_name,entry[0],entry[1],'-','-','-','uncovered_region',entry[1]-entry[0]+1,'r'])
+    
     '''
-
     for ref_name in ref_dict.keys():
         cover_reg_list=FIND_INTERSECTION(ref_interv_dict[ref_name])
 
@@ -1005,7 +1031,7 @@ def FIND_UNCOVERED_REF_FRAG(err_ref_cont_coord_errors_list,struct_dict, ref_dict
         for entry in uncovered_list:
                 err_ref_cont_coord_errors_list.append([ref_name,entry[0],entry[1],'-','-','-','clipped_repeated_region',entry[1]-entry[0]+1,'r'])
 
-        
+    ''' 
         
 def MERGE_BLOCK_TRL(reloc_list):
     #[c_st,c_end,r_st,r_end,ref_name,[c_st,c_st_Ref,c_st_Ref_type],[c_end,c_end_Ref,c_end_Tef_type]]

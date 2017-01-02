@@ -433,6 +433,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                                         ';ins_len='+str(entry[7])+';query_dir='+query_dir+';ref_sequence='+r_name+';ref_coord='+str(entry[1])+';color=#EE0000'+'\n')
                                 
                         elif entry[6]=='insertion-multiple_copy':
+                            
                             if len(entry)==13:
                                 ID_name=entry[12]
 
@@ -453,7 +454,10 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                             
                                 fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:1000035'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
                                         ';ins_len='+str(entry[7])+';query_dir=1;ref_sequence='+r_name+';ref_coord='+str(entry[1])+';color=#EE0000'+'\n')
-                            
+
+                            else:
+                                print entry
+                                raw_input('ku')
     
 
                         elif entry[6]=='insertion-tandem_multiple_copy':
@@ -1321,7 +1325,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                             
 
                     f.write(asmb_name+'\tNucDiff_v2.0\t'+'SO:0000657'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t'+'.'+'\t.\tID='+entry[5]+';Name='+entry[2]+\
-                                ';repeat_len='+str(entry[1]-entry[0]+1)+';difference_type='+entry[4][2]+';difference_coord_query='+str(entry[4][0])+'-'+str(entry[4][1])+\
+                                ';repeat_len='+str(entry[1]-entry[0]+1)+';difference_type='+err_new_names_dict[entry[4][2]]+';difference_coord_query='+str(entry[4][0])+'-'+str(entry[4][1])+\
                                     ';difference_len='+str(entry[4][3])+'\n')
 
 

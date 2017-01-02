@@ -1575,7 +1575,7 @@ class Nucmer:
         #5. find structural differences
         struct_dict=self.FIND_STRUCTURAL_ERRORS(contigs_dict, ref_dict,reloc_dist)
 
-        end_err_dict=self.FIND_WRONG_END(struct_dict)
+        #end_err_dict=self.FIND_WRONG_END(struct_dict)
         
 
         
