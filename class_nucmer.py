@@ -1540,7 +1540,7 @@ class Nucmer:
         #1. find unmapped query sequences
         unmapped_list=self.FIND_UNMAPPED_CONTIGS(contigs_dict)
 
-        uncovered_dict=self.FIND_UNCOVERED_REF_REGIONS(ref_dict )
+        uncovered_dict={}#self.FIND_UNCOVERED_REF_REGIONS(ref_dict )
 
            
         #2. delete nested query and references fragments 

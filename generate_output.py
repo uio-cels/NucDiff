@@ -19,7 +19,7 @@ err_new_names_dict={'substitution':'substitution', 'gap':'gap',
                       'wrong_end':'unaligned_end', 'wrong_gap':'inserted_gap', 'wrong_gap-overestimated':'inserted_gap',
 
                       'deletion':'deletion', 'deletion-collapsed_repeat':'collapsed_repeat',
-                      'deletion-collapsed_tandem_repeat':'tandem_collapsed_repeat','deletion-gap_underestimated':'deletion',
+                      'deletion-collapsed_tandem_repeat':'collapsed_tandem_repeat','deletion-gap_underestimated':'deletion',
 
                       'translocation':'translocation','translocation-insertion':'translocation-insertion',
                       'translocation-mixed_fragments':'translocation-insertion_ATGCN',
@@ -282,7 +282,7 @@ def OUTPUT_READABLE(structure_dict,end_err_dict,unmapped_list, cont_dict,contig_
 def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,ref_full_names_dict,cont_dict,contig_names,contig_full_names_dict,working_dir, prefix,asmb_name_full,ref_name_full,mapped_blocks_dict):
 
    #query_snps.gff
-
+    temp_entry=[]
     
     snp_err_dict={}
     struct_err_dict={}
@@ -308,17 +308,25 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
             c_name=entry[3]
             struct_err_dict[c_name].append(entry)
         else:
-            c_name=entry[0]
-            struct_err_dict[c_name].append(entry)
+            
+            struct_err_dict[c_name].append(['-','-','-']+entry)
 
-
+     
+            
+        
     for c_name in snp_err_dict.keys():
         snp_err_dict[c_name]= sorted(snp_err_dict[c_name],key=lambda inter:inter[4], reverse=False)
             
     for c_name in struct_err_dict.keys():
         struct_err_dict[c_name]= sorted(struct_err_dict[c_name],key=lambda inter:inter[4], reverse=False)
-        
 
+        
+        for entry in struct_err_dict[c_name]:
+            if entry[:3]==['-','-','-']:
+                for u in range(3):
+                     entry.pop(0)
+                
+       
 
     fq=open(working_dir+prefix+'_query_snps.gff','w')
     
@@ -602,6 +610,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                         
 
                     else:# entry[8]=='struct2'
+                        
                         if entry[3]=='circular_genome_start' or entry[3]=='misjoin':
                             ID_name=entry[9]
 
