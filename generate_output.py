@@ -308,7 +308,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
             c_name=entry[3]
             struct_err_dict[c_name].append(entry)
         else:
-            
+            c_name=entry[0]
             struct_err_dict[c_name].append(['-','-','-']+entry)
 
      
