@@ -272,10 +272,11 @@ class Nucmer:
 
                         if c1_end+1<c2_st:
                            type_gap=class_interv_coord.ANALYSE_SPACE_SIMB(contig_seq, c1_end+1, c2_st-1)
+                           
                            if type_gap=='gap':
                                 structure_dict[cont_name][transl_group]['reason'].append([c1_end+1, c2_st-1, 'translocation-wrong_scaffolding',c2_st-c1_end-1, 'transl' ])
 
-                           elif type_gap=='mixed_fragments':
+                           elif type_gap=='mixed_fragment':
                                structure_dict[cont_name][transl_group]['reason'].append([c1_end+1, c2_st-1, 'translocation-mixed_fragments',c2_st-c1_end-1, 'transl' ])
                            else:                               
                                 structure_dict[cont_name][transl_group]['reason'].append([c1_end+1, c2_st-1, 'translocation-insertion',c2_st-c1_end-1, 'transl' ])
@@ -1064,8 +1065,8 @@ class Nucmer:
                         for i in range(len(temp_block_list)):
                             temp_block_list.pop(0)
         
-        '''
         
+        '''
         for cont_name in sorted(structure_dict.keys()):
             print_flag=0
             print '#-------------'
@@ -1097,8 +1098,8 @@ class Nucmer:
                     print
                 print
            
+            
         '''
-        
         return structure_dict    
       
         
