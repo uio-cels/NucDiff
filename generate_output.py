@@ -310,7 +310,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
             struct_err_dict[c_name].append(entry)
         else:
             c_name=entry[0]
-            struct_err_dict[c_name].append(['-','-','-']+entry)
+            struct_err_dict[c_name].append(['.','.','.']+entry)
 
      
             
@@ -323,7 +323,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
 
         
         for entry in struct_err_dict[c_name]:
-            if entry[:3]==['-','-','-']:
+            if entry[:3]==['.','.','.']:
                 for u in range(3):
                      entry.pop(0)
                 
@@ -417,7 +417,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
 
                 for entry in struct_err_dict[cont_name]:
                     
-
+                    
                     if entry[8]=='struct':
                         if ref_name_full=='yes':
                             r_name=ref_full_names_dict[entry[0]]

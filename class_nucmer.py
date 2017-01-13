@@ -886,10 +886,10 @@ class Nucmer:
                                     r_st_next=entry[2]
 
                                     if ref_end+1<r_st_next:
-                                        if c_dir==1:
+                                        #if c_dir==1:
                                             blocks_info_dict[block_name]['between_output'].append([c_end,c_end, 'deletion', r_st_next-ref_end-1,'transp',ref_name,ref_end+1,r_st_next-1 ])
-                                        else:
-                                            blocks_info_dict[block_name]['between_output'].append([max(1,c_st-1),max(1,c_st-1), 'deletion', r_st_next-ref_end-1,'transp',ref_name,ref_end+1,r_st_next-1 ])
+                                        #else:
+                                        #    blocks_info_dict[block_name]['between_output'].append([max(1,c_st-1),max(1,c_st-1), 'deletion', r_st_next-ref_end-1,'transp',ref_name,ref_end+1,r_st_next-1 ])
 
 
                                     
@@ -901,9 +901,9 @@ class Nucmer:
                                     st_misj=structure_dict[cont_name][transl_group]['blocks'][misj_group]['output_line'][0]
                                     if c_st>st_misj:
                                         
-                                        if c_dir==1:
-                                            blocks_info_dict[block_name]['between_output'].append([st_misj,c_st-1, 'insertion-multiple_copy', c_st-1-st_misj+1,'transp',ref_name,max(1,ref_st-1),max(1,ref_st-1)])
-                                        else:
+                                        #if c_dir==1:
+                                        #    blocks_info_dict[block_name]['between_output'].append([st_misj,c_st-1, 'insertion-multiple_copy', c_st-1-st_misj+1,'transp',ref_name,max(1,ref_st-1),max(1,ref_st-1)])
+                                        #else:
                                             blocks_info_dict[block_name]['between_output'].append([st_misj,c_st-1, 'insertion-multiple_copy', c_st-1-st_misj+1,'transp',ref_name,ref_end,ref_end])
                                             
                                 else:
@@ -912,9 +912,9 @@ class Nucmer:
 
                                         if c_st>st_misj:
                                         
-                                            if c_dir==1:
-                                                blocks_info_dict[block_name]['between_output'].append([st_misj,c_st-1, 'insertion-multiple_copy', c_st-1-st_misj+1,'transp',ref_name,max(1,ref_st-1),max(1,ref_st-1)])
-                                            else:
+                                            #if c_dir==1:
+                                            #    blocks_info_dict[block_name]['between_output'].append([st_misj,c_st-1, 'insertion-multiple_copy', c_st-1-st_misj+1,'transp',ref_name,max(1,ref_st-1),max(1,ref_st-1)])
+                                            #else:
                                                 blocks_info_dict[block_name]['between_output'].append([st_misj,c_st-1, 'insertion-multiple_copy', c_st-1-st_misj+1,'transp',ref_name,ref_end,ref_end])
                                                 
                                     
@@ -929,27 +929,27 @@ class Nucmer:
                                     seq=contigs_dict[cont_name]
                                     space_type=class_interv_coord.ANALYSE_SPACE_SIMB(seq, c_end+1, c_st_next-1)
                                     if space_type=='gap':
-                                       if c_dir==1:
+                                       #if c_dir==1:
                                             blocks_info_dict[block_name]['between_output'].append([c_end+1,c_st_next-1, 'wrong_gap', c_st_next-c_end-1,'transp',ref_name,ref_end,ref_end  ])
-                                       else:
-                                            blocks_info_dict[block_name]['between_output'].append([c_end+1,c_st_next-1, 'wrong_gap', c_st_next-c_end-1,'transp',ref_name,max(1,ref_st-1),max(1,ref_st-1)])
+                                       #else:
+                                       #     blocks_info_dict[block_name]['between_output'].append([c_end+1,c_st_next-1, 'wrong_gap', c_st_next-c_end-1,'transp',ref_name,max(1,ref_st-1),max(1,ref_st-1)])
                                        
                                    
                                     elif space_type=='nucleotides':
-                                        if c_dir==1:
+                                        #if c_dir==1:
                                             blocks_info_dict[block_name]['between_output'].append([c_end+1,c_st_next-1, 'insertion', c_st_next-c_end-1,'transp',ref_name,ref_end,ref_end  ])
-                                        else:
-                                            blocks_info_dict[block_name]['between_output'].append([c_end+1,c_st_next-1, 'insertion', c_st_next-c_end-1,'transp',ref_name,max(1,ref_st-1),max(1,ref_st-1)])
+                                        #else:
+                                        #    blocks_info_dict[block_name]['between_output'].append([c_end+1,c_st_next-1, 'insertion', c_st_next-c_end-1,'transp',ref_name,max(1,ref_st-1),max(1,ref_st-1)])
 
                                         
                                     else: # space_type='mixed_fragment'
                                         
                                         errors_list=class_interv_coord.FIND_INSERTION_GAP_INTERVALS(seq, c_end+1, c_st_next-1,'transp')
                                         for entry in errors_list:
-                                            if c_dir==1:
+                                            #if c_dir==1:
                                                 blocks_info_dict[block_name]['between_output'].append([entry[0],entry[1], entry[2], entry[1]-entry[0]+1,'transp',ref_name,ref_end,ref_end  ])
-                                            else:
-                                                blocks_info_dict[block_name]['between_output'].append([entry[0],entry[1], entry[2], entry[1]-entry[0]+1,'transp',ref_name,max(1,ref_st-1),max(1,ref_st-1)])
+                                            #else:
+                                            #    blocks_info_dict[block_name]['between_output'].append([entry[0],entry[1], entry[2], entry[1]-entry[0]+1,'transp',ref_name,max(1,ref_st-1),max(1,ref_st-1)])
                                             
                                         
 
@@ -957,19 +957,19 @@ class Nucmer:
                                 if structure_dict[cont_name][transl_group]['blocks'][misj_group]['output_line']!=[] :
                                     end_misj=structure_dict[cont_name][transl_group]['blocks'][misj_group]['output_line'][1]
                                     if c_end<end_misj:
-                                        if c_dir==1:
+                                        #if c_dir==1:
                                             blocks_info_dict[block_name]['between_output'].append([c_end+1,end_misj, 'insertion-multiple_copy', end_misj-c_end-1+1,'transp', ref_name, ref_end,ref_end ])
-                                        else:
-                                            blocks_info_dict[block_name]['between_output'].append([c_end+1,end_misj, 'insertion-multiple_copy', end_misj-c_end-1+1,'transp', ref_name, max(1,ref_st-1),max(1,ref_st-1)])
+                                        #else:
+                                        #    blocks_info_dict[block_name]['between_output'].append([c_end+1,end_misj, 'insertion-multiple_copy', end_misj-c_end-1+1,'transp', ref_name, max(1,ref_st-1),max(1,ref_st-1)])
                                         
                                 else:
                                     if structure_dict[cont_name][transl_group]['output_line']!=[] :
                                         end_misj=structure_dict[cont_name][transl_group]['output_line'][1]
                                         if c_end<end_misj:
-                                            if c_dir==1:
+                                            #if c_dir==1:
                                                 blocks_info_dict[block_name]['between_output'].append([c_end+1,end_misj, 'insertion-multiple_copy', end_misj-c_end-1+1,'transp', ref_name, ref_end,ref_end ])
-                                            else:
-                                                blocks_info_dict[block_name]['between_output'].append([c_end+1,end_misj, 'insertion-multiple_copy', end_misj-c_end-1+1,'transp', ref_name, max(1,ref_st-1),max(1,ref_st-1)])
+                                            #else:
+                                            #    blocks_info_dict[block_name]['between_output'].append([c_end+1,end_misj, 'insertion-multiple_copy', end_misj-c_end-1+1,'transp', ref_name, max(1,ref_st-1),max(1,ref_st-1)])
                                             
 
                             
