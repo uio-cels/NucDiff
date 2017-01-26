@@ -208,11 +208,149 @@ class Nucmer:
     
         print 'Differences inside fragments are found'
 
-    
+    def REMOVE_REF_OVERLAP(self):
+
+        temp_interv_list=[]
+        temp_errors_list=[]
+        remove_list=[]
+        new_list=[]
+        
+        for cont_name in self.intervals.keys():
+            
+            max_gr=0
+            for entry in self.intervals[cont_name]:
+                if entry[9][0]>max_gr:
+                    max_gr=entry[9][0]
+
+            for gr_num in range(max_gr+1):
+                for i in range(len(self.intervals[cont_name])):
+                    if self.intervals[cont_name][i][9][0]==gr_num:
+                        temp_interv_list.append([self.intervals[cont_name][i][0],self.intervals[cont_name][i][1],self.intervals[cont_name][i][2],self.intervals[cont_name][i][3],self.intervals[cont_name][i][4],i,self.intervals[cont_name][i][10]])
+                        
+
+                #print '\nnew_list'
+                #for entry in temp_interv_list:
+                #    print entry[:10]
+                #raw_input('rfj')
+
+                if len(temp_interv_list)>1:
+
+                        temp_interv_list=sorted(temp_interv_list, key=lambda inter:inter[2], reverse=False)
+                                   
+                        for i in range(len(temp_interv_list)-1):
+                            
+                            r1_end=temp_interv_list[i][3]
+                            r2_st=temp_interv_list[i+1][2]
+
+                            
+                            if r1_end+1>r2_st: # reference fragments overlap
+                                
+                                c2_dir=temp_interv_list[i+1][4]
+                                c2_st=temp_interv_list[i+1][0]
+                                c2_end=temp_interv_list[i+1][1]
+
+                                errors_2=temp_interv_list[i+1][6]
+
+                                
+
+                                r2_coord=r1_end
+
+                                if c2_dir==1:
+                                    c2_coord, last_err_end=class_interv_coord.FIND_CONT_COORD_FORWARD_START(r2_st, c2_st, r2_coord, errors_2,c2_end)
+                                    
+                                    if c2_coord<c2_end:
+
+                                        temp_interv_list[i+1][0]=c2_coord+1
+                                        temp_interv_list[i+1][2]=r2_coord+1
+
+                                        self.intervals[cont_name][temp_interv_list[i+1][5]][0]=c2_coord+1
+                                        self.intervals[cont_name][temp_interv_list[i+1][5]][2]=r2_coord+1
+
+                                        for entry in errors_2:
+                                            if entry[0]>last_err_end:
+                                                temp_errors_list.append(entry)
+
+                                        del temp_interv_list[i+1][6][:]
+                                        del self.intervals[cont_name][temp_interv_list[i+1][5]][10][:]
+
+                                        for entry in temp_errors_list:
+                                            temp_interv_list[i+1][6].append(entry)
+                                            self.intervals[cont_name][temp_interv_list[i+1][5]][10].append(entry)
+                                            
+                                        del temp_errors_list[:]
+                                        
+                                    else:
+                                        remove_list.append(temp_interv_list[i+1][5])
+                                        
+                                        
+                                        
+                                else: #c2_dir==-1
+                                   
+                                    
+                                    c2_coord, last_err_end=class_interv_coord.FIND_CONT_COORD_REVERSE_END_SECOND(r2_st, c2_end, r2_coord, errors_2)
+
+                                    
+                                    if c2_coord>1:
+
+                                        temp_interv_list[i+1][1]=c2_coord-1
+                                        temp_interv_list[i+1][2]=r2_coord+1
+
+                                        self.intervals[cont_name][temp_interv_list[i+1][5]][1]=c2_coord-1
+                                        self.intervals[cont_name][temp_interv_list[i+1][5]][2]=r2_coord+1
+
+                                        
+                                        for entry in errors_2:
+                                            if entry[0]<last_err_end:
+                                                temp_errors_list.append(entry)
+
+                                        
+                                        del temp_interv_list[i+1][6][:]
+                                        del self.intervals[cont_name][temp_interv_list[i+1][5]][10][:]
+
+                                        for entry in temp_errors_list:
+                                            temp_interv_list[i+1][6].append(entry)
+                                            self.intervals[cont_name][temp_interv_list[i+1][5]][10].append(entry)
+                                            
+                                        del temp_errors_list[:]
+                                        
+                                    else:
+                                       remove_list.append(temp_interv_list[i+1][5]) 
+                                        
+
+                        
+                        for j in range(len(self.intervals[cont_name])):
+                            if not j in remove_list:
+                                new_list.append(self.intervals[cont_name][j])
+
+                        del remove_list[:]
+                        
+
+                        del self.intervals[cont_name][:]
+
+                        for entry in new_list:
+                             self.intervals[cont_name].append(entry)
+
+                        del new_list[:]
+
+                        
+                        
+                                
+                        
+
+            
+                    
+                    
+
+                del temp_interv_list[:]
+
+            
+            
     
     def FIND_STRUCTURAL_ERRORS(self,contigs_dict, ref_dict,reloc_dist):
         
         errors_list=[]
+
+        
 
         #-------1.find translocations
         structure_dict={}
@@ -220,15 +358,23 @@ class Nucmer:
 
         #1.1. redefine num element values
         self.FIND_REF_ORDER_NUM()
+
+        self.REMOVE_REF_OVERLAP()
         
         for cont_name in self.intervals.keys():
+
+            
 
             #1.2 sort intervals by translocation groups (fill in 'blocks' field)
             structure_dict[cont_name]={}
 
+            #print cont_name
             #for entry in self.intervals[cont_name]:
-            #    print entry
+            #    print entry[:10]
             #raw_input('rfj')
+
+
+            
             
 
             
@@ -333,16 +479,13 @@ class Nucmer:
         temp_errors_misj=[]
 
         
-        
-        
         for cont_name in structure_dict.keys():
             cur_misj_num=0
             
             
             
             for transl_group in  sorted(structure_dict[cont_name]):
-
-               #2.1 find misjoin_groups. Delete temp variable temp_group num
+                #2.1 find misjoin_groups. Delete temp variable temp_group num
                 new_misj_groups=FIND_MISJOIN_GROUP(structure_dict[cont_name][transl_group]['blocks'],reloc_dist)
 
                 
@@ -850,6 +993,7 @@ class Nucmer:
                         blocks_info_dict[block_name]['invers_output']=[]
                         blocks_info_dict[block_name]['between_output']=[]
                         blocks_info_dict[block_name]['local_output']=[]
+                        
 
 
                         c_st=structure_dict[cont_name][transl_group]['blocks'][misj_group]['blocks'][i][0]
@@ -1064,9 +1208,9 @@ class Nucmer:
 
                         for i in range(len(temp_block_list)):
                             temp_block_list.pop(0)
+
         
-        
-        '''
+        '''        
         for cont_name in sorted(structure_dict.keys()):
             print_flag=0
             print '#-------------'
@@ -1098,8 +1242,8 @@ class Nucmer:
                     print
                 print
            
-            
         '''
+        
         return structure_dict    
       
         

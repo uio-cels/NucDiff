@@ -443,6 +443,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                                 
                         elif entry[6]=='insertion-multiple_copy':
                             
+                            
                             if len(entry)==13:
                                 ID_name=entry[12]
 
