@@ -596,11 +596,11 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                             ID_name=entry[11]
 
                             fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0001874'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
-                                        ';blk_len='+str(entry[7])+';query_dir='+str(entry[9])+';ref_sequence='+r_name+';ref_coord='+str(entry[1])+'-'+str(entry[2])+';color=#404040'+'\n')
+                                        ';blk_len='+str(entry[7])+';query_dir='+str(entry[9])+';ref_sequence='+r_name+';ref_coord='+str(entry[1])+'-'+str(entry[2])+';color=#01DFD7'+'\n')
                             
                         else:
                             print entry
-                            raw_input('kfj')
+                            #raw_input('kfj')
                             a='reshuffling inversion'
                             
                     elif entry[8]=='a':
@@ -616,74 +616,134 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                         if entry[3]=='circular_genome_start' or entry[3]=='misjoin':
                             ID_name=entry[9]
 
-                            fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0001874'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+\
-                                     ';ref_sequence='+entry[6][0][4]+';blk_1_query='+str(entry[6][0][0])+'-'+str(entry[6][0][1])+';blk_1_ref='+str(entry[6][0][2])+'-'+str(entry[6][0][3])+\
-                                     ';blk_1_st_query='+str(entry[6][0][5][0])+';blk_1_st_ref='+str(entry[6][0][5][1])+';blk_1_end_query='+str(entry[6][0][6][0])+';blk_1_end_ref='+str(entry[6][0][6][1])+\
-                                     ';blk_2_query='+str(entry[7][0][0])+'-'+str(entry[7][0][1])+';blk_2_ref='+str(entry[7][0][2])+'-'+str(entry[7][0][3])+\
-                                     ';blk_2_st_query='+str(entry[7][0][5][0])+';blk_2_st_ref='+str(entry[7][0][5][1])+';blk_2_end_query='+str(entry[7][0][6][0])+';blk_2_end_ref='+str(entry[7][0][6][1])+\
+                            fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0001874'+'\t'+str(entry[1])+'\t'+str(entry[2])+\
+                                     '\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+\
+                                     ';ref_sequence='+entry[6][0][4]+';blk_1_query='+str(entry[6][0][0])+'-'+str(entry[6][0][1])+\
+                                     ';blk_1_ref='+str(entry[6][0][2])+'-'+str(entry[6][0][3])+\
+                                     ';blk_1_query_len='+str(entry[6][0][1]-entry[6][0][0]+1)+\
+                                     ';blk_1_ref_len='+str(entry[6][0][3]-entry[6][0][2]+1)+\
+                                     ';blk_1_st_query='+str(entry[6][0][5][0])+';blk_1_st_ref='+str(entry[6][0][5][1])+\
+                                     ';blk_1_end_query='+str(entry[6][0][6][0])+';blk_1_end_ref='+str(entry[6][0][6][1])+\
+                                     ';blk_2_query='+str(entry[7][0][0])+'-'+str(entry[7][0][1])+\
+                                     ';blk_2_ref='+str(entry[7][0][2])+'-'+str(entry[7][0][3])+\
+                                     ';blk_2_query_len='+str(entry[7][0][1]-entry[7][0][0]+1)+\
+                                     ';blk_2_ref_len='+str(entry[7][0][3]-entry[7][0][2]+1)+\
+                                     ';blk_2_st_query='+str(entry[7][0][5][0])+';blk_2_st_ref='+str(entry[7][0][5][1])+\
+                                     ';blk_2_end_query='+str(entry[7][0][6][0])+';blk_2_end_ref='+str(entry[7][0][6][1])+\
                                      ';color=#990099'+'\n')
 
                         elif entry[3]=='translocation':
                             ID_name=entry[9]
 
-                            fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0001873'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+\
-                                     ';blk_1_query='+str(entry[6][0][0])+'-'+str(entry[6][0][1])+';blk_1_ref='+str(entry[6][0][2])+'-'+str(entry[6][0][3])+';blk_1_ref_seq='+entry[6][0][4]+\
-                                     ';blk_1_st_query='+str(entry[6][0][5][0])+';blk_1_st_ref='+str(entry[6][0][5][1])+';blk_1_end_query='+str(entry[6][0][6][0])+';blk_1_end_ref='+str(entry[6][0][6][1])+\
-                                     ';blk_2_query='+str(entry[7][0][0])+'-'+str(entry[7][0][1])+';blk_2_ref='+str(entry[7][0][2])+'-'+str(entry[7][0][3])+';blk_2_ref_seq='+entry[7][0][4]+\
-                                     ';blk_2_st_query='+str(entry[7][0][5][0])+';blk_2_st_ref='+str(entry[7][0][5][1])+';blk_2_end_query='+str(entry[7][0][6][0])+';blk_2_end_ref='+str(entry[7][0][6][1])+\
+                            fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0001873'+'\t'+str(entry[1])+'\t'+str(entry[2])+\
+                                     '\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+\
+                                     ';ref_sequence_1='+entry[6][0][4]+\
+                                     ';blk_1_query='+str(entry[6][0][0])+'-'+str(entry[6][0][1])+\
+                                     ';blk_1_ref='+str(entry[6][0][2])+'-'+str(entry[6][0][3])+\
+                                     ';blk_1_query_len='+str(entry[6][0][1]-entry[6][0][0]+1)+\
+                                     ';blk_1_ref_len='+str(entry[6][0][3]-entry[6][0][2]+1)+\
+                                     ';blk_1_st_query='+str(entry[6][0][5][0])+';blk_1_st_ref='+str(entry[6][0][5][1])+\
+                                     ';blk_1_end_query='+str(entry[6][0][6][0])+';blk_1_end_ref='+str(entry[6][0][6][1])+\
+                                     ';ref_sequence_2='+entry[7][0][4]+\
+                                     ';blk_2_query='+str(entry[7][0][0])+'-'+str(entry[7][0][1])+\
+                                     ';blk_2_ref='+str(entry[7][0][2])+'-'+str(entry[7][0][3])+\
+                                     ';blk_2_query_len='+str(entry[7][0][1]-entry[7][0][0]+1)+\
+                                     ';blk_2_ref_len='+str(entry[7][0][3]-entry[7][0][2]+1)+\
+                                     ';blk_2_st_query='+str(entry[7][0][5][0])+';blk_2_st_ref='+str(entry[7][0][5][1])+\
+                                     ';blk_2_end_query='+str(entry[7][0][6][0])+';blk_2_end_ref='+str(entry[7][0][6][1])+\
                                      ';color=#A0A0A0'+'\n')
 
                         elif entry[3]=='misjoin-insertion' or entry[3]=='misjoin-mixed_fragments' or entry[3]=='misjoin-wrong_scaffolding':
                             ID_name=entry[9]
                             
                             
-                            fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0001874'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+\
+                            fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0001874'+'\t'+str(entry[1])+'\t'+str(entry[2])+\
+                                     '\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+\
                                      ';ins_len='+str(entry[4])+\
-                                     ';ref_sequence='+entry[6][0][4]+';blk_1_query='+str(entry[6][0][0])+'-'+str(entry[6][0][1])+';blk_1_ref='+str(entry[6][0][2])+'-'+str(entry[6][0][3])+\
-                                     ';blk_1_st_query='+str(entry[6][0][5][0])+';blk_1_st_ref='+str(entry[6][0][5][1])+';blk_1_end_query='+str(entry[6][0][6][0])+';blk_1_end_ref='+str(entry[6][0][6][1])+\
-                                     ';blk_2_query='+str(entry[7][0][0])+'-'+str(entry[7][0][1])+';blk_2_ref='+str(entry[7][0][2])+'-'+str(entry[7][0][3])+\
-                                     ';blk_2_st_query='+str(entry[7][0][5][0])+';blk_2_st_ref='+str(entry[7][0][5][1])+';blk_2_end_query='+str(entry[7][0][6][0])+';blk_2_end_ref='+str(entry[7][0][6][1])+\
+                                     ';ref_sequence='+entry[6][0][4]+';blk_1_query='+str(entry[6][0][0])+'-'+str(entry[6][0][1])+\
+                                     ';blk_1_ref='+str(entry[6][0][2])+'-'+str(entry[6][0][3])+\
+                                     ';blk_1_query_len='+str(entry[6][0][1]-entry[6][0][0]+1)+\
+                                     ';blk_1_ref_len='+str(entry[6][0][3]-entry[6][0][2]+1)+\
+                                     ';blk_1_st_query='+str(entry[6][0][5][0])+';blk_1_st_ref='+str(entry[6][0][5][1])+\
+                                     ';blk_1_end_query='+str(entry[6][0][6][0])+';blk_1_end_ref='+str(entry[6][0][6][1])+\
+                                     ';blk_2_query='+str(entry[7][0][0])+'-'+str(entry[7][0][1])+\
+                                     ';blk_2_ref='+str(entry[7][0][2])+'-'+str(entry[7][0][3])+\
+                                     ';blk_2_query_len='+str(entry[7][0][1]-entry[7][0][0]+1)+\
+                                     ';blk_2_ref_len='+str(entry[7][0][3]-entry[7][0][2]+1)+\
+                                     ';blk_2_st_query='+str(entry[7][0][5][0])+';blk_2_st_ref='+str(entry[7][0][5][1])+\
+                                     ';blk_2_end_query='+str(entry[7][0][6][0])+';blk_2_end_ref='+str(entry[7][0][6][1])+\
                                      ';color=#990099'+'\n')
 
 
                         elif entry[3]=='translocation-insertion' or entry[3]=='translocation-mixed_fragments' or entry[3]=='translocation-wrong_scaffolding':
                             ID_name=entry[9]
 
-                            fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0001873'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+\
+                            fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0001873'+'\t'+str(entry[1])+'\t'+str(entry[2])+\
+                                     '\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+\
                                      ';ins_len='+str(entry[4])+\
-                                     ';blk_1_query='+str(entry[6][0][0])+'-'+str(entry[6][0][1])+';blk_1_ref='+str(entry[6][0][2])+'-'+str(entry[6][0][3])+';blk_1_ref_seq='+entry[6][0][4]+\
-                                     ';blk_1_st_query='+str(entry[6][0][5][0])+';blk_1_st_ref='+str(entry[6][0][5][1])+';blk_1_end_query='+str(entry[6][0][6][0])+';blk_1_end_ref='+str(entry[6][0][6][1])+\
-                                     ';blk_2_query='+str(entry[7][0][0])+'-'+str(entry[7][0][1])+';blk_2_ref='+str(entry[7][0][2])+'-'+str(entry[7][0][3])+';blk_2_ref_seq='+entry[7][0][4]+\
-                                     ';blk_2_st_query='+str(entry[7][0][5][0])+';blk_2_st_ref='+str(entry[7][0][5][1])+';blk_2_end_query='+str(entry[7][0][6][0])+';blk_2_end_ref='+str(entry[7][0][6][1])+\
+                                     ';ref_sequence_1='+entry[6][0][4]+\
+                                     ';blk_1_query='+str(entry[6][0][0])+'-'+str(entry[6][0][1])+\
+                                     ';blk_1_ref='+str(entry[6][0][2])+'-'+str(entry[6][0][3])+\
+                                     ';blk_1_query_len='+str(entry[6][0][1]-entry[6][0][0]+1)+\
+                                     ';blk_1_ref_len='+str(entry[6][0][3]-entry[6][0][2]+1)+\
+                                     ';blk_1_st_query='+str(entry[6][0][5][0])+';blk_1_st_ref='+str(entry[6][0][5][1])+\
+                                     ';blk_1_end_query='+str(entry[6][0][6][0])+';blk_1_end_ref='+str(entry[6][0][6][1])+\
+                                     ';ref_sequence_2='+entry[7][0][4]+\
+                                     ';blk_2_query='+str(entry[7][0][0])+'-'+str(entry[7][0][1])+\
+                                     ';blk_2_ref='+str(entry[7][0][2])+'-'+str(entry[7][0][3])+\
+                                     ';blk_2_query_len='+str(entry[7][0][1]-entry[7][0][0]+1)+\
+                                     ';blk_2_ref_len='+str(entry[7][0][3]-entry[7][0][2]+1)+\
+                                     ';blk_2_st_query='+str(entry[7][0][5][0])+';blk_2_st_ref='+str(entry[7][0][5][1])+\
+                                     ';blk_2_end_query='+str(entry[7][0][6][0])+';blk_2_end_ref='+str(entry[7][0][6][1])+\
                                      ';color=#A0A0A0'+'\n')
 
-                            
+
+                           
                         elif entry[3]=='misjoin-overlap':
-                            ID_name=entry[10]
+                             ID_name=entry[10]
                             
-                            
-                            
-                            fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0001874'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+\
-                                     ';overalp_len='+str(entry[4])+\
-                                     ';ref_sequence='+entry[6][0][4]+';blk_1_query='+str(entry[6][0][0])+'-'+str(entry[6][0][1])+';blk_1_ref='+str(entry[6][0][2])+'-'+str(entry[6][0][3])+\
-                                     ';blk_1_st_query='+str(entry[6][0][5][0])+';blk_1_st_ref='+str(entry[6][0][5][1])+';blk_1_end_query='+str(entry[6][0][6][0])+';blk_1_end_ref='+str(entry[6][0][6][1])+\
-                                     ';blk_2_query='+str(entry[7][0][0])+'-'+str(entry[7][0][1])+';blk_2_ref='+str(entry[7][0][2])+'-'+str(entry[7][0][3])+\
-                                     ';blk_2_st_query='+str(entry[7][0][5][0])+';blk_2_st_ref='+str(entry[7][0][5][1])+';blk_2_end_query='+str(entry[7][0][6][0])+';blk_2_end_ref='+str(entry[7][0][6][1])+\
+                             fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0001874'+'\t'+str(entry[1])+'\t'+str(entry[2])+\
+                                     '\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+\
+                                     ';overlap_len='+str(entry[4])+\
+                                     ';ref_sequence='+entry[6][0][4]+';blk_1_query='+str(entry[6][0][0])+'-'+str(entry[6][0][1])+\
+                                     ';blk_1_ref='+str(entry[6][0][2])+'-'+str(entry[6][0][3])+\
+                                     ';blk_1_query_len='+str(entry[6][0][1]-entry[6][0][0]+1)+\
+                                     ';blk_1_ref_len='+str(entry[6][0][3]-entry[6][0][2]+1)+\
+                                     ';blk_1_st_query='+str(entry[6][0][5][0])+';blk_1_st_ref='+str(entry[6][0][5][1])+\
+                                     ';blk_1_end_query='+str(entry[6][0][6][0])+';blk_1_end_ref='+str(entry[6][0][6][1])+\
+                                     ';blk_2_query='+str(entry[7][0][0])+'-'+str(entry[7][0][1])+\
+                                     ';blk_2_ref='+str(entry[7][0][2])+'-'+str(entry[7][0][3])+\
+                                     ';blk_2_query_len='+str(entry[7][0][1]-entry[7][0][0]+1)+\
+                                     ';blk_2_ref_len='+str(entry[7][0][3]-entry[7][0][2]+1)+\
+                                     ';blk_2_st_query='+str(entry[7][0][5][0])+';blk_2_st_ref='+str(entry[7][0][5][1])+\
+                                     ';blk_2_end_query='+str(entry[7][0][6][0])+';blk_2_end_ref='+str(entry[7][0][6][1])+\
                                      ';color=#990099'+'\n')
 
 
                         elif entry[3]=='translocation-overlap':
                             ID_name=entry[10]
                             
-                            
-
-                            fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0001873'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+\
+                            fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0001873'+'\t'+str(entry[1])+'\t'+str(entry[2])+\
+                                     '\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+\
                                      ';overlap_len='+str(entry[4])+\
-                                     ';blk_1_query='+str(entry[6][0][0])+'-'+str(entry[6][0][1])+';blk_1_ref='+str(entry[6][0][2])+'-'+str(entry[6][0][3])+';blk_1_ref_seq='+entry[6][0][4]+\
-                                     ';blk_1_st_query='+str(entry[6][0][5][0])+';blk_1_st_ref='+str(entry[6][0][5][1])+';blk_1_end_query='+str(entry[6][0][6][0])+';blk_1_end_ref='+str(entry[6][0][6][1])+\
-                                     ';blk_2_query='+str(entry[7][0][0])+'-'+str(entry[7][0][1])+';blk_2_ref='+str(entry[7][0][2])+'-'+str(entry[7][0][3])+';blk_2_ref_seq='+entry[7][0][4]+\
-                                     ';blk_2_st_query='+str(entry[7][0][5][0])+';blk_2_st_ref='+str(entry[7][0][5][1])+';blk_2_end_query='+str(entry[7][0][6][0])+';blk_2_end_ref='+str(entry[7][0][6][1])+\
+                                     ';ref_sequence_1='+entry[6][0][4]+\
+                                     ';blk_1_query='+str(entry[6][0][0])+'-'+str(entry[6][0][1])+\
+                                     ';blk_1_ref='+str(entry[6][0][2])+'-'+str(entry[6][0][3])+\
+                                     ';blk_1_query_len='+str(entry[6][0][1]-entry[6][0][0]+1)+\
+                                     ';blk_1_ref_len='+str(entry[6][0][3]-entry[6][0][2]+1)+\
+                                     ';blk_1_st_query='+str(entry[6][0][5][0])+';blk_1_st_ref='+str(entry[6][0][5][1])+\
+                                     ';blk_1_end_query='+str(entry[6][0][6][0])+';blk_1_end_ref='+str(entry[6][0][6][1])+\
+                                     ';ref_sequence_2='+entry[7][0][4]+\
+                                     ';blk_2_query='+str(entry[7][0][0])+'-'+str(entry[7][0][1])+\
+                                     ';blk_2_ref='+str(entry[7][0][2])+'-'+str(entry[7][0][3])+\
+                                     ';blk_2_query_len='+str(entry[7][0][1]-entry[7][0][0]+1)+\
+                                     ';blk_2_ref_len='+str(entry[7][0][3]-entry[7][0][2]+1)+\
+                                     ';blk_2_st_query='+str(entry[7][0][5][0])+';blk_2_st_ref='+str(entry[7][0][5][1])+\
+                                     ';blk_2_end_query='+str(entry[7][0][6][0])+';blk_2_end_ref='+str(entry[7][0][6][1])+\
                                      ';color=#A0A0A0'+'\n')
+
+
+                           
                         
                        
                             
@@ -705,6 +765,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
 
     for cont_name in struct_err_dict.keys():
         for entry in struct_err_dict[cont_name]:
+           
             if entry[8]!='a':
                 if entry[8]!='struct2':
                     ref_struct_err_dict[entry[0]].append(entry)
@@ -745,11 +806,13 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                         
     for entry in err_ref_cont_coord_errors_list:
         if entry[8]=='r':
-                ref_name=entry[0]
-                ref_struct_err_dict[ref_name].append(entry)
-                ref_struct_err_dict[ref_name][-1].append('SV_'+str(ID_cur))
-                ID_cur+=1
                 
+                if entry[6]!='contig_st' and entry[6]!='contig_end':
+                    ref_name=entry[0]
+                    ref_struct_err_dict[ref_name].append(entry)
+                    ref_struct_err_dict[ref_name][-1].append('SV_'+str(ID_cur))
+                    ID_cur+=1
+                    
 
 
     for r_name in ref_snp_err_dict.keys():
@@ -1041,16 +1104,17 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
 
                         
                         
-                        if entry[6]=='uncovered_region' or entry[6]=='clipped_repeated_region' :
+                        if entry[6]=='uncovered_region' :
                             ID_name=entry[9]
 
                             fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
                                         ';region_len='+str(entry[2]-entry[1]+1)+';color=#990000'+'\n')
 
-                        else:
-                            ID_name=entry[9]
-                            fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
-                                        ';query_sequence='+entry[3]+';query_pos='+str(entry[4])+';color=#990000'+'\n')
+                        #else:
+                            #print entry
+                            #ID_name=entry[9]
+                            #fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
+                            #            ';query_sequence='+entry[3]+';query_pos='+str(entry[4])+';color=#990000'+'\n')
 
                             
 
@@ -1059,129 +1123,106 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                         if entry[3]=='circular_genome_start' or entry[3]=='misjoin':
                             ID_name=entry[10]
 
-                            if entry[9][3]=='block_end':
 
-                                fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0001874'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+'_'+entry[4]+\
-                                     ';query_sequence='+str(entry[5])+';blk_st_query='+str(entry[6])+';breakpoint_query='+str(entry[7][0])+'-'+str(entry[7][1])+\
-                                     ';blk_query='+str(entry[8][0])+'-'+str(entry[8][1])+';blk_ref='+str(entry[8][2])+'-'+str(entry[8][3])+\
-                                     ';blk_end_query='+str(entry[9][0])+';blk_end_ref='+str(entry[9][1])+';blk_end_ref_type='+entry[9][2]+';color=#990099'+'\n')
-
-                                
-                            else:
-                                fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0001874'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+'_'+entry[4]+\
-                                     ';query_sequence='+str(entry[5])+';blk_end_query='+str(entry[6])+';breakpoint_query='+str(entry[7][0])+'-'+str(entry[7][1])+\
-                                     ';blk_query='+str(entry[8][0])+'-'+str(entry[8][1])+';blk_ref='+str(entry[8][2])+'-'+str(entry[8][3])+\
-                                     ';blk_st_query='+str(entry[9][0])+';blk_st_ref='+str(entry[9][1])+';blk_st_ref_type='+entry[9][2]+';color=#990099'+'\n')
-
-                                
+                            fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0001874'+'\t'+str(entry[1])+'\t'+str(entry[2])+\
+                                     '\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+\
+                                     ';query_sequence='+str(entry[5])+';query_coord='+str(entry[6])+\
+                                     ';breakpoint_query='+str(entry[7][0])+'-'+str(entry[7][1])+\
+                                     ';blk_query='+str(entry[8][0])+'-'+str(entry[8][1])+\
+                                     ';blk_ref='+str(entry[8][2])+'-'+str(entry[8][3])+\
+                                     ';blk_query_len='+str(entry[8][1]-entry[8][0]+1)+\
+                                     ';blk_ref_len='+str(entry[8][3]-entry[8][2]+1)+\
+                                     ';color=#990099'+'\n'
+                                     )
                             
                         elif entry[3]=='translocation':
                             ID_name=entry[10]
 
-                            if entry[9][3]=='block_end':
+                            fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0001873'+'\t'+str(entry[1])+'\t'+str(entry[2])+\
+                                     '\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+\
+                                     ';query_sequence='+str(entry[5])+';query_coord='+str(entry[6])+\
+                                     ';breakpoint_query='+str(entry[7][0])+'-'+str(entry[7][1])+\
+                                     ';blk_query='+str(entry[8][0])+'-'+str(entry[8][1])+\
+                                     ';blk_ref='+str(entry[8][2])+'-'+str(entry[8][3])+\
+                                     ';blk_query_len='+str(entry[8][1]-entry[8][0]+1)+\
+                                     ';blk_ref_len='+str(entry[8][3]-entry[8][2]+1)+\
+                                     ';color=#A0A0A0'+'\n'
+                                     )
+                            
 
-                                fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0001873'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+'_'+entry[4]+\
-                                     ';query_sequence='+str(entry[5])+';blk_st_query='+str(entry[6])+';breakpoint_query='+str(entry[7][0])+'-'+str(entry[7][1])+\
-                                     ';blk_query='+str(entry[8][0])+'-'+str(entry[8][1])+';blk_ref='+str(entry[8][2])+'-'+str(entry[8][3])+\
-                                     ';blk_end_query='+str(entry[9][0])+';blk_end_ref='+str(entry[9][1])+';blk_end_ref_type='+entry[9][2]+';color=#A0A0A0'+'\n')
-
-                                
-                            else:
-                                fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0001873'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+'_'+entry[4]+\
-                                     ';query_sequence='+str(entry[5])+';blk_end_query='+str(entry[6])+';breakpoint_query='+str(entry[7][0])+'-'+str(entry[7][1])+\
-                                     ';blk_query='+str(entry[8][0])+'-'+str(entry[8][1])+';blk_ref='+str(entry[8][2])+'-'+str(entry[8][3])+\
-                                     ';blk_st_query='+str(entry[9][0])+';blk_st_ref='+str(entry[9][1])+';blk_st_ref_type='+entry[9][2]+';color=#A0A0A0'+'\n')
-
-                               
                             
                         elif entry[3]=='misjoin-insertion' or entry[3]=='misjoin-mixed_fragments' or entry[3]=='misjoin-wrong_scaffolding':
                             
                             
                             ID_name=entry[10]
 
-                            if entry[9][3]=='block_end':
-
-                                fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0001874'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+'_'+entry[4]+\
-                                     ';query_sequence='+str(entry[5])+';blk_st_query='+str(entry[6])+';ins_len'+str(entry[7][2])+\
-                                     ';breakpoint_query='+str(entry[7][0])+'-'+str(entry[7][1])+\
-                                     ';blk_query='+str(entry[8][0])+'-'+str(entry[8][1])+';blk_ref='+str(entry[8][2])+'-'+str(entry[8][3])+\
-                                     ';blk_end_query='+str(entry[9][0])+';blk_end_ref='+str(entry[9][1])+';blk_end_ref_type='+entry[9][2]+';color=#990099'+'\n')
-
-                                
-                            else:
-                                fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0001874'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+'_'+entry[4]+\
-                                     ';query_sequence='+str(entry[5])+';blk_end_query='+str(entry[6])+';ins_len='+str(entry[7][2])+\
-                                         ';breakpoint_query='+str(entry[7][0])+'-'+str(entry[7][1])+\
-                                     ';blk_query='+str(entry[8][0])+'-'+str(entry[8][1])+';blk_ref='+str(entry[8][2])+'-'+str(entry[8][3])+\
-                                     ';blk_st_query='+str(entry[9][0])+';blk_st_ref='+str(entry[9][1])+';blk_st_ref_type='+entry[9][2]+';color=#990099'+'\n')
-
-                                
                             
+                            fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0001874'+'\t'+str(entry[1])+'\t'+str(entry[2])+\
+                                     '\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+\
+                                     ';ins_len='+str(entry[7][2])+\
+                                     ';query_sequence='+str(entry[5])+';query_coord='+str(entry[6])+\
+                                     ';breakpoint_query='+str(entry[7][0])+'-'+str(entry[7][1])+\
+                                     ';blk_query='+str(entry[8][0])+'-'+str(entry[8][1])+\
+                                     ';blk_ref='+str(entry[8][2])+'-'+str(entry[8][3])+\
+                                     ';blk_query_len='+str(entry[8][1]-entry[8][0]+1)+\
+                                     ';blk_ref_len='+str(entry[8][3]-entry[8][2]+1)+\
+                                     ';color=#990099'+'\n'
+                                     )
+
                             
                         elif entry[3]=='translocation-insertion' or entry[3]=='translocation-mixed_fragments' or entry[3]=='translocation-wrong_scaffolding':
                             ID_name=entry[10]
 
-                            if entry[9][3]=='block_end':
+                            fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0001873'+'\t'+str(entry[1])+'\t'+str(entry[2])+\
+                                     '\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+\
+                                     ';ins_len='+str(entry[7][2])+\
+                                     ';query_sequence='+str(entry[5])+';query_coord='+str(entry[6])+\
+                                     ';breakpoint_query='+str(entry[7][0])+'-'+str(entry[7][1])+\
+                                     ';blk_query='+str(entry[8][0])+'-'+str(entry[8][1])+\
+                                     ';blk_ref='+str(entry[8][2])+'-'+str(entry[8][3])+\
+                                     ';blk_query_len='+str(entry[8][1]-entry[8][0]+1)+\
+                                     ';blk_ref_len='+str(entry[8][3]-entry[8][2]+1)+\
+                                     ';color=#A0A0A0'+'\n'
+                                     )
 
-                                fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0001873'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+'_'+entry[4]+\
-                                     ';query_sequence='+str(entry[5])+';blk_st_query='+str(entry[6])+';ins_len='+str(entry[7][2])+\
-                                         ';breakpoint_query='+str(entry[7][0])+'-'+str(entry[7][1])+\
-                                     ';blk_query='+str(entry[8][0])+'-'+str(entry[8][1])+';blk_ref='+str(entry[8][2])+'-'+str(entry[8][3])+\
-                                     ';blk_end_query='+str(entry[9][0])+';blk_end_ref='+str(entry[9][1])+';blk_end_ref_type='+entry[9][2]+';color=#A0A0A0'+'\n')
 
-                                
-                            else:
-                                fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0001873'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+'_'+entry[4]+\
-                                     ';query_sequence='+str(entry[5])+';blk_end_query='+str(entry[6])+';ins_len='+str(entry[7][2])+\
-                                         ';breakpoint_query='+str(entry[7][0])+'-'+str(entry[7][1])+\
-                                     ';blk_query='+str(entry[8][0])+'-'+str(entry[8][1])+';blk_ref='+str(entry[8][2])+'-'+str(entry[8][3])+\
-                                     ';blk_st_query='+str(entry[9][0])+';blk_st_ref='+str(entry[9][1])+';blk_st_ref_type='+entry[9][2]+';color=#A0A0A0'+'\n')
-
-                                
-                            
+                                                        
                         elif entry[3]=='misjoin-overlap':
                             
                             
                             ID_name=entry[10]
 
-                            if entry[9][3]=='block_end':
-
-                                fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0001874'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+'_'+entry[4]+\
-                                     ';query_sequence='+str(entry[5])+';blk_st_query='+str(entry[6])+';overlap_len'+str(entry[7][2])+\
+                            fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0001874'+'\t'+str(entry[1])+'\t'+str(entry[2])+\
+                                     '\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+\
+                                     ';overlap_len='+str(entry[7][2])+\
+                                     ';query_sequence='+str(entry[5])+';query_coord='+str(entry[6])+\
                                      ';breakpoint_query='+str(entry[7][0])+'-'+str(entry[7][1])+\
-                                     ';blk_query='+str(entry[8][0])+'-'+str(entry[8][1])+';blk_ref='+str(entry[8][2])+'-'+str(entry[8][3])+\
-                                     ';blk_end_query='+str(entry[9][0])+';blk_end_ref='+str(entry[9][1])+';blk_end_ref_type='+entry[9][2]+';color=#990099'+'\n')
+                                     ';blk_query='+str(entry[8][0])+'-'+str(entry[8][1])+\
+                                     ';blk_ref='+str(entry[8][2])+'-'+str(entry[8][3])+\
+                                     ';blk_query_len='+str(entry[8][1]-entry[8][0]+1)+\
+                                     ';blk_ref_len='+str(entry[8][3]-entry[8][2]+1)+\
+                                     ';color=#990099'+'\n'
+                                     )
 
-                                
-                            else:
-                                fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0001874'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+'_'+entry[4]+\
-                                     ';query_sequence='+str(entry[5])+';blk_end_query='+str(entry[6])+';overlaplen='+str(entry[7][2])+\
-                                         ';breakpoint_query='+str(entry[7][0])+'-'+str(entry[7][1])+\
-                                     ';blk_query='+str(entry[8][0])+'-'+str(entry[8][1])+';blk_ref='+str(entry[8][2])+'-'+str(entry[8][3])+\
-                                     ';blk_st_query='+str(entry[9][0])+';blk_st_ref='+str(entry[9][1])+';blk_st_ref_type='+entry[9][2]+';color=#990099'+'\n')
-
-                            
+                           
                             
                         elif entry[3]=='translocation-overlap':
                             ID_name=entry[10]
 
-                            if entry[9][3]=='block_end':
+                            fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0001873'+'\t'+str(entry[1])+'\t'+str(entry[2])+\
+                                     '\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+\
+                                     ';overlap_len='+str(entry[7][2])+\
+                                     ';query_sequence='+str(entry[5])+';query_coord='+str(entry[6])+\
+                                     ';breakpoint_query='+str(entry[7][0])+'-'+str(entry[7][1])+\
+                                     ';blk_query='+str(entry[8][0])+'-'+str(entry[8][1])+\
+                                     ';blk_ref='+str(entry[8][2])+'-'+str(entry[8][3])+\
+                                     ';blk_query_len='+str(entry[8][1]-entry[8][0]+1)+\
+                                     ';blk_ref_len='+str(entry[8][3]-entry[8][2]+1)+\
+                                     ';color=#A0A0A0'+'\n'
+                                     )
 
-                                fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0001873'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+'_'+entry[4]+\
-                                     ';query_sequence='+str(entry[5])+';blk_st_query='+str(entry[6])+';overlap_len='+str(entry[7][2])+\
-                                         ';breakpoint_query='+str(entry[7][0])+'-'+str(entry[7][1])+\
-                                     ';blk_query='+str(entry[8][0])+'-'+str(entry[8][1])+';blk_ref='+str(entry[8][2])+'-'+str(entry[8][3])+\
-                                     ';blk_end_query='+str(entry[9][0])+';blk_end_ref='+str(entry[9][1])+';blk_end_ref_type='+entry[9][2]+';color=#A0A0A0'+'\n')
 
-                                
-                            else:
-                                fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0001873'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[3]]+'_'+entry[4]+\
-                                     ';query_sequence='+str(entry[5])+';blk_end_query='+str(entry[6])+';overlap_len='+str(entry[7][2])+\
-                                         ';breakpoint_query='+str(entry[7][0])+'-'+str(entry[7][1])+\
-                                     ';blk_query='+str(entry[8][0])+'-'+str(entry[8][1])+';blk_ref='+str(entry[8][2])+'-'+str(entry[8][3])+\
-                                     ';blk_st_query='+str(entry[9][0])+';blk_st_ref='+str(entry[9][1])+';blk_st_ref_type='+entry[9][2]+';color=#A0A0A0'+'\n')
-
-                        
+                           
                        
                                 
 
@@ -1261,7 +1302,8 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
     
             
 
-
+    for ref_name in ref_duplication_dict.keys():
+        ref_duplication_dict[ref_name]=sorted(ref_duplication_dict[ref_name],key=lambda inter:inter[0], reverse=False)    
 
     f=open(working_dir+prefix+'_ref_additional.gff','w')
     
@@ -1420,7 +1462,7 @@ def OUTPUT_MAPPED_BLOCKS_TO_REF(struct_dict,ref_dict,ref_names,ref_full_names_di
 
 
     
-    f=open(working_dir+prefix+'_mapped_blocks.gff','w')
+    f=open(working_dir+prefix+'_ref_blocks.gff','w')
     
     f.write('##gff-version 3\n')
 
@@ -1490,16 +1532,36 @@ def OUTPUT_BLOCKS_TO_QUERY(cont_blocks_dict,ref_dict,contig_names,ref_full_names
                     else:
                             rf_name=entry[4]
 
-                            
-                    if len(entry)==5:
-                        f.write(asmb_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t'+'.'+'\t.\tID='+entry[4]+';Name='+entry[2]+\
-                                ';blk_length='+str(entry[3])+'\n')
-
-                        
-
-                    elif len(entry)==9:
+                    if entry[2]=='Inversion': 
                         f.write(asmb_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t'+'.'+'\t.\tID='+entry[8]+';Name='+entry[2]+\
-                                ';blk_length='+str(entry[3])+';query_dir='+str(entry[7])+';ref_sequence='+rf_name+';ref_coord='+str(entry[5])+'-'+str(entry[6])+'\n')
+                                ';blk_length='+str(entry[3])+';query_dir='+str(entry[7])+';ref_sequence='+rf_name+';ref_coord='+str(entry[5])+'-'+str(entry[6])+';color=#DF0101'+'\n')
+
+                    elif entry[2]=='Block':
+                        f.write(asmb_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t'+'.'+'\t.\tID='+entry[8]+';Name='+entry[2]+\
+                                ';blk_length='+str(entry[3])+';query_dir='+str(entry[7])+';ref_sequence='+rf_name+';ref_coord='+str(entry[5])+'-'+str(entry[6])+';color=#000000'+'\n')
+
+                    elif entry[2].startswith('Resh'):
+                         f.write(asmb_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t'+'.'+'\t.\tID='+entry[8]+';Name='+entry[2]+\
+                                ';blk_length='+str(entry[3])+';query_dir='+str(entry[7])+';ref_sequence='+rf_name+';ref_coord='+str(entry[5])+'-'+str(entry[6])+';color=#04B404'+'\n')
+
+                    elif entry[2]=='Relocation_block':
+                        f.write(asmb_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t'+'.'+'\t.\tID='+entry[4]+';Name='+entry[2]+\
+                                ';blk_length='+str(entry[3])+';color=#01DFD7'+'\n')
+
+                    elif entry[2]=='Translocation_block':
+                        f.write(asmb_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t'+'.'+'\t.\tID='+entry[4]+';Name='+entry[2]+\
+                                ';blk_length='+str(entry[3])+';color=#0404B4'+'\n')
+                        
+                    else:  
+                        if len(entry)==5:
+                            f.write(asmb_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t'+'.'+'\t.\tID='+entry[4]+';Name='+entry[2]+\
+                                    ';blk_length='+str(entry[3])+'\n')
+
+                            
+
+                        elif len(entry)==9:
+                            f.write(asmb_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t'+'.'+'\t.\tID='+entry[8]+';Name='+entry[2]+\
+                                    ';blk_length='+str(entry[3])+';query_dir='+str(entry[7])+';ref_sequence='+rf_name+';ref_coord='+str(entry[5])+'-'+str(entry[6])+'\n')
 
                         
                     
