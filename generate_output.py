@@ -805,9 +805,10 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                     
                         
     for entry in err_ref_cont_coord_errors_list:
+        
         if entry[8]=='r':
                 
-                if entry[6]!='contig_st' and entry[6]!='contig_end':
+                if entry[6]!='contig_st' and entry[6]!='contig_end' and entry[6]!='uncovered_region':
                     ref_name=entry[0]
                     ref_struct_err_dict[ref_name].append(entry)
                     ref_struct_err_dict[ref_name][-1].append('SV_'+str(ID_cur))
@@ -961,15 +962,13 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                                 ID_name=entry[12]
 
                                 if len(entry[11])==1:
-                                    #repeat_region_dict[cont_name].append([entry])
-                                    
+                                   
                                     fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:1000173'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
                                         ';ins_len='+str(entry[7])+';query_dir='+str(entry[9])+';query_sequence='+c_name+';query_coord='+str(entry[4])+'-'+str(entry[5])+\
                                         ';ref_repeated_region='+str(entry[11][0][1])+'-'+str(entry[11][0][2])+';color=#EE0000'+'\n')
 
                                 elif len(entry[11])==2:
-                                    #repeat_region_dict[cont_name].append([entry])
-                                    
+                                                                       
                                     fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:1000173'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
                                         ';ins_len='+str(entry[7])+';query_dir='+str(entry[9])+';query_sequence='+c_name+';query_coord='+str(entry[4])+'-'+str(entry[5])+\
                                         ';ref_repeated_region_1='+str(entry[11][0][1])+'-'+str(entry[11][0][2])+\
@@ -1011,7 +1010,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                                 ID_name=entry[12]
 
                                 if len(entry[11])==1:
-                                    #repeat_region_dict[cont_name].append([entry])
+                                   
                                     
                                     fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0000159'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
                                         ';del_len='+str(entry[7])+';query_dir='+str(entry[9])+';query_sequence='+c_name+';query_coord='+str(entry[4])+\
@@ -1038,7 +1037,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                                 ID_name=entry[12]
 
                                 if len(entry[11])==1:
-                                    #repeat_region_dict[cont_name].append([entry])
+                                    
                                     
                                     fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0000159'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
                                         ';del_len='+str(entry[7])+';query_dir='+str(entry[9])+';query_sequence='+c_name+';query_coord='+str(entry[4])+\
@@ -1047,7 +1046,6 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                                     
 
                                 elif len(entry[11])==2:
-                                    #repeat_region_dict[cont_name].append([entry])
                                     
                                     fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0000159'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
                                         ';del_len='+str(entry[7])+';query_dir='+str(entry[9])+';query_sequence='+c_name+';query_coord='+str(entry[4])+\
@@ -1096,10 +1094,10 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                             ID_name=entry[11]
 
                             fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0001874'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
-                                        ';blk_len='+str(entry[7])+';query_dir='+str(entry[9])+';query_sequence='+c_name+';query_coord='+str(entry[4])+'-'+str(entry[5])+';color=#404040'+'\n')
+                                        ';blk_len='+str(entry[7])+';query_dir='+str(entry[9])+';query_sequence='+c_name+';query_coord='+str(entry[4])+'-'+str(entry[5])+';color=#01DFD7'+'\n')
 
                             
-                            
+                            '''        
                     elif entry[8]=='r':
 
                         
@@ -1110,12 +1108,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                             fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
                                         ';region_len='+str(entry[2]-entry[1]+1)+';color=#990000'+'\n')
 
-                        #else:
-                            #print entry
-                            #ID_name=entry[9]
-                            #fr.write(r_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[1])+'\t'+str(entry[2])+'\t.\t.\t.\tID='+ID_name+';Name='+err_new_names_dict[entry[6]]+\
-                            #            ';query_sequence='+entry[3]+';query_pos='+str(entry[4])+';color=#990000'+'\n')
-
+                            '''   
                             
 
                             
@@ -1232,16 +1225,22 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
     #additional files
 
     
-            
-
-    
     ref_duplication_dict={}
     for ref_name in mapped_blocks_dict.keys():
         ref_duplication_list=FIND_REF_DUPLICATION(mapped_blocks_dict[ref_name])
         ref_duplication_dict[ref_name]=ref_duplication_list
 
        
+    for entry in err_ref_cont_coord_errors_list:
+        if entry[6]=='uncovered_region':
+            ref_name=entry[0]
 
+            if not ref_duplication_dict.has_key(ref_name):
+                ref_duplication_dict[ref_name]=[]
+
+            ref_duplication_dict[ref_name].append([entry[1],entry[2],'Uncovered_region'])    
+
+             
 
     cont_repeat_region_dict={}
     for cont_name in repeat_region_dict.keys():
@@ -1322,11 +1321,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                     f.write('##sequence-region\t'+ref_name+'\t1\t'+str(len(ref_dict[r_name]))+'\n')
 
                     for entry in ref_duplication_dict[r_name]:
-                        #if asmb_name_full=='yes':
-                        #    c_name=contig_full_names_dict[entry[2]]
-                        #else:
-                        #    c_name=entry[2]
-
+                        
                         ID_cur='Region_'+str(ID)
                         ID+=1
 
@@ -1335,16 +1330,26 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                         if entry[2]=='Repeated_region':
                             f.write(ref_name+'\tNucDiff_v2.0\t'+'SO:0000657'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t.\t.\tID='+entry[5]+';Name='+entry[2]+\
                                 ';repeat_len='+str(entry[1]-entry[0]+1)+';difference_type='+err_new_names_dict[entry[4][2]]+';difference_coord_ref='+str(entry[4][0])+'-'+str(entry[4][1])+\
-                                    ';difference_len='+str(entry[4][3])+';color=#EE0000'+'\n')
+                                    ';difference_len='+str(entry[4][3])+';color=#DB0101'+'\n')
 
-                        elif entry[2]=='Relocation_overlap_region' or entry[2]=='Translocation_overlap_region':
+                        elif entry[2]=='Relocation_overlap_region':
                             f.write(ref_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t.\t.\tID='+entry[3]+';Name='+entry[2]+\
-                                ';overlap_len='+str(entry[1]-entry[0]+1)+'\n')
+                                ';overlap_len='+str(entry[1]-entry[0]+1)+';color=#00A123'+'\n')
+
+                        elif  entry[2]=='Translocation_overlap_region':
+                            f.write(ref_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t.\t.\tID='+entry[3]+';Name='+entry[2]+\
+                                ';overlap_len='+str(entry[1]-entry[0]+1)+';color=#8E00A1'+'\n')
+
+
+                        elif entry[2]=='Uncovered_region':  
+                            f.write(ref_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t.\t.\tID='+entry[3]+';Name='+entry[2]+\
+                                        ';region_len='+str(entry[1]-entry[0]+1)+';color=#000000'+'\n')
+   
                         else:
                             
                             
                             f.write(ref_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t.\t.\tID='+entry[3]+';Name='+'Ref_duplication'+\
-                                ';duplic_len='+str(entry[1]-entry[0]+1)+'\n')
+                                ';duplic_len='+str(entry[1]-entry[0]+1)+';color=#4005BF'+'\n')
                         
     f.close()
 
@@ -1369,13 +1374,6 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                 for entry in cont_repeat_region_dict[c_name]:
                     entry.append('Region_'+str(ID))
                     ID+=1
-
-                    #if ref_name_full=='yes':
-                    #        rf_name=ref_full_names_dict[entry[4]]
-                    #else:
-                    #        rf_name=entry[4]
-
-                            
 
                     f.write(asmb_name+'\tNucDiff_v2.0\t'+'SO:0000657'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t'+'.'+'\t.\tID='+entry[5]+';Name='+entry[2]+\
                                 ';repeat_len='+str(entry[1]-entry[0]+1)+';difference_type='+err_new_names_dict[entry[4][2]]+';difference_coord_query='+str(entry[4][0])+'-'+str(entry[4][1])+\
@@ -1551,7 +1549,11 @@ def OUTPUT_BLOCKS_TO_QUERY(cont_blocks_dict,ref_dict,contig_names,ref_full_names
                     elif entry[2]=='Translocation_block':
                         f.write(asmb_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t'+'.'+'\t.\tID='+entry[4]+';Name='+entry[2]+\
                                 ';blk_length='+str(entry[3])+';color=#0404B4'+'\n')
-                        
+
+                    elif entry[2]=='Circular_genome_block':
+                        f.write(asmb_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t'+'.'+'\t.\tID='+entry[4]+';Name='+entry[2]+\
+                                ';blk_length='+str(entry[3])+';color=#990099'+'\n')
+   
                     else:  
                         if len(entry)==5:
                             f.write(asmb_name+'\tNucDiff_v2.0\t'+'SO:0000001'+'\t'+str(entry[0])+'\t'+str(entry[1])+'\t.\t'+'.'+'\t.\tID='+entry[4]+';Name='+entry[2]+\
