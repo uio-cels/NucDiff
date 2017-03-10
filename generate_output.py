@@ -1617,7 +1617,7 @@ def OUTPUT_BLOCKS_TO_QUERY(cont_blocks_dict,ref_dict,contig_names,ref_full_names
     f.write('##gff-version 3\n')
 
     
-    gff_dict={'block':'Block', 'translocation_block':'TRL','relocation_block':'RLC', 'inversion':'INV', 'circlular_genome_block':'RLC'}
+    
 
     ID=1
     for c_name in contig_names:
