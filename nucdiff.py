@@ -41,6 +41,8 @@ def START(args):
 
     asmb_name_full=args['query_name_full']
     ref_name_full=args['ref_name_full']
+
+    vcf_flag=args['vcf']
     
     
           
@@ -61,7 +63,7 @@ def START(args):
 
 
     #5. generate output
-    generate_output.GENERATE_OUTPUT(struct_dict,end_err_dict,unmapped_list, file_ref, file_contigs, working_dir, prefix,err_ref_cont_coord_errors_list,statistics_output_lines,asmb_name_full,ref_name_full,cont_blocks_dict)
+    generate_output.GENERATE_OUTPUT(struct_dict,end_err_dict,unmapped_list, file_ref, file_contigs, working_dir, prefix,err_ref_cont_coord_errors_list,statistics_output_lines,asmb_name_full,ref_name_full,cont_blocks_dict,vcf_flag)
 
 
    
@@ -85,7 +87,8 @@ def main():
     parser.add_argument('--proc',  type=int, nargs='?',default=1, help='- Number of processes to be used [1] ')
     parser.add_argument('--ref_name_full',  type=str, nargs='?',default='no',choices=['yes','no'], help="- Print full reference names in output files ('yes' value). In case of 'no', everything after the first space will be ignored. ['no']")
     parser.add_argument('--query_name_full',  type=str, nargs='?',default='no',choices=['yes','no'], help="- Print full reference names in output files ('yes' value). In case of 'no', everything after the first space will be ignored.['no'] ")
-    parser.add_argument('--version', action='version', version='AEfinder 2.0')
+    parser.add_argument('--vcf',  type=str, nargs='?',default='no',choices=['yes','no'], help="- Output small and medium local differences in the VCF format")
+    parser.add_argument('--version', action='version', version='NucDiff version 2.0')
     
     
     

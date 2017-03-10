@@ -276,10 +276,113 @@ def OUTPUT_READABLE(structure_dict,end_err_dict,unmapped_list, cont_dict,contig_
 
 
     
+def OUTPUT_VCF_FILE_QUERY(asmb_name_full,contig_full_names_dict, contig_names,snp_err_dict,output_file,cont_dict,ref_dict):
+
+    fq=open(output_file,'w')
+    
+    fq.write('##fileformat=VCFv4.2\n')
+    fq.write('##source=NucDiffv2.0\n')
+    fq.write('#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\n')
+   
+    for cont_name in contig_names:
+        if asmb_name_full=='yes':
+            c_name=contig_full_names_dict[cont_name]
+        else:
+            c_name=cont_name
+                
+
+        if snp_err_dict[cont_name]!=[]:
+                for entry in snp_err_dict[cont_name]:
+                                
+                        if entry[6]=='insertion' or entry[6]=='wrong_gap':
+                            fq.write(c_name+'\t'+str(entry[4]-1)+'\t.\t'+cont_dict[cont_name][entry[4]-2:entry[5]].upper()+
+                                         '\t'+cont_dict[cont_name][entry[4]-2:entry[4]-1].upper()+'\t.\tPASS\n')
+        
+                            
+                        elif entry[6]=='deletion':
+                            
+                            if entry[9]==1:
+                                 ref_bases=ref_dict[entry[0]][entry[1]-1:entry[2]].upper()
+                            else:
+                                 ref_bases=general.COMPL_STRING(ref_dict[entry[0]][entry[1]-1:entry[2]]).upper()
+
+                            fq.write(c_name+'\t'+str(entry[4])+'\t.\t'+cont_dict[cont_name][entry[4]-1:entry[4]].upper()+
+                                         '\t'+cont_dict[cont_name][entry[4]-1:entry[4]].upper()+ref_bases+'\t.\tPASS\n')
+                         
+                            
+                           
+                        else: #subst and gap
+                            ref_coord=str(entry[1])+'-'+str(entry[2])
+                            if entry[9]==1:
+                                 ref_bases=ref_dict[entry[0]][entry[1]-1:entry[2]].upper()
+                            else:
+                                 ref_bases=general.COMPL_STRING(ref_dict[entry[0]][entry[1]-1:entry[2]]).upper()
+
+                                
+                            fq.write(c_name+'\t'+str(entry[4])+'\t.\t'+cont_dict[cont_name][entry[4]-1:entry[5]].upper()+
+                                         '\t'+ref_bases+'\t.\tPASS\n')
+                         
+                           
+                       
+                        
+    
+    fq.close()
+
+        
+def OUTPUT_VCF_FILE_REF(ref_name_full,ref_full_names_dict, ref_names,ref_snp_err_dict,output_file,ref_dict,cont_dict):
+    fr=open(output_file,'w')
+
+    fr.write('##fileformat=VCFv4.2\n')
+    fr.write('##source=NucDiffv2.0\n')
+    fr.write('#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\n')
+
+    for ref_name in ref_names:
+        if ref_name_full=='yes':
+            r_name=ref_full_names_dict[ref_name]
+        else:
+            r_name=ref_name
+                
+
+        if ref_snp_err_dict[ref_name]!=[]:
+                
+                for entry in ref_snp_err_dict[ref_name]:
+                                
+                        if entry[6]=='insertion' or entry[6]=='wrong_gap':
+                            if entry[9]==1:
+                                 query_bases=cont_dict[entry[3]][entry[4]-1:entry[5]].upper()
+                            else:
+                                 query_bases=general.COMPL_STRING(cont_dict[entry[3]][entry[4]-1:entry[5]]).upper()
+
+                            fr.write(r_name+'\t'+str(entry[1])+'\t.\t'+ref_dict[r_name][entry[1]-1:entry[1]].upper()+
+                                         '\t'+ref_dict[r_name][entry[1]-1:entry[1]].upper()+query_bases+'\t.\tPASS\n')
+                         
+
+                         
+
+                        elif entry[6]=='deletion':
+                            fr.write(r_name+'\t'+str(entry[1]-1)+'\t.\t'+ref_dict[r_name][entry[1]-2:entry[2]].upper()+
+                                         '\t'+ref_dict[r_name][entry[1]-2:entry[1]-1].upper()+'\t.\tPASS\n')
+        
+
+                            
+                            
+                        
+                        else: #subst and gap
+                            if entry[9]==1:
+                                query_bases=cont_dict[entry[3]][entry[4]-1:entry[5]].upper()
+                            else:
+                                query_bases=general.COMPL_STRING(cont_dict[entry[3]][entry[4]-1:entry[5]]).upper()
+                         
+                            fr.write(r_name+'\t'+str(entry[1])+'\t.\t'+ref_dict[r_name][entry[1]-1:entry[2]].upper()+
+                                         '\t'+query_bases+'\t.\tPASS\n')
+                         
+                           
+    
+    
+    fr.close()
 
 
-
-def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,ref_full_names_dict,cont_dict,contig_names,contig_full_names_dict,working_dir, prefix,asmb_name_full,ref_name_full,mapped_blocks_dict):
+def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,ref_full_names_dict,cont_dict,contig_names,contig_full_names_dict,working_dir, prefix,asmb_name_full,ref_name_full,mapped_blocks_dict,vcf_flag):
 
    #query_snps.gff
     temp_entry=[]
@@ -328,6 +431,8 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                      entry.pop(0)
                 
        
+    if vcf_flag=='yes':
+            OUTPUT_VCF_FILE_QUERY(asmb_name_full,contig_full_names_dict, contig_names,snp_err_dict,working_dir+prefix+'_query_snps.vcf',cont_dict,ref_dict)
 
     fq=open(working_dir+prefix+'_query_snps.gff','w')
     
@@ -357,8 +462,10 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
 
                                 
                         if entry[6]=='insertion' or entry[6]=='wrong_gap':
-                                fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0000667'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t.\t.\tID='+entry[11]+';Name='+err_new_names_dict[entry[6]]+\
-                                        ';ins_len='+str(entry[7])+';query_dir='+str(entry[9])+';ref_sequence='+r_name+';ref_coord='+str(entry[1])+';query_bases='+cont_dict[cont_name][entry[4]-1:entry[5]]+\
+                                fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0000667'+'\t'+str(entry[4])+'\t'+str(entry[5])+
+                                         '\t.\t.\t.\tID='+entry[11]+';Name='+err_new_names_dict[entry[6]]+\
+                                        ';ins_len='+str(entry[7])+';query_dir='+str(entry[9])+';ref_sequence='+r_name+';ref_coord='+str(entry[1])+
+                                         ';query_bases='+cont_dict[cont_name][entry[4]-1:entry[5]].lower()+\
                                         ';ref_bases=-'+';color=#EE0000'+'\n')
 
                         
@@ -370,7 +477,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                                  ref_bases=general.COMPL_STRING(ref_dict[entry[0]][entry[1]-1:entry[2]])
                          
                             fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:0000159'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t.\t.\tID='+entry[11]+';Name='+err_new_names_dict[entry[6]]+\
-                                        ';del_len='+str(entry[7])+';query_dir='+str(entry[9])+';ref_sequence='+r_name+';ref_coord='+ref_coord+';query_bases=-;ref_bases='+ref_bases+\
+                                        ';del_len='+str(entry[7])+';query_dir='+str(entry[9])+';ref_sequence='+r_name+';ref_coord='+ref_coord+';query_bases=-;ref_bases='+ref_bases.lower()+\
                                      ';color=#0000EE'+'\n')
                         
                         else: #subst and gap
@@ -380,9 +487,11 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                             else:
                                  ref_bases=general.COMPL_STRING(ref_dict[entry[0]][entry[1]-1:entry[2]])
                          
-                            fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:1000002'+'\t'+str(entry[4])+'\t'+str(entry[5])+'\t.\t.\t.\tID='+entry[11]+';Name='+err_new_names_dict[entry[6]]+\
-                                        ';subst_len='+str(entry[7])+';query_dir='+str(entry[9])+';ref_sequence='+r_name+';ref_coord='+ref_coord+';query_bases='+cont_dict[cont_name][entry[4]-1:entry[5]]+\
-                                     ';ref_bases='+ref_bases+';color=#42C042'+'\n')
+                            fq.write(c_name+'\tNucDiff_v2.0\t'+'SO:1000002'+'\t'+str(entry[4])+'\t'+str(entry[5])+
+                                     '\t.\t.\t.\tID='+entry[11]+';Name='+err_new_names_dict[entry[6]]+\
+                                        ';subst_len='+str(entry[7])+';query_dir='+str(entry[9])+';ref_sequence='+r_name+
+                                     ';ref_coord='+ref_coord+';query_bases='+cont_dict[cont_name][entry[4]-1:entry[5]].lower()+\
+                                     ';ref_bases='+ref_bases.lower()+';color=#42C042'+'\n')
                          
                         if entry[4]>entry[5] or entry[7]<0:
                             print entry
@@ -821,7 +930,9 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
             
     for r_name in ref_struct_err_dict.keys():
         ref_struct_err_dict[r_name]= sorted(ref_struct_err_dict[r_name],key=lambda inter:inter[1], reverse=False)
-       
+
+    if vcf_flag=='yes':
+            OUTPUT_VCF_FILE_REF(ref_name_full,ref_full_names_dict, ref_names,ref_snp_err_dict,working_dir+prefix+'_ref_snps.vcf',ref_dict,cont_dict)  
 
     #ref snps
     fr=open(working_dir+prefix+'_ref_snps.gff','w')
@@ -1572,7 +1683,7 @@ def OUTPUT_BLOCKS_TO_QUERY(cont_blocks_dict,ref_dict,contig_names,ref_full_names
     f.close()
     
 
-def GENERATE_OUTPUT(struct_dict,end_err_dict,unmapped_list, file_ref, file_contigs,working_dir, prefix,err_ref_cont_coord_errors_list,statistics_output_lines,asmb_name_full,ref_name_full,cont_blocks_dict):
+def GENERATE_OUTPUT(struct_dict,end_err_dict,unmapped_list, file_ref, file_contigs,working_dir, prefix,err_ref_cont_coord_errors_list,statistics_output_lines,asmb_name_full,ref_name_full,cont_blocks_dict,vcf_flag):
 
     contigs_dict, contig_seqs, contig_names, contig_full_names_dict=general.READ_FASTA_ENTRY(file_contigs)
     ref_dict, ref_seqs, ref_names,ref_full_names_dict=general.READ_FASTA_ENTRY(file_ref)
@@ -1581,6 +1692,6 @@ def GENERATE_OUTPUT(struct_dict,end_err_dict,unmapped_list, file_ref, file_conti
     #OUTPUT_READABLE(struct_dict,end_err_dict,unmapped_list, contigs_dict,contig_names, contig_full_names_dict, ref_dict,ref_full_names_dict,working_dir, 'results/'+prefix)
 
     mapped_blocks_dict=OUTPUT_MAPPED_BLOCKS_TO_REF(struct_dict,ref_dict,ref_names,ref_full_names_dict,contigs_dict,contig_full_names_dict,working_dir, 'results/'+prefix,asmb_name_full,ref_name_full)
-    OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,ref_full_names_dict,contigs_dict,contig_names,contig_full_names_dict,working_dir, 'results/'+prefix,asmb_name_full,ref_name_full,mapped_blocks_dict)
+    OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,ref_full_names_dict,contigs_dict,contig_names,contig_full_names_dict,working_dir, 'results/'+prefix,asmb_name_full,ref_name_full,mapped_blocks_dict,vcf_flag)
     OUTPUT_STAT(statistics_output_lines,working_dir, 'results/'+prefix, len(contigs_dict.keys()),len(ref_dict.keys()))
     OUTPUT_BLOCKS_TO_QUERY(cont_blocks_dict, ref_dict,contig_names,ref_full_names_dict,contigs_dict,contig_full_names_dict,working_dir, 'results/'+prefix,asmb_name_full,ref_name_full)
