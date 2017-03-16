@@ -12,7 +12,7 @@
 
 import class_nucmer
 
-def FIND_ERRORS_ASSEMBLY(file_ref,file_contigs, working_dir, nucmer_opt, prefix, proc_num,filter_opt,delta_file,reloc_dist ):
+def FIND_ERRORS_ASSEMBLY(file_ref,file_contigs, working_dir, nucmer_opt, prefix, proc_num,filter_opt,delta_file,reloc_dist,coord_file ):
     mummer_prefix=working_dir+prefix
 
     
@@ -20,7 +20,7 @@ def FIND_ERRORS_ASSEMBLY(file_ref,file_contigs, working_dir, nucmer_opt, prefix,
     print
     print 'Run NUCmer...'
     print
-    nuc=class_nucmer.Nucmer(mummer_prefix, file_ref, file_contigs, working_dir,delta_file)    
+    nuc=class_nucmer.Nucmer(mummer_prefix, file_ref, file_contigs, working_dir,delta_file,coord_file)    
     nuc.RUN(nucmer_opt,filter_opt)
     nuc.PARSE()
 

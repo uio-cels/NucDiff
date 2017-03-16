@@ -27,75 +27,75 @@ import ref_coord
 
     
 class Nucmer:
-    def __init__(self, nuc_prefix, reference_file, contigs_file, working_dir,delta_file):
+    def __init__(self, nuc_prefix, reference_file, contigs_file, working_dir,delta_file,coord_file):
         self.prefix=nuc_prefix
         
         self.ref=reference_file
         self.cont=contigs_file
         self.working_dir=working_dir
-        self.coord_file='unknown'
+        
         if delta_file=='':
             self.delta_file='unknown'
         else:
             self.delta_file=delta_file
+
+        if coord_file=='':
+            self.coord_file='unknown'
+        else:
+            self.coord_file=coord_file
         self.intervals={}
 
-   
+
 
     def RUN(self,nucmer_opt,filter_opt):
 
-        
-        
+       
         if self.delta_file=='unknown':
-            #1. many to many mapping
-        
-            call_line='nucmer '+nucmer_opt+' --maxmatch --prefix='+self.prefix+' '+self.ref+' '+self.cont
-            subprocess.call(call_line, shell=True)
 
-            
+            if '--maxmatch' in nucmer_opt:
+                call_line='nucmer '+nucmer_opt+' --prefix='+self.prefix+' '+self.ref+' '+self.cont
+            else:
+                call_line='nucmer '+nucmer_opt+' --maxmatch --prefix='+self.prefix+' '+self.ref+' '+self.cont
 
-                       
-            f=open(self.prefix+'.filter','w')
-            call_line_list=[]
-            call_line_list.append('delta-filter')
-            for entry in filter_opt.split(' '):
-                call_line_list.append(entry)
-            if not 'q' in filter_opt:
-                call_line_list.append('q')
-            call_line_list.append(self.prefix+'.delta')
-            
-            subprocess.call(call_line_list, stdout=f)
-            f.close()
-
+            try:
+                subprocess.check_call(call_line, shell=True)
+            except subprocess.CalledProcessError:
+                sys.exit('\nCould not run nucmer. Please, check nucmer input parameters values.')
             
 
             self.delta_file=self.prefix+'.delta'
 
-        else:
-            f=open(self.prefix+'.filter','w')
-            call_line_list=[]
-            call_line_list.append('delta-filter')
-            for entry in filter_opt.split(' '):
-                call_line_list.append(entry)
-            if not 'q' in filter_opt:
-                call_line_list.append('q')
+           
 
-            call_line_list.append(self.prefix+'.delta')
-            subprocess.call(call_line_list,stdout=f)
-            f.close()
-            
-        
+       
+                       
+        f=open(self.prefix+'.filter','w')
+        call_line_list=[]
+        call_line_list.append('delta-filter')
+        for entry in filter_opt.split(' '):
+            call_line_list.append(entry)
+        if not '-q' in filter_opt:
+            call_line_list.append('-q')
+                
+        call_line_list.append(self.prefix+'.delta')
 
+        try:
+            subprocess.check_call(call_line, shell=True)
+        except subprocess.CalledProcessError:
+            sys.exit('\nCould not run delta-filter. Please, check delta-filter input parameters values.')        
+        subprocess.check_call(call_line_list, stdout=f)
 
-            
+        f.close()
+
+                
 
         f=open(self.prefix+'.coords','w')
-        subprocess.call(['show-coords', '-qcldH', self.prefix+'.filter'], stdout=f)
+        subprocess.check_call(['show-coords', '-qcldH', self.prefix+'.filter'], stdout=f)
         f.close()
 
         self.coord_file=self.prefix+'.coords'
 
-
+        
         
     
     def PARSE(self):
@@ -2165,6 +2165,7 @@ def FIND_SNPS_TYPES(lines_error_list):
    
     
 def FIND_SNPS_SINGLE(input_list):
+    
     coord_lines_list=input_list[0]
     delta_file=input_list[1]
     prefix=input_list[2]
@@ -2194,11 +2195,16 @@ def FIND_SNPS_SINGLE(input_list):
     f=open(snp_file, 'w')
     f_in=open(coord_file,'r')
 
-    subprocess.call(['show-snps', '-SqHT', delta_file], stdin=f_in, stdout=f)
+    try:
+        subprocess.check_call(['show-snps', '-SqHT', delta_file], stdin=f_in, stdout=f)
+    except subprocess.CalledProcessError:
+        return 'failed'
+    
     f.close()
     f_in.close()
-    
 
+    
+    
     snps_raw_dict={}
     for cont_name in frag_dict.keys():
         snps_raw_dict[cont_name]=[]
@@ -2295,6 +2301,9 @@ def FIND_SNPS(frag_dict,coord_file, delta_file,prefix,proc_num, file_contigs):
     output_list=pool.map(FIND_SNPS_SINGLE,input_list)
 
     for frag_dict_part in output_list:
+        if frag_dict_part=='failed':
+            import sys
+            sys.exit(0)
         for cont_name in frag_dict_part.keys():
             for new_entry in frag_dict_part[cont_name]:
 
