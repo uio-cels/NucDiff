@@ -52,7 +52,7 @@ Optional arguments:
 
 <br><br>
 ### 3.2 Running examples
-A running example with NucDiff and NUCmer predefined parameters values, except NUCmer --maxmatch parameter and delta-filter -q parameter.  --maxmatch is hard coded and cannot be changed neither to --mum nor to --mumreference. -q is also hard coded and cannot be changed neither to -g not to -r:
+A running example with NucDiff and NUCmer predefined parameters values, except NUCmer --maxmatch parameter and delta-filter -q parameter.  --maxmatch is hard coded and cannot be changed neither to --mum nor to --mumreference. -q is also hard coded and cannot be changed neither to -g nor to -r:
 
 ```
 $python nucdiff.py my_reference.fasta my_query.fasta my_output_dir my_prefix
