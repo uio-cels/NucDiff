@@ -360,6 +360,8 @@ class Nucmer:
         self.FIND_REF_ORDER_NUM()
 
         self.REMOVE_REF_OVERLAP()
+
+        x=self.IMPROVE_PARSING_RESULTS(contigs_dict, ref_dict)
         
         for cont_name in self.intervals.keys():
 
@@ -470,7 +472,9 @@ class Nucmer:
                 structure_dict[cont_name][0].pop('temp', None)
 
 
-            
+        
+
+       
         
         #---------2.find misjoins and circular genome ends
                     
@@ -527,11 +531,13 @@ class Nucmer:
                             i=misj_groups_dict[misj_group]['temp']
 
                             
-                            
                             a=class_interv_coord.Interv_coord(structure_dict[cont_name][transl_group]['blocks'][i])
                             b=class_interv_coord.Interv_coord(structure_dict[cont_name][transl_group]['blocks'][i+1])
+
+                            
                             interv_case, interv_type=a.FIND_CASE(b,reloc_dist)
 
+                           
                             r1_st=structure_dict[cont_name][transl_group]['blocks'][i][2]
                             r2_end=structure_dict[cont_name][transl_group]['blocks'][i+1][3]
                             len_r2=structure_dict[cont_name][transl_group]['blocks'][i+1][7]
