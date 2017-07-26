@@ -8,7 +8,7 @@ NucDiff provides information about the types of differences and their locations.
 
 <br><br>
 ## 2 Prerequisites
-NucDiff can be run on Linux and Mac OS. It uses MUMmer v3.23 and Biopython package which should be installed and be in the PATH before running NucDiff.  
+NucDiff can be run on Linux and Mac OS. It uses Python 2.7, MUMmer v3.23 and Biopython package which should be installed and be in the PATH before running NucDiff.  
 
 The MUMmer tarball can be downloaded at http://sourceforge.net/projects/mummer/ .
 The Biopython package can be downloaded at http://biopython.org/wiki/Download . 
