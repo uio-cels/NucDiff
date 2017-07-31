@@ -36,7 +36,7 @@ def FIND_ERRORS_ASSEMBLY(file_ref,file_contigs, working_dir, nucmer_opt, prefix,
     struct_dict,end_err_dict,unmapped_list,uncovered_dict=nuc.FIND_ERRORS(file_contigs, file_ref,reloc_dist)
 
     print
-    print 'Differences between fragments are found'
+    print 'Find differences between fragments step is complete'
 
     return struct_dict,end_err_dict,unmapped_list,uncovered_dict
     
