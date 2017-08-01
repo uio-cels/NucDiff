@@ -206,7 +206,7 @@ class Nucmer:
             
 
     
-        print 'The find differences inside fragments step is complete'
+        print 'The difference detection inside fragments step is complete'
 
     def REMOVE_REF_OVERLAP(self):
 

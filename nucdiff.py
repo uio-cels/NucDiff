@@ -89,7 +89,7 @@ def main():
     parser.add_argument('--ref_name_full',  type=str, nargs='?',default='no',choices=['yes','no'], help="- Print full reference names in output files ('yes' value). In case of 'no', everything after the first space will be ignored. ['no']")
     parser.add_argument('--query_name_full',  type=str, nargs='?',default='no',choices=['yes','no'], help="- Print full query names in output files ('yes' value). In case of 'no', everything after the first space will be ignored.['no'] ")
     parser.add_argument('--vcf',  type=str, nargs='?',default='no',choices=['yes','no'], help="- Output small and medium local differences in the VCF format")
-    parser.add_argument('--version', action='version', version='NucDiff version 2.1')
+    parser.add_argument('--version', action='version', version='NucDiff version 2.0.1')
     
     
     
