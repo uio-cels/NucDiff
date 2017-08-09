@@ -80,11 +80,10 @@ class Nucmer:
         call_line_list.append(self.prefix+'.delta')
 
         try:
-            subprocess.check_call(call_line, shell=True)
+            subprocess.check_call(call_line_list,stdout=f)
         except subprocess.CalledProcessError:
             sys.exit('\nCould not run delta-filter. Please, check delta-filter input parameters values.')        
-        subprocess.check_call(call_line_list, stdout=f)
-
+        
         f.close()
 
                 
