@@ -26,13 +26,18 @@ def CHECK_INPUT_DATA(file_ref, file_contigs, working_dir, prefix, nucmer_opt,fil
         print 'ERROR: the provided file with a reference genome does not exist'
         print
         sys.exit(0)
-
+    else:
+        file_ref=os.path.abspath(file_ref)
+        
     
     if not os.path.exists(file_contigs):
         print
         print 'ERROR: The provided file with an assembly does not exist'
         print
         sys.exit(0)
+    else:
+        file_contigs=os.path.abspath(file_contigs)
+        
 
     if delta_file!='':
         if not os.path.exists(delta_file):
@@ -40,25 +45,14 @@ def CHECK_INPUT_DATA(file_ref, file_contigs, working_dir, prefix, nucmer_opt,fil
             print 'ERROR: the provided delta file does not exist'
             print
             sys.exit(0)
-
-    
-    if not os.path.exists(working_dir):
-        if working_dir.startswith('/'):
-            os.makedirs(working_dir)
-
         else:
-            cur_dir=os.getcwd()
-            
-            os.makedirs(working_dir)
-            if working_dir.startswith('./'):
-                working_dir=cur_dir+'/'+working_dir.split('./')[1]
-            else:
-                working_dir=cur_dir+'/'+working_dir
+            delta_file=os.path.abspath(delta_file)
 
-        
-       
+    working_dir=os.path.abspath(working_dir)
 
-            
+    if not os.path.exists(working_dir):
+        os.makedirs(working_dir)
+
         if not os.path.exists(working_dir):
             print
             print 'ERROR: it is not possible to create working directory'
@@ -125,7 +119,7 @@ def CHECK_INPUT_DATA(file_ref, file_contigs, working_dir, prefix, nucmer_opt,fil
     
 
 
-    return working_dir
+    return file_ref, file_contigs, working_dir, delta_file
 
     
     

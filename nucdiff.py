@@ -48,7 +48,7 @@ def START(args):
     
           
     #1. check input data correctness
-    working_dir=initial_preparation.CHECK_INPUT_DATA(file_ref, file_contigs, working_dir, prefix, nucmer_opt,filter_opt,delta_file)
+    file_ref, file_contigs, working_dir, delta_file=initial_preparation.CHECK_INPUT_DATA(file_ref, file_contigs, working_dir, prefix, nucmer_opt,filter_opt,delta_file)
 
     
 
