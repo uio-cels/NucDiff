@@ -106,8 +106,15 @@ A detailed description of all output files can be found in GithHub wiki (https:/
 
 A detailed description of used GFF3 and VCF file formats can be also found at https://github.com/The-Sequence-Ontology/Specifications/blob/master/gff3.md and https://samtools.github.io/hts-specs/VCFv4.2.pdf , respectively. 
 
+## 6.Citing NucDiff
+
+To cite your use of NucDiff in your publication:
+
+Khelik K, Lagesen K, Sandve GK, Rognes T, Nederbragt AJ. NucDiff: in-depth characterization and annotation of differences between two sets of DNA sequences. BMC Bioinformatics. 2017;18(1):338. doi: 10.1186/s12859-017-1748-z. 
+
+
 <br><br>
 ## References
 [1] Kurtz S et al. Versatile and open software for comparing large genomes. Genome Biol. 2004;5(2):R12. doi 10.1186/gb-2004-5-2-r12.
 
-[2] Khelik K et al. NucDiff: in-depth characterization and annotation of differences between two sets of DNA sequences. 2016 (unpublished article)
+[2] Khelik K et al. NucDiff: in-depth characterization and annotation of differences between two sets of DNA sequences. BMC Bioinformatics. 2017;18(1):338. doi: 10.1186/s12859-017-1748-z.
