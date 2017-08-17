@@ -951,7 +951,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                
                 for entry in ref_snp_err_dict[ref_name]:
                         if asmb_name_full=='yes':
-                            c_name=ref_full_names_dict[entry[3]]
+                            c_name=contig_full_names_dict[entry[3]]
                         else:
                             c_name=entry[3]
 
@@ -1017,7 +1017,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                     if entry[8]=='struct':
                         
                         if asmb_name_full=='yes':
-                            c_name=ref_full_names_dict[entry[3]]
+                            c_name=contig_full_names_dict[entry[3]]
                         else:
                             c_name=entry[3]
                                 
@@ -1637,7 +1637,11 @@ def OUTPUT_BLOCKS_TO_QUERY(cont_blocks_dict,ref_dict,contig_names,ref_full_names
                     ID+=1
 
                     if ref_name_full=='yes':
-                            rf_name=ref_full_names_dict[entry[4]]
+                            if not entry[2] in ['Circular_genome_block','Relocation_block','Translocation_block']:
+                                
+                                rf_name=ref_full_names_dict[entry[4]]
+                            else:
+                                rf_name=entry[4]
                     else:
                             rf_name=entry[4]
 
