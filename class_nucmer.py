@@ -202,9 +202,6 @@ class Nucmer:
 
                     
 
-            
-
-    
         print 'The difference detection inside fragments step is complete'
 
     def REMOVE_REF_OVERLAP(self):
@@ -225,8 +222,7 @@ class Nucmer:
                 for i in range(len(self.intervals[cont_name])):
                     if self.intervals[cont_name][i][9][0]==gr_num:
                         temp_interv_list.append([self.intervals[cont_name][i][0],self.intervals[cont_name][i][1],self.intervals[cont_name][i][2],self.intervals[cont_name][i][3],self.intervals[cont_name][i][4],i,self.intervals[cont_name][i][10]])
-                        
-
+                
                 #print '\nnew_list'
                 #for entry in temp_interv_list:
                 #    print entry[:10]
@@ -237,7 +233,7 @@ class Nucmer:
                         temp_interv_list=sorted(temp_interv_list, key=lambda inter:inter[2], reverse=False)
                                    
                         for i in range(len(temp_interv_list)-1):
-                            
+
                             r1_end=temp_interv_list[i][3]
                             r2_st=temp_interv_list[i+1][2]
 
@@ -256,7 +252,7 @@ class Nucmer:
 
                                 if c2_dir==1:
                                     c2_coord, last_err_end=class_interv_coord.FIND_CONT_COORD_FORWARD_START(r2_st, c2_st, r2_coord, errors_2,c2_end)
-                                    
+
                                     if c2_coord<c2_end:
 
                                         temp_interv_list[i+1][0]=c2_coord+1
@@ -273,7 +269,6 @@ class Nucmer:
                                         del self.intervals[cont_name][temp_interv_list[i+1][5]][10][:]
 
                                         for entry in temp_errors_list:
-                                            temp_interv_list[i+1][6].append(entry)
                                             self.intervals[cont_name][temp_interv_list[i+1][5]][10].append(entry)
                                             
                                         del temp_errors_list[:]
@@ -288,7 +283,6 @@ class Nucmer:
                                     
                                     c2_coord, last_err_end=class_interv_coord.FIND_CONT_COORD_REVERSE_END_SECOND(r2_st, c2_end, r2_coord, errors_2)
 
-                                    
                                     if c2_coord>1:
 
                                         temp_interv_list[i+1][1]=c2_coord-1
@@ -307,10 +301,13 @@ class Nucmer:
                                         del self.intervals[cont_name][temp_interv_list[i+1][5]][10][:]
 
                                         for entry in temp_errors_list:
-                                            temp_interv_list[i+1][6].append(entry)
                                             self.intervals[cont_name][temp_interv_list[i+1][5]][10].append(entry)
-                                            
+
+
+                                        
                                         del temp_errors_list[:]
+
+                                        
                                         
                                     else:
                                        remove_list.append(temp_interv_list[i+1][5]) 
@@ -350,6 +347,7 @@ class Nucmer:
         errors_list=[]
 
         
+        
 
         #-------1.find translocations
         structure_dict={}
@@ -357,10 +355,11 @@ class Nucmer:
 
         #1.1. redefine num element values
         self.FIND_REF_ORDER_NUM()
-
+        
         self.REMOVE_REF_OVERLAP()
-
+        
         x=self.IMPROVE_PARSING_RESULTS(contigs_dict, ref_dict)
+
         
         for cont_name in self.intervals.keys():
 
@@ -2009,13 +2008,13 @@ def PARSE_SNPS_FILE(snps_file,snps_raw_dict):
         cont_name=temp[11]
 
         
-
         snps_raw_dict[cont_name].append([cont_pos, ref_pos, cont_simb, ref_simb, ref_name, cont_dir])
         
            
 
     f.close()
 
+    
    
    
     return snps_raw_dict
