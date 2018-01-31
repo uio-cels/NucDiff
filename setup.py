@@ -15,8 +15,12 @@ from setuptools import find_packages, setup, Command
 NAME = 'NucDiff'
 DESCRIPTION = 'NucDiff locates and categorizes differences between two closely related nucleotide sequences.'
 URL = 'https://github.com/uio-cels/NucDiff'
-EMAIL = 'zach.charlop.powers@gmail.com'
-AUTHOR = 'zachcp'
+AUTHOR = 'Ksenia Khelik'
+EMAIL = 'kseniakh@ifi.uio.no'
+MAINTAINER = 'zach.charlop.powers@gmail.com'
+MAINTAINEREMAIL = "zach.charlop.powers@gmail.com"
+
+
 
 # What packages are required for this module to be executed?
 REQUIRED = [
@@ -82,6 +86,8 @@ setup(
     long_description=long_description,
     author=AUTHOR,
     author_email=EMAIL,
+    maintainer=MAINTAINER,
+    maintainer_email=MAINTAINEREMAIL,
     url=URL,
     packages=find_packages(exclude=('tests',)),
     # If your package is a single module, use this instead of 'packages':
@@ -92,11 +98,11 @@ setup(
     # },
     install_requires=REQUIRED,
     include_package_data=True,
-    license='MIT',
+    license='Mozilla Public License Version 2.0',
     classifiers=[
         # Trove classifiers
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
-        'License :: OSI Approved :: Mozilla Public License Version 2.0',
+        'License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
