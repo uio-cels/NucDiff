@@ -14,11 +14,11 @@ import sys
 import argparse
 import os
 
-from .find_errors import *
-from .generate_output import *
-from .initial_preparation import *
-from .ref_coord import *
-from .statistics import *
+from .find_errors import FIND_ERRORS_ASSEMBLY
+from .generate_output import GENERATE_OUTPUT
+from .initial_preparation import CHECK_INPUT_DATA
+from .ref_coord import FIND_REF_COORD_ERRORS
+from .statistics import FIND_STATISTICS
 
 import subprocess
 
@@ -50,23 +50,23 @@ def START(args):
     
           
     #1. check input data correctness
-    file_ref, file_contigs, working_dir, delta_file=initial_preparation.CHECK_INPUT_DATA(file_ref, file_contigs, working_dir, prefix, nucmer_opt,filter_opt,delta_file)
+    file_ref, file_contigs, working_dir, delta_file=CHECK_INPUT_DATA(file_ref, file_contigs, working_dir, prefix, nucmer_opt,filter_opt,delta_file)
 
     
 
     #2. find differences and gaps in assembly
-    struct_dict,end_err_dict,unmapped_list,uncovered_dict=find_errors.FIND_ERRORS_ASSEMBLY(file_ref,file_contigs, working_dir, nucmer_opt, prefix,proc_num, filter_opt,delta_file,reloc_dist,coord_file ) #class Errors
+    struct_dict,end_err_dict,unmapped_list,uncovered_dict=FIND_ERRORS_ASSEMBLY(file_ref,file_contigs, working_dir, nucmer_opt, prefix,proc_num, filter_opt,delta_file,reloc_dist,coord_file ) #class Errors
 
 
     #3. find reference-oriented difference coordinates
-    err_ref_cont_coord_errors_list,cont_blocks_dict=ref_coord.FIND_REF_COORD_ERRORS(struct_dict,end_err_dict,unmapped_list,file_ref, file_contigs,uncovered_dict)
+    err_ref_cont_coord_errors_list,cont_blocks_dict=FIND_REF_COORD_ERRORS(struct_dict,end_err_dict,unmapped_list,file_ref, file_contigs,uncovered_dict)
 
     #4. find statistics
-    statistics_output_lines=statistics.FIND_STATISTICS(err_ref_cont_coord_errors_list)
+    statistics_output_lines=FIND_STATISTICS(err_ref_cont_coord_errors_list)
 
 
     #5. generate output
-    generate_output.GENERATE_OUTPUT(struct_dict,end_err_dict,unmapped_list, file_ref, file_contigs, working_dir, prefix,err_ref_cont_coord_errors_list,statistics_output_lines,asmb_name_full,ref_name_full,cont_blocks_dict,vcf_flag)
+    GENERATE_OUTPUT(struct_dict,end_err_dict,unmapped_list, file_ref, file_contigs, working_dir, prefix,err_ref_cont_coord_errors_list,statistics_output_lines,asmb_name_full,ref_name_full,cont_blocks_dict,vcf_flag)
 
 
    
