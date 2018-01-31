@@ -9,8 +9,9 @@
 #-------------------------------------------------------------------------------
 
 
+from __future__ import print_function
 
-import general
+from . import general
 
 err_new_names_dict={'substitution':'substitution', 'gap':'gap',
 
@@ -127,8 +128,8 @@ def OUTPUT_INVERS_PART(f,structure_dict_block, cont_name,  level_line):
 def OUTPUT_TRANSP_PART(f,structure_dict_misj, cont_name, level_line):
 
     
-        if len(structure_dict_misj.keys())==1: #no transposition
-            block_name=structure_dict_misj.keys()[0]
+        if len(list(structure_dict_misj.keys()))==1: #no transposition
+            block_name=list(structure_dict_misj.keys())[0]
             OUTPUT_INVERS_PART(f,structure_dict_misj[block_name], cont_name, level_line)
 
         else: #transposition
@@ -180,8 +181,8 @@ def OUTPUT_TRANSP_PART(f,structure_dict_misj, cont_name, level_line):
 def OUTPUT_MISJOIN_PART(f,structure_dict_transl, cont_name, level_line):
 
     
-        if len(structure_dict_transl.keys())==1: #no misjoin
-            misj_group=structure_dict_transl.keys()[0]
+        if len(list(structure_dict_transl.keys()))==1: #no misjoin
+            misj_group=list(structure_dict_transl.keys())[0]
             OUTPUT_TRANSP_PART(f,structure_dict_transl[misj_group]['blocks'], cont_name,  level_line)
 
         else: #misjoin
@@ -200,7 +201,7 @@ def OUTPUT_MISJOIN_PART(f,structure_dict_transl, cont_name, level_line):
 def OUTPUT_TRANSLOC_PART(f,structure_dict_cont, cont_name):
 
     
-        if len(structure_dict_cont.keys())==1: #no translocation
+        if len(list(structure_dict_cont.keys()))==1: #no translocation
             OUTPUT_MISJOIN_PART(f,structure_dict_cont[0]['blocks'], cont_name, '')
 
         else: #translocation
@@ -229,7 +230,7 @@ def OUTPUT_READABLE(structure_dict,end_err_dict,unmapped_list, cont_dict,contig_
 
         for cont_name in contig_names:
             cont_name=cont_name.split(' ')[0]
-            if end_err_dict.has_key(cont_name) and (end_err_dict[cont_name]['wrong_beginning']!=[] or end_err_dict[cont_name]['wrong_end']!=[]):
+            if cont_name in end_err_dict and (end_err_dict[cont_name]['wrong_beginning']!=[] or end_err_dict[cont_name]['wrong_end']!=[]):
                 f.write(contig_full_names_dict[cont_name]+'\t'+str(len(cont_dict[cont_name]))+'\n' )
 
                 if  end_err_dict[cont_name]['wrong_beginning']!=[]:
@@ -239,9 +240,9 @@ def OUTPUT_READABLE(structure_dict,end_err_dict,unmapped_list, cont_dict,contig_
                         
                         
 
-                if len(structure_dict[cont_name].keys())==1 and \
-                       len(structure_dict[cont_name][0]['blocks'].keys())==1 and \
-                       len(structure_dict[cont_name][0]['blocks'][0]['blocks'].keys())==1 and \
+                if len(list(structure_dict[cont_name].keys()))==1 and \
+                       len(list(structure_dict[cont_name][0]['blocks'].keys()))==1 and \
+                       len(list(structure_dict[cont_name][0]['blocks'][0]['blocks'].keys()))==1 and \
                        structure_dict[cont_name][0]['blocks'][0]['blocks'][0]['block'][10]==[]:
                             a='no errors inside'
                 else:
@@ -262,9 +263,9 @@ def OUTPUT_READABLE(structure_dict,end_err_dict,unmapped_list, cont_dict,contig_
                     f.write('\n\n')
 
                 else:
-                    if len(structure_dict[cont_name].keys())==1 and \
-                       len(structure_dict[cont_name][0]['blocks'].keys())==1 and \
-                       len(structure_dict[cont_name][0]['blocks'][0]['blocks'].keys())==1 and \
+                    if len(list(structure_dict[cont_name].keys()))==1 and \
+                       len(list(structure_dict[cont_name][0]['blocks'].keys()))==1 and \
+                       len(list(structure_dict[cont_name][0]['blocks'][0]['blocks'].keys()))==1 and \
                        structure_dict[cont_name][0]['blocks'][0]['blocks'][0]['block'][10]==[]:
                             a='correct_query'
                     else:
@@ -390,7 +391,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
     snp_err_dict={}
     struct_err_dict={}
     repeat_region_dict={}
-    for cont_name in cont_dict.keys():
+    for cont_name in list(cont_dict.keys()):
         snp_err_dict[cont_name]=[]
         struct_err_dict[cont_name]=[]
         repeat_region_dict[cont_name]=[]
@@ -418,10 +419,10 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
      
             
         
-    for c_name in snp_err_dict.keys():
+    for c_name in list(snp_err_dict.keys()):
         snp_err_dict[c_name]= sorted(snp_err_dict[c_name],key=lambda inter:inter[4], reverse=False)
             
-    for c_name in struct_err_dict.keys():
+    for c_name in list(struct_err_dict.keys()):
         struct_err_dict[c_name]= sorted(struct_err_dict[c_name],key=lambda inter:inter[4], reverse=False)
 
         
@@ -494,8 +495,8 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                                      ';ref_bases='+ref_bases.lower()+';color=#42C042'+'\n')
                          
                         if entry[4]>entry[5] or entry[7]<0:
-                            print entry
-                            print 'ERROR: a wrong query coordinate'
+                            print(entry)
+                            print('ERROR: a wrong query coordinate')
 
                     
                         
@@ -575,8 +576,8 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                                         ';ins_len='+str(entry[7])+';query_dir=1;ref_sequence='+r_name+';ref_coord='+str(entry[1])+';color=#EE0000'+'\n')
 
                             else:
-                                print entry
-                                raw_input('ku')
+                                print(entry)
+                                input('ku')
     
 
                         elif entry[6]=='insertion-tandem_multiple_copy':
@@ -708,7 +709,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                                         ';blk_len='+str(entry[7])+';query_dir='+str(entry[9])+';ref_sequence='+r_name+';ref_coord='+str(entry[1])+'-'+str(entry[2])+';color=#01DFD7'+'\n')
                             
                         else:
-                            print entry
+                            print(entry)
                             #raw_input('kfj')
                             a='reshuffling inversion'
                             
@@ -863,16 +864,16 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
     ref_snp_err_dict={}
     ref_struct_err_dict={}
     
-    for ref_name in ref_dict.keys():
+    for ref_name in list(ref_dict.keys()):
         ref_snp_err_dict[ref_name]=[]
         ref_struct_err_dict[ref_name]=[]
         
 
-    for cont_name in snp_err_dict.keys():
+    for cont_name in list(snp_err_dict.keys()):
         for entry in snp_err_dict[cont_name]:
                ref_snp_err_dict[entry[0]].append(entry)
 
-    for cont_name in struct_err_dict.keys():
+    for cont_name in list(struct_err_dict.keys()):
         for entry in struct_err_dict[cont_name]:
            
             if entry[8]!='a':
@@ -925,10 +926,10 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                     
 
 
-    for r_name in ref_snp_err_dict.keys():
+    for r_name in list(ref_snp_err_dict.keys()):
         ref_snp_err_dict[r_name]= sorted(ref_snp_err_dict[r_name],key=lambda inter:inter[1], reverse=False)
             
-    for r_name in ref_struct_err_dict.keys():
+    for r_name in list(ref_struct_err_dict.keys()):
         ref_struct_err_dict[r_name]= sorted(ref_struct_err_dict[r_name],key=lambda inter:inter[1], reverse=False)
 
     if vcf_flag=='yes':
@@ -987,8 +988,8 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                                      ';query_bases='+query_bases+';ref_bases='+ref_dict[entry[0]][entry[1]-1:entry[2]]+';color=#42C042'+'\n')
                          
                         if entry[4]>entry[5] or entry[7]<0:
-                            print entry
-                            print 'ERROR: a wrong query coordinate'
+                            print(entry)
+                            print('ERROR: a wrong query coordinate')
     
     
     fr.close()
@@ -1337,7 +1338,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
 
     
     ref_duplication_dict={}
-    for ref_name in mapped_blocks_dict.keys():
+    for ref_name in list(mapped_blocks_dict.keys()):
         ref_duplication_list=FIND_REF_DUPLICATION(mapped_blocks_dict[ref_name])
         ref_duplication_dict[ref_name]=ref_duplication_list
 
@@ -1346,7 +1347,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
         if entry[6]=='uncovered_region':
             ref_name=entry[0]
 
-            if not ref_duplication_dict.has_key(ref_name):
+            if ref_name not in ref_duplication_dict:
                 ref_duplication_dict[ref_name]=[]
 
             ref_duplication_dict[ref_name].append([entry[1],entry[2],'Uncovered_region'])    
@@ -1354,7 +1355,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
              
 
     cont_repeat_region_dict={}
-    for cont_name in repeat_region_dict.keys():
+    for cont_name in list(repeat_region_dict.keys()):
         cont_repeat_region_dict[cont_name]=[]
         for entry in repeat_region_dict[cont_name]:
             entry=entry[0]
@@ -1362,7 +1363,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
             ref_name=entry[0]
             cont_repeat_region_dict[cont_name].append([entry[11][0][4],entry[11][0][5],'Repeated_region',entry[11][0][6],[entry[4],entry[5],entry[6],entry[7]]])
 
-            if not ref_duplication_dict.has_key(ref_name):
+            if ref_name not in ref_duplication_dict:
                 ref_duplication_dict[ref_name]=[]
 
             ref_duplication_dict[ref_name].append([entry[11][0][1],entry[11][0][2],'Repeated_region',entry[11][0][6],[entry[1],entry[2],entry[6],entry[7]]])
@@ -1374,10 +1375,10 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
                 
 
             
-    for c_name in cont_repeat_region_dict.keys():
+    for c_name in list(cont_repeat_region_dict.keys()):
         cont_repeat_region_dict[c_name]= sorted(cont_repeat_region_dict[c_name],key=lambda inter:inter[0], reverse=False)
 
-    for r_name in ref_duplication_dict.keys():
+    for r_name in list(ref_duplication_dict.keys()):
         ref_duplication_dict[r_name]= sorted(ref_duplication_dict[r_name],key=lambda inter:inter[0], reverse=False)
             
     
@@ -1385,13 +1386,13 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
         if entry[8]=='struct2':
             if entry[3]=='misjoin-overlap': 
                 ref_name=entry[9][0][0]
-                if not ref_duplication_dict.has_key(ref_name):
+                if ref_name not in ref_duplication_dict:
                     ref_duplication_dict[ref_name]=[]
 
                 ref_duplication_dict[ref_name].append([entry[9][0][1],entry[9][0][2],'Relocation_overlap_region'])
 
                 ref_name=entry[9][1][0]
-                if not ref_duplication_dict.has_key(ref_name):
+                if ref_name not in ref_duplication_dict:
                     ref_duplication_dict[ref_name]=[]
 
                 ref_duplication_dict[ref_name].append([entry[9][1][1],entry[9][1][2],'Relocation_overlap_region'])
@@ -1399,20 +1400,20 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
             
             elif entry[3]=='translocation-overlap': 
                 ref_name=entry[9][0][0]
-                if not ref_duplication_dict.has_key(ref_name):
+                if ref_name not in ref_duplication_dict:
                     ref_duplication_dict[ref_name]=[]
 
                 ref_duplication_dict[ref_name].append([entry[9][0][1],entry[9][0][2],'Translocation_overlap_region'])
 
                 ref_name=entry[9][1][0]
-                if not ref_duplication_dict.has_key(ref_name):
+                if ref_name not in ref_duplication_dict:
                     ref_duplication_dict[ref_name]=[]
 
                 ref_duplication_dict[ref_name].append([entry[9][1][1],entry[9][1][2],'Translocation_overlap_region'])
     
             
 
-    for ref_name in ref_duplication_dict.keys():
+    for ref_name in list(ref_duplication_dict.keys()):
         ref_duplication_dict[ref_name]=sorted(ref_duplication_dict[ref_name],key=lambda inter:inter[0], reverse=False)    
 
     f=open(working_dir+prefix+'_ref_additional.gff','w')
@@ -1427,7 +1428,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
             ref_name=r_name
         
 
-        if ref_duplication_dict.has_key(r_name):
+        if r_name in ref_duplication_dict:
             if ref_duplication_dict[r_name]!=[]:
                     f.write('##sequence-region\t'+ref_name+'\t1\t'+str(len(ref_dict[r_name]))+'\n')
 
@@ -1476,7 +1477,7 @@ def OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,re
         else:
             asmb_name=c_name
 
-        if cont_repeat_region_dict.has_key(c_name):
+        if c_name in cont_repeat_region_dict:
 
             if cont_repeat_region_dict[c_name]!=[]:
 
@@ -1520,11 +1521,11 @@ def FIND_REF_DUPLICATION(input_list):
 
     temp_dict={}
     for entry in input_list:
-        if not temp_dict.has_key(entry[0]):
+        if entry[0] not in temp_dict:
             temp_dict[entry[0]]={'st':0,'end':0}
         temp_dict[entry[0]]['st']+=1
 
-        if not temp_dict.has_key(entry[1]+1):
+        if entry[1]+1 not in temp_dict:
             temp_dict[entry[1]+1]={'st':0,'end':0}
         temp_dict[entry[1]+1]['end']+=1
 
@@ -1553,20 +1554,20 @@ def OUTPUT_MAPPED_BLOCKS_TO_REF(struct_dict,ref_dict,ref_names,ref_full_names_di
     
 
     mapped_blocks_dict={}
-    for r_name in ref_dict.keys():
+    for r_name in list(ref_dict.keys()):
         mapped_blocks_dict[r_name]=[]
 
    
-    for cont in struct_dict.keys():
-        for trl in struct_dict[cont].keys():
-            for msj in struct_dict[cont][trl]['blocks'].keys():
-                for bl in struct_dict[cont][trl]['blocks'][msj]['blocks'].keys():
+    for cont in list(struct_dict.keys()):
+        for trl in list(struct_dict[cont].keys()):
+            for msj in list(struct_dict[cont][trl]['blocks'].keys()):
+                for bl in list(struct_dict[cont][trl]['blocks'][msj]['blocks'].keys()):
                     blk_coord=struct_dict[cont][trl]['blocks'][msj]['blocks'][bl]['block']
 
                     ref_name=blk_coord[8]
                     mapped_blocks_dict[ref_name].append([blk_coord[2],blk_coord[3],cont,blk_coord[0],blk_coord[1], blk_coord[4]])
                     
-    for ref in mapped_blocks_dict.keys():
+    for ref in list(mapped_blocks_dict.keys()):
         mapped_blocks_dict[ref]=sorted(mapped_blocks_dict[ref],key=lambda inter:inter[0], reverse=False)
 
 
@@ -1583,7 +1584,7 @@ def OUTPUT_MAPPED_BLOCKS_TO_REF(struct_dict,ref_dict,ref_names,ref_full_names_di
             ref_name=r_name
         
 
-        if mapped_blocks_dict.has_key(r_name):
+        if r_name in mapped_blocks_dict:
             if mapped_blocks_dict[r_name]!=[]:
                     f.write('##sequence-region\t'+ref_name+'\t1\t'+str(len(ref_dict[r_name]))+'\n')
 
@@ -1626,7 +1627,7 @@ def OUTPUT_BLOCKS_TO_QUERY(cont_blocks_dict,ref_dict,contig_names,ref_full_names
         else:
             asmb_name=c_name
 
-        if cont_blocks_dict.has_key(c_name):
+        if c_name in cont_blocks_dict:
 
             if cont_blocks_dict[c_name]!=[]:
 
@@ -1697,5 +1698,5 @@ def GENERATE_OUTPUT(struct_dict,end_err_dict,unmapped_list, file_ref, file_conti
 
     mapped_blocks_dict=OUTPUT_MAPPED_BLOCKS_TO_REF(struct_dict,ref_dict,ref_names,ref_full_names_dict,contigs_dict,contig_full_names_dict,working_dir, 'results/'+prefix,asmb_name_full,ref_name_full)
     OUTPUT_REF_ASSEM_TABLE(err_ref_cont_coord_errors_list, ref_dict,ref_names,ref_full_names_dict,contigs_dict,contig_names,contig_full_names_dict,working_dir, 'results/'+prefix,asmb_name_full,ref_name_full,mapped_blocks_dict,vcf_flag)
-    OUTPUT_STAT(statistics_output_lines,working_dir, 'results/'+prefix, len(contigs_dict.keys()),len(ref_dict.keys()))
+    OUTPUT_STAT(statistics_output_lines,working_dir, 'results/'+prefix, len(list(contigs_dict.keys())),len(list(ref_dict.keys())))
     OUTPUT_BLOCKS_TO_QUERY(cont_blocks_dict, ref_dict,contig_names,ref_full_names_dict,contigs_dict,contig_full_names_dict,working_dir, 'results/'+prefix,asmb_name_full,ref_name_full)

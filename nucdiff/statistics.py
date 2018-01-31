@@ -9,6 +9,7 @@
 #-------------------------------------------------------------------------------
 
 
+from __future__ import print_function
 
 
 
@@ -51,11 +52,11 @@ def FIND_STATISTICS(err_ref_cont_coord_errors_list):
         
         elif entry[8]=='struct' or entry[8]=='snps':
 
-            if insertions_dict.has_key(entry[6]):
+            if entry[6] in insertions_dict:
                 insertions_dict[entry[6]]+=1
-            elif deletions_dict.has_key(entry[6]):
+            elif entry[6] in deletions_dict:
                 deletions_dict[entry[6]]+=1
-            elif substitutions_dict.has_key(entry[6]):
+            elif entry[6] in substitutions_dict:
                 substitutions_dict[entry[6]]+=1
             elif entry[6].startswith('reshuffling'):
                 
@@ -71,7 +72,7 @@ def FIND_STATISTICS(err_ref_cont_coord_errors_list):
            
         elif entry[8]=='struct2':
             
-            if misjoin_dict.has_key(entry[3]):
+            if entry[3] in misjoin_dict:
                 
                 misjoin_dict[entry[3]]+=1
 
@@ -81,7 +82,7 @@ def FIND_STATISTICS(err_ref_cont_coord_errors_list):
                 elif entry[3]in ['misjoin-wrong_scaffolding'] :
                     insertions_dict['wrong_gap']+=1
                         
-            elif translocation_dict.has_key(entry[3]):
+            elif entry[3] in translocation_dict:
                 translocation_dict[entry[3]]+=1
 
                 if entry[3]in ['translocation-insertion','translocation-mixed_fragments'] :

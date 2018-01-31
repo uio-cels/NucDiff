@@ -7,6 +7,9 @@
 # https://mozilla.org/MPL/2.0/.
 #
 #-------------------------------------------------------------------------------
+
+from __future__ import print_function
+
 from Bio.Seq import Seq
 from Bio import SeqIO
 

@@ -8,7 +8,7 @@
 #
 #-------------------------------------------------------------------------------
 
-
+from __future__ import print_function
 
 class Interv_coord:
     def __init__(self, list_info):
@@ -26,7 +26,7 @@ class Interv_coord:
         
     def PRINT_FUNC(self):
         entry=[self.c_st,self.c_end,self.r_st,self.r_end,self.c_dir,self.r_dir,self.c_len, self.r_len,self.r_name,self.num]
-        print entry
+        print(entry)
 
     def FIND_CASE(self, b, reloc_dist):
         interv_case=''
@@ -53,10 +53,10 @@ class Interv_coord:
         elif  self.c_end+1>b.c_st and self.c_end<b.c_end: #(-----*-*-****** c1c2)
             interv_case+='3'
         else:
-            print 'ERROR: unknown contig case in Interv_coord.find_case()'
-            print '\t',self.c_st, self.c_end,self.r_st, self.r_end,self.c_dir, self.c_len,self.r_dir, self.r_len
-            print '\t',b.c_st, b.c_end,b.r_st, b.r_end,b.c_dir, b.c_len,b.r_dir, b.r_len
-            print
+            print('ERROR: unknown contig case in Interv_coord.find_case()')
+            print('\t',self.c_st, self.c_end,self.r_st, self.r_end,self.c_dir, self.c_len,self.r_dir, self.r_len)
+            print('\t',b.c_st, b.c_end,b.r_st, b.r_end,b.c_dir, b.c_len,b.r_dir, b.r_len)
+            print()
             return '0.0', 'structural'
            
             
@@ -115,9 +115,9 @@ class Interv_coord:
 
         else:
             
-           print 'ERROR: unknown reference case in Interv_coord.find_case()'
-           print '\t',self.c_st, self.c_end,self.r_st, self.r_end,self.c_dir, self.c_len,self.r_dir, self.r_len
-           print '\t',b.c_st, b.c_end,b.r_st, b.r_end,b.c_dir, b.c_len,b.r_dir, b.r_len
+           print('ERROR: unknown reference case in Interv_coord.find_case()')
+           print('\t',self.c_st, self.c_end,self.r_st, self.r_end,self.c_dir, self.c_len,self.r_dir, self.r_len)
+           print('\t',b.c_st, b.c_end,b.r_st, b.r_end,b.c_dir, b.c_len,b.r_dir, b.r_len)
            return '0.0', 'structural'
             
         non_structural_list=['1.2','1.3','1.4','1.5','1.6','1.7','1.12','1.13','1.14', '1.15',\

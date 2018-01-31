@@ -8,7 +8,7 @@
 #
 #-------------------------------------------------------------------------------
 
-
+from __future__ import print_function
 
 import sys
 import os
@@ -184,8 +184,8 @@ def FIND_LOCAL_ERRORS(err_ref_cont_coord_errors_list,block_coord,cont_name):
             err_source=entry[6]
             
             if r_st>r_end or c_st>c_end:
-                print ref_name,r_st,r_end, cont_name,c_st,c_end, err_type,err_len,'b'
-                print 'ERROR: wrong local difference'
+                print(ref_name,r_st,r_end, cont_name,c_st,c_end, err_type,err_len,'b')
+                print('ERROR: wrong local difference')
             err_ref_cont_coord_errors_list.append([ref_name,r_st,r_end, cont_name,c_st,c_end, err_type,err_len,'b',c_dir,err_source])
 
             if err_source!='snps':
@@ -195,9 +195,9 @@ def FIND_LOCAL_ERRORS(err_ref_cont_coord_errors_list,block_coord,cont_name):
             
 
 def FIND_TRANSP(err_ref_cont_coord_errors_list,misjoin_blocks,cont_name):
-    if  len(misjoin_blocks.keys())==1: 
+    if  len(list(misjoin_blocks.keys()))==1: 
 
-                            block_name=misjoin_blocks.keys()[0]
+                            block_name=list(misjoin_blocks.keys())[0]
                             block_coord=misjoin_blocks[block_name]['block']
 
                             FIND_LOCAL_ERRORS(err_ref_cont_coord_errors_list,block_coord, cont_name)
@@ -207,7 +207,7 @@ def FIND_TRANSP(err_ref_cont_coord_errors_list,misjoin_blocks,cont_name):
                             
     else: 
 
-                            for block_name in misjoin_blocks.keys():
+                            for block_name in list(misjoin_blocks.keys()):
                                 transp_block_coord=misjoin_blocks[block_name]['block']
 
                                 FIND_LOCAL_ERRORS(err_ref_cont_coord_errors_list,transp_block_coord, cont_name)
@@ -227,9 +227,9 @@ def FIND_TRANSP(err_ref_cont_coord_errors_list,misjoin_blocks,cont_name):
                                     
 
                                     if r_st>r_end or c_st>c_end:
-                                            print r_name,r_st,r_end,cont_name, c_st,c_end,err_name,err_len,'b'
-                                            print transp_output_coord
-                                            print 'ERROR: wrong reshuffling output'
+                                            print(r_name,r_st,r_end,cont_name, c_st,c_end,err_name,err_len,'b')
+                                            print(transp_output_coord)
+                                            print('ERROR: wrong reshuffling output')
 
                                     err_ref_cont_coord_errors_list.append([r_name,r_st,r_end,cont_name, c_st,c_end,err_name,err_len,'b',c_dir])
 
@@ -240,7 +240,7 @@ def FIND_TRANSP(err_ref_cont_coord_errors_list,misjoin_blocks,cont_name):
 
                                         for entry in between_output_coord:
                                            if entry[6]>entry[7] or entry[1]>entry[2]:
-                                                print 'ERROR: wrong difference between reshuffling blocks'
+                                                print('ERROR: wrong difference between reshuffling blocks')
                                            err_ref_cont_coord_errors_list.append([entry[5],entry[6],entry[7], cont_name, entry[0],entry[1],entry[2],entry[3],'b']) 
                                         
 
@@ -257,7 +257,7 @@ def FIND_TRANSP(err_ref_cont_coord_errors_list,misjoin_blocks,cont_name):
                                         c_dir=transp_block_coord[4]
 
                                         if r_st>r_end or c_st>c_end:
-                                            print 'ERROR: wrong inversion'
+                                            print('ERROR: wrong inversion')
 
                                         err_ref_cont_coord_errors_list.append([r_name,r_st,r_end,cont_name, c_st,c_end,err_name,err_len,'b',c_dir])
 
@@ -266,7 +266,7 @@ def FIND_TRANSP(err_ref_cont_coord_errors_list,misjoin_blocks,cont_name):
 def FIND_MISJ_BLOCK_COORD(err_ref_cont_coord_errors_list,misjoin_blocks,cont_name):
     c_list=[]
 
-    for block_name in misjoin_blocks.keys():
+    for block_name in list(misjoin_blocks.keys()):
                 block_coord=misjoin_blocks[block_name]['block']
 
                 c_st=block_coord[0]
@@ -331,9 +331,9 @@ def FIND_TRL_BLOCK_COORD(err_ref_cont_coord_errors_list,translocation_block,cont
 
     c_list=[]
 
-    for misj_gr in translocation_block.keys():
+    for misj_gr in list(translocation_block.keys()):
         
-        for block_name in translocation_block[misj_gr]['blocks'].keys():
+        for block_name in list(translocation_block[misj_gr]['blocks'].keys()):
                 block_coord=translocation_block[misj_gr]['blocks'][block_name]['block']
 
                 c_st=block_coord[0]
@@ -404,8 +404,8 @@ def FIND_REF_DIR_TRL(end_type,cur_trl_group,c_point):
     
 
     if end_type=='end':
-        for msj_gr in cur_trl_group['blocks'].keys():
-            for block_name in cur_trl_group['blocks'][msj_gr]['blocks'].keys():
+        for msj_gr in list(cur_trl_group['blocks'].keys()):
+            for block_name in list(cur_trl_group['blocks'][msj_gr]['blocks'].keys()):
                 block_line=cur_trl_group['blocks'][msj_gr]['blocks'][block_name]['block']
                 if block_line[1]==c_point:
                     r_st=block_line[2]
@@ -432,8 +432,8 @@ def FIND_REF_DIR_TRL(end_type,cur_trl_group,c_point):
 
 
     elif end_type=='start':
-         for msj_gr in cur_trl_group['blocks'].keys():
-            for block_name in cur_trl_group['blocks'][msj_gr]['blocks'].keys():
+         for msj_gr in list(cur_trl_group['blocks'].keys()):
+            for block_name in list(cur_trl_group['blocks'][msj_gr]['blocks'].keys()):
                 block_line=cur_trl_group['blocks'][msj_gr]['blocks'][block_name]['block']
                 if block_line[0]==c_point:
                     r_st=block_line[2]
@@ -464,7 +464,7 @@ def FIND_REF_DIR_MISJ(end_type,cur_misjoin_group,c_point):
     
 
     if end_type=='end':
-        for block_name in cur_misjoin_group['blocks'].keys():
+        for block_name in list(cur_misjoin_group['blocks'].keys()):
             block_line=cur_misjoin_group['blocks'][block_name]['block']
             if block_line[1]==c_point:
                 r_st=block_line[2]
@@ -491,7 +491,7 @@ def FIND_REF_DIR_MISJ(end_type,cur_misjoin_group,c_point):
 
     elif end_type=='start':
         
-        for block_name in cur_misjoin_group['blocks'].keys():
+        for block_name in list(cur_misjoin_group['blocks'].keys()):
             block_line=cur_misjoin_group['blocks'][block_name]['block']
             
             if block_line[0]==c_point:
@@ -556,23 +556,23 @@ def TRANSLOCATION_REASON(err_ref_cont_coord_errors_list,cur_trl_group,next_trl_g
     elif translocation_reason=='translocation-insertion' or translocation_reason=='translocation-mixed_fragments' or translocation_reason=='translocation-wrong_scaffolding':
         if c_dir_end_cur==1:
             if  coord_reason[1]>coord_reason[2]:
-                print 'ERROR: wrong translocation reason'
+                print('ERROR: wrong translocation reason')
             err_ref_cont_coord_errors_list.append([r_name,r_end_cur,r_end_cur,cont_name,coord_reason[0],coord_reason[1],coord_reason[2],coord_reason[3],'r'])
             err_ref_cont_coord_errors_list.append([r_name,r_end_cur,r_end_cur,cont_name,coord_reason[0],coord_reason[0],coord_reason[2]+'_end',coord_reason[3],'a'])
         else:
             if  coord_reason[1]>coord_reason[2]:
-                print 'ERROR: wrong translocation reason'
+                print('ERROR: wrong translocation reason')
             err_ref_cont_coord_errors_list.append([r_name,max(1,r_st_cur-1),max(1,r_st_cur-1),cont_name,coord_reason[0],coord_reason[1],coord_reason[2],coord_reason[3],'r'])
             err_ref_cont_coord_errors_list.append([r_name,max(1,r_st_cur-1),max(1,r_st_cur-1),cont_name,coord_reason[0],coord_reason[0],coord_reason[2]+'_end',coord_reason[3],'a'])
 
         if c_dir_st_next==1:
             if  coord_reason[1]>coord_reason[2]:
-                print 'ERROR: wrong translocation reason'
+                print('ERROR: wrong translocation reason')
             err_ref_cont_coord_errors_list.append([r_name_next,max(r_st_next-1,1),max(1,r_st_next-1),cont_name,coord_reason[0],coord_reason[1],coord_reason[2],coord_reason[3],'r'])
             err_ref_cont_coord_errors_list.append([r_name_next,max(r_st_next-1,1),max(1,r_st_next-1),cont_name,coord_reason[1],coord_reason[1],coord_reason[2]+'_st',coord_reason[3],'a'])
         else:
             if  coord_reason[1]>coord_reason[2]:
-                print 'ERROR: wrong translocation reason'
+                print('ERROR: wrong translocation reason')
             err_ref_cont_coord_errors_list.append([r_name_next,r_end_next,r_end_next,cont_name,coord_reason[0],coord_reason[1],coord_reason[2],coord_reason[3],'r'])
             err_ref_cont_coord_errors_list.append([r_name_next,r_end_next,r_end_next,cont_name,coord_reason[1],coord_reason[1],coord_reason[2]+'_st',coord_reason[3],'a'])
 
@@ -688,8 +688,8 @@ def  MISJOIN_REASON(err_ref_cont_coord_errors_list,cur_misjoin_group,next_misjoi
 def FIND_MISJ(err_ref_cont_coord_errors_list,translocation_block,cont_name):
     temp_list=[]
     
-    if len(translocation_block.keys())==1: #no misjoins
-        msj_gr=translocation_block.keys()[0]
+    if len(list(translocation_block.keys()))==1: #no misjoins
+        msj_gr=list(translocation_block.keys())[0]
         misjoin_blocks=translocation_block[msj_gr]['blocks']
 
         FIND_TRANSP(err_ref_cont_coord_errors_list,misjoin_blocks,cont_name)
@@ -698,7 +698,7 @@ def FIND_MISJ(err_ref_cont_coord_errors_list,translocation_block,cont_name):
        
     else:
                         
-        for msj_gr in translocation_block.keys():
+        for msj_gr in list(translocation_block.keys()):
 
             #print translocation_block[msj_gr]
             #raw_input('hgf')
@@ -727,9 +727,9 @@ def FIND_CONTIGS_ENDS(err_ref_cont_coord_errors_list,struct_dict_contig, cont_na
     c_list=[]
     
 
-    for trl_gr in struct_dict_contig.keys():
-        for misj_gr in struct_dict_contig[trl_gr]['blocks'].keys():
-            for block_name in struct_dict_contig[trl_gr]['blocks'][misj_gr]['blocks'].keys():
+    for trl_gr in list(struct_dict_contig.keys()):
+        for misj_gr in list(struct_dict_contig[trl_gr]['blocks'].keys()):
+            for block_name in list(struct_dict_contig[trl_gr]['blocks'][misj_gr]['blocks'].keys()):
                 block_coord=struct_dict_contig[trl_gr]['blocks'][misj_gr]['blocks'][block_name]['block']
                 c_st=block_coord[0]
                 c_end=block_coord[1]
@@ -844,19 +844,19 @@ def FIND_CONTIGS_ENDS(err_ref_cont_coord_errors_list,struct_dict_contig, cont_na
 def FIND_ERRORS_ALL_COORD1(ref_dict,cont_dict, struct_dict, end_err_dict,unmapped_list):
     err_ref_cont_coord_errors_list=[]
 
-    for cont_name in cont_dict.keys():
+    for cont_name in list(cont_dict.keys()):
         #wrong query sequences
 
         
 
-        if not struct_dict.has_key(cont_name):
+        if cont_name not in struct_dict:
             if cont_name in unmapped_list:
                 len_cont=len(cont_dict[cont_name])
                 err_ref_cont_coord_errors_list.append(['-','-','-',cont_name, 1, len_cont,'wrong_sequence',len_cont,'a'])
             else:
-                print
-                print 'ERROR: not handled query sequence', cont_name
-                print
+                print()
+                print('ERROR: not handled query sequence', cont_name)
+                print()
                 
                 
             
@@ -865,13 +865,13 @@ def FIND_ERRORS_ALL_COORD1(ref_dict,cont_dict, struct_dict, end_err_dict,unmappe
             FIND_CONTIGS_ENDS(err_ref_cont_coord_errors_list,struct_dict[cont_name],cont_name,end_err_dict)
            
             
-            if len(struct_dict[cont_name].keys())==1: #no translocations
-                    trl_group=struct_dict[cont_name].keys()[0]
+            if len(list(struct_dict[cont_name].keys()))==1: #no translocations
+                    trl_group=list(struct_dict[cont_name].keys())[0]
                     translocation_block=struct_dict[cont_name][trl_group]['blocks']
 
                     FIND_MISJ(err_ref_cont_coord_errors_list,translocation_block,cont_name)
             else:
-                for trl_group in struct_dict[cont_name].keys():
+                for trl_group in list(struct_dict[cont_name].keys()):
                     translocation_block=struct_dict[cont_name][trl_group]['blocks']
                     FIND_MISJ(err_ref_cont_coord_errors_list,translocation_block,cont_name)
 
@@ -952,13 +952,13 @@ def FIND_UNCOVERED_REF_FRAG(err_ref_cont_coord_errors_list,struct_dict, ref_dict
                 err_ref_cont_coord_errors_list.append([ref_name,entry[0],entry[1],'-','-','-','uncovered_region',entry[1]-entry[0]+1,'r'])
     '''
     #find clipped_repeated_regios
-    for ref_name in ref_dict.keys():
+    for ref_name in list(ref_dict.keys()):
         ref_interv_dict[ref_name]=[]
 
-    for cont_name in struct_dict.keys():
-        for trl_gr in struct_dict[cont_name].keys():
-            for msj_gr in struct_dict[cont_name][trl_gr]['blocks'].keys():
-                for bl_name in struct_dict[cont_name][trl_gr]['blocks'][msj_gr]['blocks'].keys():
+    for cont_name in list(struct_dict.keys()):
+        for trl_gr in list(struct_dict[cont_name].keys()):
+            for msj_gr in list(struct_dict[cont_name][trl_gr]['blocks'].keys()):
+                for bl_name in list(struct_dict[cont_name][trl_gr]['blocks'][msj_gr]['blocks'].keys()):
                     block_coord=struct_dict[cont_name][trl_gr]['blocks'][msj_gr]['blocks'][bl_name]['block']
                     ref_interv_dict[block_coord[8]].append([block_coord[2],block_coord[3]])
 
@@ -970,7 +970,7 @@ def FIND_UNCOVERED_REF_FRAG(err_ref_cont_coord_errors_list,struct_dict, ref_dict
                                 ref_interv_dict[entry[5]].append([entry[6],entry[7]])
 
     
-    for ref_name in ref_interv_dict.keys():
+    for ref_name in list(ref_interv_dict.keys()):
         if ref_interv_dict[ref_name]==[]:
             err_ref_cont_coord_errors_list.append([ref_name,1,len(ref_dict[ref_name]),'-','-','-','uncovered_region',len(ref_dict[ref_name]),'r'])
         else:
@@ -1144,7 +1144,7 @@ def FIND_CONT_BLOCKS(structure_dict):
     temp_dict={}
     result_dict={}
     
-    for cont_name in structure_dict.keys():
+    for cont_name in list(structure_dict.keys()):
         temp_dict[cont_name]={'transloc':[], 'misj':[],'reshuf':[],'invers':[],'blocks':[]}
         cont_blocks_dict[cont_name]={'transloc':[], 'misj':[],'reshuf':[],'invers':[],'blocks':[]}
         result_dict[cont_name]=[]
@@ -1270,16 +1270,16 @@ def FIND_ERRORS_ALL_COORD(ref_dict,cont_dict, structure_dict, end_err_dict,unmap
     reloc_list1=[]
     reloc_list2=[]
 
-    for cont_name in cont_dict.keys():
+    for cont_name in list(cont_dict.keys()):
         #wrong query sequences
-        if not structure_dict.has_key(cont_name):
+        if cont_name not in structure_dict:
             if cont_name in unmapped_list:
                 len_cont=len(cont_dict[cont_name])
                 err_ref_cont_coord_errors_list.append(['-','-','-',cont_name, 1, len_cont,'wrong_sequence',len_cont,'a'])
             else:
-                print
-                print 'ERROR: not handled query sequence', cont_name
-                print
+                print()
+                print('ERROR: not handled query sequence', cont_name)
+                print()
                 
                 
             
@@ -1288,7 +1288,7 @@ def FIND_ERRORS_ALL_COORD(ref_dict,cont_dict, structure_dict, end_err_dict,unmap
             FIND_CONTIGS_ENDS(err_ref_cont_coord_errors_list,structure_dict[cont_name],cont_name,end_err_dict)
     
     
-    for cont_name in structure_dict.keys():
+    for cont_name in list(structure_dict.keys()):
         temp_dict[cont_name]={'transloc':[], 'misj':[],'reshuf':[],'invers':[],'blocks':[],'between':[]}
         cont_blocks_dict[cont_name]={'transloc':[], 'misj':[],'reshuf':[],'invers':[],'blocks':[]}
         result_dict[cont_name]=[]
