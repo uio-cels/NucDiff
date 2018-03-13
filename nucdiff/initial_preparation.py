@@ -8,7 +8,7 @@
 #
 #-------------------------------------------------------------------------------
 
-
+from __future__ import print_function
 
 import os
 import subprocess
@@ -22,18 +22,18 @@ def CHECK_INPUT_DATA(file_ref, file_contigs, working_dir, prefix, nucmer_opt,fil
 
     
     if not os.path.exists(file_ref):
-        print
-        print 'ERROR: the provided file with a reference genome does not exist'
-        print
+        print()
+        print('ERROR: the provided file with a reference genome does not exist')
+        print()
         sys.exit(0)
     else:
         file_ref=os.path.abspath(file_ref)
         
     
     if not os.path.exists(file_contigs):
-        print
-        print 'ERROR: The provided file with an assembly does not exist'
-        print
+        print()
+        print('ERROR: The provided file with an assembly does not exist')
+        print()
         sys.exit(0)
     else:
         file_contigs=os.path.abspath(file_contigs)
@@ -41,9 +41,9 @@ def CHECK_INPUT_DATA(file_ref, file_contigs, working_dir, prefix, nucmer_opt,fil
 
     if delta_file!='':
         if not os.path.exists(delta_file):
-            print
-            print 'ERROR: the provided delta file does not exist'
-            print
+            print()
+            print('ERROR: the provided delta file does not exist')
+            print()
             sys.exit(0)
         else:
             delta_file=os.path.abspath(delta_file)
@@ -54,9 +54,9 @@ def CHECK_INPUT_DATA(file_ref, file_contigs, working_dir, prefix, nucmer_opt,fil
         os.makedirs(working_dir)
 
         if not os.path.exists(working_dir):
-            print
-            print 'ERROR: it is not possible to create working directory'
-            print
+            print()
+            print('ERROR: it is not possible to create working directory')
+            print()
             sys.exit(0)
 
 
@@ -78,20 +78,20 @@ def CHECK_INPUT_DATA(file_ref, file_contigs, working_dir, prefix, nucmer_opt,fil
             if not opt in nucmer_opt_list:
                 if opt in ['--prefix','-p', '--mum', '--mumreference']:
                     if opt in ['--prefix','-p']:
-                        print
-                        print "ERROR: It is not possible to use {0} option in --nucmer_opt".format(opt)
-                        print
+                        print()
+                        print("ERROR: It is not possible to use {0} option in --nucmer_opt".format(opt))
+                        print()
                         sys.exit(0)
                     elif opt in ['--mum', '--mumreference']:
-                        print
-                        print "ERROR: It is not possible to use {0} option. Use --maxmatch instead.".format(opt)
-                        print
+                        print()
+                        print("ERROR: It is not possible to use {0} option. Use --maxmatch instead.".format(opt))
+                        print()
                         sys.exit(0)
                    
                 else:
-                    print
-                    print "ERROR: the wrong nucmer option '{0}'".format(opt)
-                    print 
+                    print()
+                    print("ERROR: the wrong nucmer option '{0}'".format(opt))
+                    print() 
                     sys.exit(0)
             
     #check filter run options
@@ -105,15 +105,15 @@ def CHECK_INPUT_DATA(file_ref, file_contigs, working_dir, prefix, nucmer_opt,fil
         if opt.startswith('-'):
             if not opt in filter_opt_list:
                 if opt in ['-g','-r']:
-                        print
-                        print "ERROR: It is not possible to use {0} option. Use -q instead.".format(opt)
-                        print
+                        print()
+                        print("ERROR: It is not possible to use {0} option. Use -q instead.".format(opt))
+                        print()
                         sys.exit(0)
                    
                 else:
-                    print
-                    print "ERROR: the wrong delta-filter option '{0}'".format(opt)
-                    print 
+                    print()
+                    print("ERROR: the wrong delta-filter option '{0}'".format(opt))
+                    print() 
                     sys.exit(0)
             
     
