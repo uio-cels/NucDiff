@@ -16,6 +16,7 @@ import subprocess
 import os
 import getopt
 import multiprocessing
+from copy import deepcopy
 
 from . import general
 from . import class_errors
@@ -169,7 +170,7 @@ class Nucmer:
                 frag_dict[cont_name].append([info[0], info[1], info[2], info[3], info[8], info[10],0,[]])
                 num_all+=1
         
-       
+        
         FIND_SNPS(frag_dict, self.coord_file, self.delta_file,self.prefix, proc_num, file_contigs )
 
         contigs_dict, contig_seqs, contig_names, contig_full_names_dict=general.READ_FASTA_ENTRY(file_contigs)
@@ -2181,7 +2182,7 @@ def FIND_SNPS_SINGLE(input_list):
     f=open(coord_file,'w')
 
     frag_dict={}
-    
+        
     for entry in coord_lines_list:
         cont_name=entry[0]
         frag_line=entry[1]
@@ -2275,7 +2276,7 @@ def FIND_SNPS(frag_dict,coord_file, delta_file,prefix,proc_num, file_contigs):
                     else:
                         answ=CHECK_OVERL_FRAG([cont_name,frag_dict[cont_name][i]],temp_list)
                         if answ==0:
-                                temp_list.append([cont_name,frag_dict[cont_name][i]])
+                                temp_list.append([cont_name,deepcopy(frag_dict[cont_name][i])])
                                 frag_dict[cont_name][i][6]=1
 
                         
@@ -2301,10 +2302,13 @@ def FIND_SNPS(frag_dict,coord_file, delta_file,prefix,proc_num, file_contigs):
 
    
     
-    pool=multiprocessing.Pool(processes=proc_num)                
-    output_list=pool.map(FIND_SNPS_SINGLE,input_list)
-
-    for frag_dict_part in output_list:
+    #pool=multiprocessing.Pool(processes=proc_num)                
+    #output_list=pool.map(FIND_SNPS_SINGLE,input_list)
+    
+    
+    for input_entry in input_list:
+        frag_dict_part=FIND_SNPS_SINGLE(input_entry)
+        
         if frag_dict_part=='failed':
             import sys
             sys.exit(0)
